@@ -1,3 +1,17 @@
 <resources>
+
+    <!-- These are all the strings for the Sign Up page -->
     <string name="app_name">ST10262898_BUDGETBUNNY_POEPART2</string>
+    <string name="welcome">Welcome to</string>
+    <string name="budgetBunny">Budget Bunny</string>
+    <string name="signUp">Sign up to start saving</string>
+    <string name="promptUsername">Please enter a username:</string>
+    <string name="enterUsername">Username</string>
+    <string name="promptPassword">Please enter password:</string>
+    <string name="enterPassword">Password</string>
+    <string name="passwordRequirements">Password Requirements:</string>
+    <string name="passwordListRequirements">•Minimum 8 characters\n •Includes Number\n •Includes Symbol</string>
+    <string name="btn_signUp">Sign Up</string>
+
+
 </resources>
