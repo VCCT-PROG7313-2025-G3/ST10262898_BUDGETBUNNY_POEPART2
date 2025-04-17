@@ -3,15 +3,54 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:background="@drawable/bg_nodate"
     android:orientation="vertical"
+    android:textAlignment="center"
     tools:context=".bugetGoalsPage">
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="77dp" />
 
     <TextView
         android:id="@+id/textView4"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/assistant_bold"
+        android:gravity="center"
+        android:text="What is your monthly\n          budget goal?"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="25sp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+    <EditText
+
+        android:layout_gravity="center"
+
+        android:width="300dp"
+        android:id="@+id/amountEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint=" Enter an amount"
+        android:textColorHint="#B3FFFFFF"
+
+        android:background="@drawable/edittext_background"
+        android:inputType="numberDecimal"
+        android:padding="8dp"
+        android:textSize="16sp"
+        android:layout_margin="-20dp"
+    />
+
+    <TextView
+        android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="TextView" />
+
 </LinearLayout>

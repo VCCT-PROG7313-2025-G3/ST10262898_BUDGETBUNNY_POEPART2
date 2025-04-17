@@ -1,6 +1,7 @@
 package com.fake.st10262898_budgetbunny_poepart2
 
 import android.os.Bundle
+import android.widget.EditText
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -17,4 +18,5 @@ class bugetGoalsPage : AppCompatActivity() {
             insets
         }
     }
+    val amountEditText = findViewById<EditText>(R.id.amountEditText)
 }
