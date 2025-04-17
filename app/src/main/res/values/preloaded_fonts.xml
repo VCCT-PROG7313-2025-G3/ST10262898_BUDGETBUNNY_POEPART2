@@ -2,5 +2,15 @@
 <resources>
     <array name="preloaded_fonts" translatable="false">
         <item>@font/agdasima</item>
+        <item>@font/assistant_bold</item>
+        <item>@font/assistant_extrabold</item>
+        <item>@font/budgetbunny_pacifico</item>
+        <item>@font/cairo</item>
+        <item>@font/jost_medium</item>
+        <item>@font/mulish_extralight</item>
+        <item>@font/noto_sans_tamil_medium</item>
+        <item>@font/pacifico</item>
+        <item>@font/rajdhani_bold</item>
+        <item>@font/rajdhani_semibold</item>
     </array>
 </resources>
