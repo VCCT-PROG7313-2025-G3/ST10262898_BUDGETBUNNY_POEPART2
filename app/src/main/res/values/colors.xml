@@ -2,4 +2,12 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="grey">#1A1A1A</color>
+    <color name="regalia">#3F3184</color>
+    <color name="india_green">#1B7515</color>
+    <color name="mordant_red_19">#B80405</color>
+    <color name="dark_pastel_purple">#A175D9</color>
+    <color name="orange">#FF990A</color>
+    <color name="ucla_blue">#4D60AA</color>
+    <color name="outrageous_orange">#ff6d41</color>
 </resources>
