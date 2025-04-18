@@ -12,6 +12,19 @@
     <string name="passwordRequirements">Password Requirements:</string>
     <string name="passwordListRequirements">•Minimum 8 characters\n •Includes Number\n •Includes Symbol</string>
     <string name="btn_signUp">Sign Up</string>
+    <string name="welcome_back_to">Welcome back to</string>
+    <string name="log_in">Log In</string>
+    <string name="budgetbunny">BudgetBunny</string>
+    <string name="log_in_to_start_saving">Log in to start saving</string>
+    <string name="or_log_in_using">or, Log In using:</string>
+    <string name="instagram_login">Instagram Login</string>
+    <string name="apple_login">Apple Login</string>
+    <string name="google_login">Google Login</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="password">Password</string>
+    <string name="username">Username</string>
+    <string name="don_t_have_an_account">Don\'t have an account?</string>
+    <string name="create_an_account_below_to_start">Create an account below to start.</string>
 
 
 </resources>
