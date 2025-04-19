@@ -14,8 +14,12 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
+        //Declaring the button so we can add functionality to it:
         val btn_signUp = findViewById<ImageButton>(R.id.SignUp)
+
+        //This allows the buttons to be clickable and there to be functionality:
         btn_signUp.setOnClickListener {
+            //When the user clicks the button, it will take them to the sign up page:
             val intent = Intent(this, signUpPage::class.java)
             startActivity(intent)
         }

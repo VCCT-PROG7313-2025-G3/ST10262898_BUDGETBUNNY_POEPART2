@@ -2,8 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
 
+    //This is the import/plugin that is needed for Kapt
     id("org.jetbrains.kotlin.kapt")
-     //I added this
+
 
 }
 
@@ -58,4 +59,6 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     kapt(libs.room.compiler)
+
+    implementation(libs.lifecycle.viewmodel.ktx)
 }
