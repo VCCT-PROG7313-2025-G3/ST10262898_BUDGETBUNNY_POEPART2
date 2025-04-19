@@ -15,7 +15,7 @@
         android:layout_height="77dp" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/budgetGoalsQ1"
         android:layout_width="400dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/assistant_bold"
@@ -47,10 +47,31 @@
         android:layout_margin="-20dp"
     />
 
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/budgetGoalsQ2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:text="                       Budget Catagories"
+        android:fontFamily="@font/assistant_bold"
+        android:textColor="@color/white"
+        android:textSize="25sp"
+        />
 
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="9dp" />
+
+    <TextView
+        android:id="@+id/budgetGoalsQ3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="                    What are you saving towards?"
+        android:fontFamily="@font/assistant_bold"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        />
 </LinearLayout>
