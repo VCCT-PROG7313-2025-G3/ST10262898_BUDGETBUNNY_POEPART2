@@ -11,6 +11,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.Observer
+import android.content.Intent
 
 class signUpPage : AppCompatActivity() {
 
@@ -40,6 +41,11 @@ class signUpPage : AppCompatActivity() {
                 userViewModel.registrationResult.observe(this, Observer<Boolean> { isSuccess ->
                     if (isSuccess) {
                         Toast.makeText(this, "Sign up successful", Toast.LENGTH_SHORT).show()
+
+                        val intent = Intent(this, MainActivity::class.java)
+                        startActivity(intent)
+                        finish()
+
                     } else {
                         Toast.makeText(this, "Sign up failed", Toast.LENGTH_SHORT).show()
                     }

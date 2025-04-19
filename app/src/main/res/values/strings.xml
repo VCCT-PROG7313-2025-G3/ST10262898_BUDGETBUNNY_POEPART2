@@ -12,6 +12,8 @@
     <string name="passwordRequirements">Password Requirements:</string>
     <string name="passwordListRequirements">•Minimum 8 characters\n •Includes Number\n •Includes Symbol</string>
     <string name="btn_signUp">Sign Up</string>
+
+    <!-- These are the strings for the Login page -->
     <string name="welcome_back_to">Welcome back to</string>
     <string name="log_in">Log In</string>
     <string name="budgetbunny">BudgetBunny</string>
