@@ -51,17 +51,20 @@ class MainActivity : AppCompatActivity()
 
 
         btn_login.setOnClickListener{
-            val username = usernameEditText.text.toString()
+            val username = usernameEditText.text.toString() //Saves what the user has entered to this variable
             val password = passwordEditText.text.toString()
 
+            //This allows the user to login if they have signed up
             lifecycleScope.launch {
-                val user = db.userDao().getUser(username, password)
+                val user = db.userDao().getUser(username, password) //Fetches the user from the database
                 if(user != null)
                 {
+                    //If compiler can find the user this is what happens
                     Toast.makeText(applicationContext, "Login successful!", Toast.LENGTH_SHORT).show()
                 }
                 else
                 {
+                    //If compiler cannot find the users details this is what happens
                     Toast.makeText(applicationContext, "Invalid username or password", Toast.LENGTH_SHORT).show()
                 }
             }
