@@ -12,7 +12,7 @@
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="77dp" />
+        android:layout_height="131dp" />
 
     <TextView
         android:id="@+id/budgetGoalsQ1"
@@ -49,13 +49,13 @@
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="20dp" />
+        android:layout_height="34dp" />
 
     <TextView
         android:id="@+id/budgetGoalsQ2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="                       Budget Catagories"
+        android:text="                       Budget Categories"
         android:fontFamily="@font/assistant_bold"
         android:textColor="@color/white"
         android:textSize="25sp"
@@ -63,7 +63,7 @@
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="9dp" />
+        android:layout_height="13dp" />
 
     <TextView
         android:id="@+id/budgetGoalsQ3"
@@ -74,4 +74,64 @@
         android:textColor="@color/white"
         android:textSize="20sp"
         />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+    <GridLayout
+        android:id="@+id/buttonGrid"
+        android:layout_width="331dp"
+        android:layout_height="250dp"
+        android:layout_gravity="center"
+        android:alignmentMode="alignMargins"
+        android:columnCount="2"
+        android:columnOrderPreserved="false"
+        android:rowCount="3"
+        android:useDefaultMargins="true">
+
+
+        <Button
+            android:id="@+id/holiday_button"
+            style="@style/category_button_style"
+            android:text="Holiday" />
+
+        <Button
+            android:id="@+id/house_button"
+            style="@style/category_button_style"
+            android:text="House" />
+
+        <Button
+            android:id="@+id/tuition_button"
+            style="@style/category_button_style"
+            android:text="Tuition" />
+
+        <Button
+            android:id="@+id/investments_button"
+            style="@style/category_button_style"
+            android:text="Investments" />
+
+        <Button
+            android:id="@+id/baby_button"
+            style="@style/category_button_style"
+            android:text="Baby" />
+
+        <Button
+            android:id="@+id/addCustom_button"
+            style="@style/category_button_style"
+            android:text="+ Custom" />
+    </GridLayout>
+
+    <Button
+        android:id="@+id/next_button"
+        android:text="Next >"
+        android:layout_marginTop="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/dark_pastel_purple"
+        android:textColor="#FFFFFF"
+        android:layout_gravity="right"
+        android:layout_marginRight="20dp"
+        />
+
 </LinearLayout>
