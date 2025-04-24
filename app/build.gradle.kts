@@ -4,7 +4,7 @@ plugins {
 
     //This is the import/plugin that is needed for Kapt
     id("org.jetbrains.kotlin.kapt")
-
+    
 
 }
 
@@ -48,7 +48,7 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.material)
+    implementation(libs.material) //This dependency allows for the navigation bar to run.
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     testImplementation(libs.junit)
@@ -61,4 +61,6 @@ dependencies {
     kapt(libs.room.compiler)
 
     implementation(libs.lifecycle.viewmodel.ktx)
+
+
 }
