@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_nodate"
+    android:orientation="vertical"
+    android:textAlignment="center"
+    tools:context=".bugetGoalsPage">
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="131dp" />
+
+    <TextView
+        android:id="@+id/budgetGoalsQ1"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/assistant_bold"
+        android:gravity="center"
+        android:text="What is your monthly\n          budget goal?"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="25sp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+    <EditText
+
+        android:layout_gravity="center"
+
+        android:width="300dp"
+        android:id="@+id/amountEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint=" Enter an amount"
+        android:textColorHint="#B3FFFFFF"
+
+        android:background="@drawable/edittext_background"
+        android:inputType="numberDecimal"
+        android:padding="8dp"
+        android:textSize="16sp"
+        android:layout_margin="-20dp"
+    />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="34dp" />
+
+    <TextView
+        android:id="@+id/budgetGoalsQ2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="                       Budget Categories"
+        android:fontFamily="@font/assistant_bold"
+        android:textColor="@color/white"
+        android:textSize="25sp"
+        />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="13dp" />
+
+    <TextView
+        android:id="@+id/budgetGoalsQ3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="                    What are you saving towards?"
+        android:fontFamily="@font/assistant_bold"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+    <GridLayout
+        android:id="@+id/buttonGrid"
+        android:layout_width="331dp"
+        android:layout_height="250dp"
+        android:layout_gravity="center"
+        android:alignmentMode="alignMargins"
+        android:columnCount="2"
+        android:columnOrderPreserved="false"
+        android:rowCount="3"
+        android:useDefaultMargins="true">
+
+
+        <Button
+            android:id="@+id/holiday_button"
+            style="@style/category_button_style"
+            android:text="Holiday" />
+
+        <Button
+            android:id="@+id/house_button"
+            style="@style/category_button_style"
+            android:text="House" />
+
+        <Button
+            android:id="@+id/tuition_button"
+            style="@style/category_button_style"
+            android:text="Tuition" />
+
+        <Button
+            android:id="@+id/investments_button"
+            style="@style/category_button_style"
+            android:text="Investments" />
+
+        <Button
+            android:id="@+id/baby_button"
+            style="@style/category_button_style"
+            android:text="Baby" />
+
+        <Button
+            android:id="@+id/addCustom_button"
+            style="@style/category_button_style"
+            android:text="+ Custom" />
+    </GridLayout>
+
+    <Button
+        android:id="@+id/next_button"
+        android:text="Next >"
+        android:layout_marginTop="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/dark_pastel_purple"
+        android:textColor="#FFFFFF"
+        android:layout_gravity="right"
+        android:layout_marginRight="20dp"
+        />
+
+</LinearLayout>
