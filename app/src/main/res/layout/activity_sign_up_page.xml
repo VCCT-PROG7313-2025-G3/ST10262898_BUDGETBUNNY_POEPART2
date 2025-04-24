@@ -11,7 +11,7 @@
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="40dp" />
+        android:layout_height="69dp" />
 
 
     <TextView
@@ -19,8 +19,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:fontFamily="@font/agdasima"
-        android:textSize="30sp"
+        android:fontFamily="@font/noto_sans_tamil_medium"
+        android:textSize="25sp"
         android:textColor="#FFFFFF"
         android:text="@string/welcome"
         />
@@ -36,10 +36,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:fontFamily="@font/agdasima"
-        android:textSize="50sp"
+        android:fontFamily="@font/pacifico"
+        android:text="@string/budgetBunny"
         android:textColor="#FFFFFF"
-        android:text="@string/budgetBunny" />
+        android:textSize="50sp" />
 
 
     <Space
@@ -52,15 +52,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:fontFamily="@font/agdasima"
-        android:textSize="20sp"
+        android:fontFamily="@font/noto_sans_tamil_medium"
+        android:textSize="18sp"
         android:textColor="#FFFFFF"
         android:text="@string/signUp" />
 
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="80dp" />
+        android:layout_height="49dp" />
 
 
     <TextView
@@ -68,11 +68,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:fontFamily="@font/agdasima"
+        android:fontFamily="@font/jost_medium"
         android:text="@string/promptUsername"
         android:textColor="#FFFFFF"
-        android:textSize="20sp"
-        android:translationX="-80dp" />
+        android:textSize="15sp"
+        android:translationX="-77dp" />
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="10dp" />
 
     <EditText
         android:id="@+id/et_username"
@@ -84,21 +88,26 @@
         android:inputType="text"
         android:minHeight="40sp"
         android:translationX="-10dp"
-        android:textColor="#FFFFFF" />
+        android:textColor="#FFFFFF"
+        android:fontFamily="@font/jost_medium"/>
 
     <Space
         android:layout_width="wrap_content"
-        android:layout_height="40dp" />
+        android:layout_height="50dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:fontFamily="@font/agdasima"
-        android:textSize="20sp"
-        android:textColor="#FFFFFF"
+        android:fontFamily="@font/jost_medium"
         android:text="@string/promptPassword"
-        android:translationX="-80dp" />
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        android:translationX="-85dp" />
+
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="10dp" />
 
     <EditText
         android:id="@+id/et_password"
@@ -109,8 +118,9 @@
         android:hint="@string/enterPassword"
         android:inputType="textPassword"
         android:minHeight="40sp"
-        android:translationX="-10dp"
-        android:textColor="#FFFFFF" />
+        android:textColor="#FFFFFF"
+        android:fontFamily="@font/jost_medium"
+        android:translationX="-10dp" />
 
     <Space
         android:layout_width="wrap_content"
@@ -122,18 +132,21 @@
         android:text="@string/passwordRequirements"
         android:layout_gravity="center"
         android:textSize="15sp"
-        android:textColor="#FFFFFF" />
+        android:textColor="#FFFFFF"
+        android:fontFamily="@font/jost_medium"/>
 
     <Space
         android:layout_width="wrap_content"
         android:layout_height="10dp" />
-    
+
     <TextView
+        android:id="@+id/passwordListRequirements"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:textSize="14sp"
         android:textColor="#FFFFFF"
+        android:fontFamily="@font/jost_medium"
         android:text="@string/passwordListRequirements" />
 
     <Space
@@ -141,10 +154,13 @@
         android:layout_height="40dp" />
     <Button
         android:id="@+id/btn_signUp"
+        android:fontFamily="@font/assistant_bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Sign Up" />
+        android:text="Sign Up"
+        android:textColor="@color/black"
+        android:backgroundTint="#A175D9"/>
 
 
 
