@@ -29,6 +29,7 @@
     <string name="create_an_account_below_to_start">Create an account below to start.</string>
 
     <!-- These are the Strings on the HomePage -->
+    <string name="Overview">Overview</string>
 
 
 </resources>
