@@ -75,6 +75,7 @@
                     android:layout_height="wrap_content"
                     android:text="CurrentDateAndTime"
                     android:textColor="#FFFFFF"
+                    android:fontFamily="@font/jost_medium"
                     app:layout_constraintTop_toBottomOf="@id/tv_Month"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />
@@ -324,8 +325,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             app:menu="@menu/bottom_nav_menu"
-            app:labelVisibilityMode="labeled"
-            android:background="?android:attr/windowBackground"
+            app:labelVisibilityMode="unlabeled"
+            android:background="#000000"
+            app:itemIconSize="40dp"
+            app:itemIconTint="#FFFFFF"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
