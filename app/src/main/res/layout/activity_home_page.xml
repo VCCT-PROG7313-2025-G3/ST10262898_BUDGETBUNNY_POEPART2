@@ -61,9 +61,10 @@
                     android:id="@+id/tv_Month"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Month"
+                    android:text="@string/Home"
+                    android:fontFamily="@font/pacifico"
                     android:textColor="#FFFFFF"
-                    android:textSize="30sp"
+                    android:textSize="40sp"
                     app:layout_constraintTop_toBottomOf="@id/v_navBar"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />
@@ -132,28 +133,40 @@
                     <androidx.cardview.widget.CardView
                         android:id="@+id/cv_balances"
                         android:layout_width="0dp"
-                        android:layout_height="150dp"
+                        android:layout_height="200dp"
                         android:layout_columnWeight="1"
                         android:layout_margin="8dp"
                         app:cardCornerRadius="30dp"
                         app:cardElevation="4dp"
                         app:cardBackgroundColor="#40A9A9A9">
 
-                        <TextView
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:text="@string/Balances"
-                            android:textColor="#FFFFFF"
-                            android:textSize="12sp"
-                            android:translationX="17sp"
-                            android:fontFamily="@font/jost_medium"/>
+                            android:orientation="vertical"
+                            android:padding="8dp">
 
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/BudgetOverview"
+                                android:textColor="#FFFFFF"
+                                android:fontFamily="@font/jost_medium"
+                                android:translationX="25dp"
+                                />
 
                         <!-- This places a Pie chart inside the card view -->
                         <com.github.mikephil.charting.charts.PieChart
                             android:id="@+id/pieChart"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            />
+
+
+
+
+                        </LinearLayout>
 
                     </androidx.cardview.widget.CardView>
 
@@ -161,17 +174,23 @@
                     <androidx.cardview.widget.CardView
                         android:id="@+id/cv_chart"
                         android:layout_width="0dp"
-                        android:layout_height="150dp"
+                        android:layout_height="200dp"
                         android:layout_columnWeight="1"
                         android:layout_margin="8dp"
                         app:cardCornerRadius="30dp"
                         app:cardElevation="6dp"
                         app:cardBackgroundColor="#40A9A9A9">
 
-                        <TextView
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:text="@string/SavingCategories"
+                            android:orientation="vertical"
+                            android:padding="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/ExpensesGraph"
                             android:fontFamily="@font/jost_medium"
                             android:textColor="#FFFFFF"
                             android:translationX="30dp"
@@ -179,9 +198,12 @@
 
                         <!-- This places a Bar chart inside the card view -->
                         <com.github.mikephil.charting.charts.BarChart
-                            android:id="@+id/barChat"
+                            android:id="@+id/barChart"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
+                            android:layout_height="0dp"
+                            android:layout_weight="1"/>
+
+                        </LinearLayout>
 
                     </androidx.cardview.widget.CardView>
 
