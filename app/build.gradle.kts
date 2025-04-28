@@ -60,7 +60,12 @@ dependencies {
     implementation(libs.room.ktx)
     kapt(libs.room.compiler)
 
+    //This is for the lifecycle:
     implementation(libs.lifecycle.viewmodel.ktx)
+
+    //This is to implement graphs and charts:
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
 
 
 }
