@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- These are the items of the navigation bar -->
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/home_tab_icon"
+        android:title="Home" />
+
+    <item
+        android:id="@+id/nav_transactions"
+        android:icon="@drawable/transaction_tab_icon"
+        android:title="Transactions" />
+
+    <item
+        android:id="@+id/nav_bunny"
+        android:icon="@drawable/budgetbunny_tab_icon"
+        android:title="Bunny Page" />
+
+    <item
+        android:id="@+id/nav_budgetGoal"
+        android:icon="@drawable/budget_tab_icon"
+        android:title="Budget Goals" />
+
+
+    <item
+        android:id="@+id/nav_settings"
+        android:icon="@drawable/settings_tab_icon"
+        android:title="Settings" />
+
+
+</menu>
