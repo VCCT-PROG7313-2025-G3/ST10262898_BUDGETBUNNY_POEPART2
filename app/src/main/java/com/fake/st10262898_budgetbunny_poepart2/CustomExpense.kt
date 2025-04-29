@@ -54,7 +54,7 @@ class CustomExpense : AppCompatActivity() {
                 Toast.makeText(this, "Please choose an icon", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-//database and saving work from here
+//database and saving from here
 
 
 
