@@ -28,5 +28,15 @@
     <string name="don_t_have_an_account">Don\'t have an account?</string>
     <string name="create_an_account_below_to_start">Create an account below to start.</string>
 
+    <!-- These are the Strings on the HomePage -->
+    <string name="Home"><u>Budget Bunny</u></string>
+    <string name="Overview">Overview</string>
+    <string name="ExpensesGraph"><u>Expenses Graph</u></string>
+    <string name="Balances"><u>Income Expenses Balance</u></string>
+    <string name="bunnyName"><u>Budget Bunny</u></string>
+    <string name="Gamification">Gamification feature</string>
+    <string name="ComingSoon">Coming Soon!</string>
+    <string name="RecentTransactions"><u>Recent Transactions</u></string>
+    <string name="BudgetOverview"><u>Budget Overview</u></string>
 
 </resources>

@@ -16,6 +16,10 @@
             android:name=".bugetGoalsPage"
             android:exported="false" />
         <activity
+            android:name=".HomePageActivity"
+            android:exported="true"/>
+
+        <activity
             android:name=".signUpPage"
             android:exported="false" />
         <activity
