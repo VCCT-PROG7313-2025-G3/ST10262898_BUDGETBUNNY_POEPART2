@@ -10,10 +10,10 @@
     tools:context=".category_budget_goal"
     android:textAlignment="center"
     >
+
     <Space
         android:layout_width="match_parent"
-        android:layout_height="140dp"
-        />
+        android:layout_height="208dp" />
 
     <TextView
         android:id="@+id/budgetGoalsQ1"
@@ -21,7 +21,6 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/assistant_bold"
         android:gravity="center"
-        android:text="What is your \n          budget goal?"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="25sp" />

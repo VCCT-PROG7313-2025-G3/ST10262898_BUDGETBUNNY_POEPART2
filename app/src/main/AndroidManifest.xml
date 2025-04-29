@@ -38,4 +38,8 @@
         </activity>
 
         <meta-data
-            android:name="p
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+    </application>
+
+</manifest>

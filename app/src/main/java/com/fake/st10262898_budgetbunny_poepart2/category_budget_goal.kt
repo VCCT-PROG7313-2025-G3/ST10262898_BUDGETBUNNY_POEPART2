@@ -10,13 +10,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
-class BudgetGoalActivity : AppCompatActivity() {
+class category_budget_goal : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_category_budget_goal)
 
         val categoryName = intent.getStringExtra("CATEGORY_NAME") ?: "Custom"
-        findViewById<TextView>(R.id.budgetGoalsQ1).text = "What is your $categoryName budget goal?"
+        findViewById<TextView>(R.id.budgetGoalsQ1).text =
+            getString(R.string.budget_goal_question, categoryName)
 
         findViewById<Button>(R.id.next_button).setOnClickListener {
             val amount = findViewById<EditText>(R.id.amountEditText).text.toString()
