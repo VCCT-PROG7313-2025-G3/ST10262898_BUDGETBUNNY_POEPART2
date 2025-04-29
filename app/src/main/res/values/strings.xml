@@ -39,13 +39,15 @@
     <string name="choose_an_icon">Choose an icon</string>
     <string name="expensehint">Expense</string>
 
-
-    <!-- These are the strings for the Transactions page -->
-    <string name="yourExpenses"><u>Top Expenses</u></string>
-    <string name="transactionsHeading"><u>Transactions</u></string>
-    <string name="transactions"><u>Transactions</u></string>
-    <string name="monthsAtAGlance"><u>Months at a glance</u></string>
-
-
+    <!-- These are the Strings on the HomePage -->
+    <string name="Home"><u>Budget Bunny</u></string>
+    <string name="Overview">Overview</string>
+    <string name="ExpensesGraph"><u>Expenses Graph</u></string>
+    <string name="Balances"><u>Income Expenses Balance</u></string>
+    <string name="bunnyName"><u>Budget Bunny</u></string>
+    <string name="Gamification">Gamification feature</string>
+    <string name="ComingSoon">Coming Soon!</string>
+    <string name="RecentTransactions"><u>Recent Transactions</u></string>
+    <string name="BudgetOverview"><u>Budget Overview</u></string>
 
 </resources>
