@@ -61,4 +61,6 @@ dependencies {
     kapt(libs.room.compiler)
 
     implementation(libs.lifecycle.viewmodel.ktx)
+
+    implementation("androidx.gridlayout:gridlayout:1.0.0") //Added for grid layouts in transaction page
 }
