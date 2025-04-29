@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".BunnyNameActivity"
+    android:background="@drawable/bg_nodate">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/settingUp"
+        android:textSize="35sp"
+        android:fontFamily="@font/jost_medium"
+        android:textColor="#FFFFFF"
+        android:gravity="center" />
+
+
+    <ImageView
+        android:layout_width="400dp"
+        android:layout_height="386dp"
+        android:src="@drawable/budgetbunny_name_sc" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/jost_medium"
+        android:gravity="center"
+        android:text="@string/nameBunnyPrompt"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+    <EditText
+        android:id="@+id/bunnyName"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:background="@drawable/edittext_background"
+        android:layout_gravity="center"
+        android:hint=" Enter name"
+        android:textColorHint="#A9A9A9"/>
+
+
+
+
+
+
+
+</LinearLayout>
