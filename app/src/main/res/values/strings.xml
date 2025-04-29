@@ -27,6 +27,17 @@
     <string name="username">Username</string>
     <string name="don_t_have_an_account">Don\'t have an account?</string>
     <string name="create_an_account_below_to_start">Create an account below to start.</string>
+    <string name="x">X</string>
+    <string name="sign_up_complete">Sign-up Complete</string>
+    <string name="here_s_50_coins_to_get_you_started_on_your_budgetbunny_journey">Here\'s 50 coins to get you started on your BudgetBunny journey</string>
+    <string name="you_re_ready_to_start_saving">You\'re ready to start saving!</string>
+    <string name="reward_coin">reward coin</string>
+    <string name="add_a_custom_expense">Add a custom expense</string>
+    <string name="you_can_change_this_later">*You can change this later</string>
+    <string name="next">Next</string>
+    <string name="expense">Expense</string>
+    <string name="choose_an_icon">Choose an icon</string>
+    <string name="expensehint">Expense</string>
 
     <!-- These are the Strings on the HomePage -->
     <string name="Home"><u>Budget Bunny</u></string>
