@@ -38,6 +38,10 @@
     <string name="expense">Expense</string>
     <string name="choose_an_icon">Choose an icon</string>
     <string name="expensehint">Expense</string>
+    <string name="sun">Sun</string>
+    <string name="pin">Pin</string>
+    <string name="phone">Phone</string>
+    <string name="flower">Flower</string>
 
 
 </resources>
