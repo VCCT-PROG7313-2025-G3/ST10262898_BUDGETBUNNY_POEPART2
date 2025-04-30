@@ -16,6 +16,12 @@
             android:name=".Settings"
             android:exported="false" />
         <activity
+            android:name=".SignUpReward"
+            android:exported="false" />
+        <activity
+            android:name=".BunnyNameActivity"
+            android:exported="false" />
+        <activity
             android:name=".ExpenseList"
             android:exported="false" />
         <activity
