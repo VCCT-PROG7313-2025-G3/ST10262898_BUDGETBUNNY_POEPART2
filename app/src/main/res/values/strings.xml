@@ -58,4 +58,10 @@
     <string name="settingUp">We are almost done setting you up </string>
     <string name="nameBunnyPrompt"><u>Name your bunny</u></string>
 
+    <!-- These are the strings for the budget goals Overview page -->
+    <string name="BudgetBunny">Budget Bunny</string>
+    <string name="budgetGoalTitle">Savings for the month</string>
+    <string name="Categories"><u>Categories</u></string>
+
+
 </resources>
