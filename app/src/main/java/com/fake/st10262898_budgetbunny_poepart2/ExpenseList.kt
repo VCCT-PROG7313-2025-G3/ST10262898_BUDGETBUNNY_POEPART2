@@ -39,6 +39,20 @@ class ExpenseList : AppCompatActivity() {
             startActivity(intent)
         }
 
+        //This is a single on click listener for all image buttons
+        val goToMonthlyPayment = {
+            val intent = Intent(this@ExpenseList, MonthlyPayment::class.java)
+            startActivity(intent)
+        }
+
+
+        billsButton.setOnClickListener { goToMonthlyPayment() }
+        carButton.setOnClickListener { goToMonthlyPayment() }
+        emergenciesButton.setOnClickListener { goToMonthlyPayment() }
+        entertainmentButton.setOnClickListener { goToMonthlyPayment() }
+        foodButton.setOnClickListener { goToMonthlyPayment() }
+        hobbiesButton.setOnClickListener { goToMonthlyPayment() }
+        rentButton.setOnClickListener { goToMonthlyPayment() }
 
 
 
