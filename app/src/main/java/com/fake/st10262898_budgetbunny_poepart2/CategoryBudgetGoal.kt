@@ -5,12 +5,9 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.EditText
 import android.content.Intent
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 
-class category_budget_goal : AppCompatActivity() {
+class CategoryBudgetGoal : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_category_budget_goal)

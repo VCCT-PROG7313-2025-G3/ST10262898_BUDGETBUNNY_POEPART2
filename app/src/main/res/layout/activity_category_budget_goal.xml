@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/bg_nodate"
     android:orientation="vertical"
-    tools:context=".category_budget_goal"
+    tools:context=".CategoryBudgetGoal"
     android:textAlignment="center"
     >
 
