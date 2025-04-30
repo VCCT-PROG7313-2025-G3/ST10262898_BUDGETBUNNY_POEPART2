@@ -37,7 +37,7 @@
         android:id="@+id/amountEditText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint=" Enter an amount"
+        android:hint="@string/enter_an_amount"
         android:textColorHint="#B3FFFFFF"
 
         android:background="@drawable/edittext_background"

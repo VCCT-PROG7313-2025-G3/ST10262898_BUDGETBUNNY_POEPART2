@@ -1,0 +1,645 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_date"
+    tools:context=".TransactionsActivity">
+
+    <LinearLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="20dp">
+    
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Budget Bunny"
+        android:fontFamily="@font/pacifico"
+        android:textSize="30sp"
+        android:textColor="#FFFFFF"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CurrentDateandTime"
+        android:textColor="#FFFFFF"
+        android:fontFamily="@font/jost_medium"
+        android:textSize="15sp"
+        android:layout_gravity="center" />
+    
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="30dp"
+            android:layout_gravity="center"
+            app:cardBackgroundColor="#40A9A9A9">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/yourExpenses"
+                    android:textColor="#FFFFFF"
+                    android:fontFamily="@font/jost_medium"
+                    android:textSize="20sp"
+                    android:layout_gravity="center"
+                    android:translationX="10dp"/>
+
+                <!-- This is the grid which will hold all the tiles of the expense -->
+                <androidx.gridlayout.widget.GridLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:columnCount="2"
+                    app:orientation="horizontal"
+                    app:alignmentMode="alignMargins"
+                    app:useDefaultMargins="true">
+
+                    <!-- Tile 1 -->
+                    <LinearLayout
+                        android:layout_width="80dp"
+                        android:layout_height="70dp"
+                        android:layout_margin="20dp"
+                        android:background="@drawable/rounded_tile_background"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:padding="10dp"
+                        app:layout_columnWeight="1"
+                        app:layout_row="0"
+                        app:layout_column="0">
+
+                        <TextView
+                            android:id="@+id/nameOfExpense1"
+                            android:layout_width="40dp"
+                            android:layout_height="wrap_content"
+                            android:gravity="start"
+                            android:text="Name"
+                            android:textColor="#000000"
+                            android:textSize="15sp"
+                            android:fontFamily="@font/jost_medium"/>
+
+                        <View
+                            android:layout_width="2dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="#000000"/>
+
+                        <TextView
+                            android:id="@+id/expenseAmountOne"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Total amount: R0" />
+
+
+
+
+                    </LinearLayout>
+
+                    <!-- Tile 2 -->
+                    <LinearLayout
+                        android:layout_width="80dp"
+                        android:layout_height="70dp"
+                        android:layout_margin="20dp"
+                        android:background="@drawable/rounded_tile_background"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:padding="10dp"
+                        app:layout_columnWeight="1"
+                        app:layout_row="0"
+                        app:layout_column="1">
+
+                        <TextView
+                            android:id="@+id/nameOfExpense2"
+                            android:layout_width="40dp"
+                            android:layout_height="wrap_content"
+                            android:text="Name"
+                            android:textColor="#000000"
+                            android:gravity="start"
+                            android:textSize="15sp"
+                            android:fontFamily="@font/jost_medium" />
+
+                        <View
+                            android:layout_width="2dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="#000000"/>
+
+                        <TextView
+                            android:id="@+id/expenseAmount2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Total amount: R0" />
+
+                    </LinearLayout>
+
+                    <!-- Tile 3 -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="70dp"
+                        android:layout_margin="20dp"
+                        android:background="@drawable/rounded_tile_background"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:padding="10dp"
+                        app:layout_columnWeight="1"
+                        app:layout_row="1"
+                        app:layout_column="0">
+
+                        <TextView
+                            android:id="@+id/nameOfExpense3"
+                            android:layout_width="40dp"
+                            android:layout_height="wrap_content"
+                            android:text="Name"
+                            android:gravity="start"
+                            android:textColor="#000000"
+                            android:textSize="15sp"
+                            android:fontFamily="@font/jost_medium" />
+
+                        <View
+                            android:layout_width="2dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="#000000"/>
+
+                        <TextView
+                            android:id="@+id/expenseAmounnt3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Total amount: R0" />
+                    </LinearLayout>
+
+                    <!-- Tile 4 -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="70dp"
+                        android:layout_margin="20dp"
+                        android:background="@drawable/rounded_tile_background"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:padding="10dp"
+                        app:layout_columnWeight="1"
+                        app:layout_row="1"
+                        app:layout_column="1">
+
+                        <TextView
+                            android:id="@+id/nameOfExpense4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Name"
+                            android:textColor="#000000"
+                            android:textSize="15sp"
+                            android:fontFamily="@font/jost_medium" />
+                        <View
+                            android:layout_width="2dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:background="#000000"/>
+
+                        <TextView
+                            android:id="@+id/expenseAmount4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Total amount: R0" />
+
+                    </LinearLayout>
+
+
+
+                </androidx.gridlayout.widget.GridLayout>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add an expense"
+                    android:layout_gravity="center" />
+
+            </LinearLayout>
+
+
+
+        </androidx.cardview.widget.CardView>
+
+
+        <Space
+        android:layout_width="match_parent"
+        android:layout_height="50dp"/>
+
+
+
+    <!--This is the transactions card-->
+    <androidx.cardview.widget.CardView
+        android:layout_width="350dp"
+        android:layout_height="250dp"
+        app:cardCornerRadius="30dp"
+        android:layout_gravity="center"
+        app:cardBackgroundColor="#40A9A9A9">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/transactions"
+            android:textSize="25sp"
+            android:textColor="#FFFFFF"
+            android:fontFamily="@font/jost_medium"
+            android:layout_gravity="center|top"
+            android:translationX="10dp"/>
+
+
+
+        </LinearLayout>
+
+
+
+
+    </androidx.cardview.widget.CardView>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+
+
+
+
+        <!-- This is the card view to view information in monthly format: -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="30dp"
+            android:layout_gravity="center"
+            app:cardBackgroundColor="#40A9A9A9">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="25sp"
+                            android:text="@string/monthsAtAGlance"
+                            android:textColor="#FFFFFF"
+                            android:fontFamily="@font/jost_medium"
+                            android:layout_gravity="center_horizontal"
+                            />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Select Month"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp"
+                    android:fontFamily="@font/jost_medium"
+                    android:layout_gravity="center"
+                    android:paddingBottom="12dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp" >
+
+                    <!--This is going to store all the twelve months: -->
+                    <androidx.gridlayout.widget.GridLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:columnCount="3"
+                        app:alignmentMode="alignMargins"
+                        app:useDefaultMargins="true" >
+
+
+                        <!-- January -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_margin="8dp"
+                            android:background="@drawable/month_tile_background"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:padding="10dp"
+                            app:layout_columnWeight="1">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="January"
+                                android:textColor="#000000"
+                                android:textSize="16sp"
+                                android:fontFamily="@font/jost_medium" />
+                        </LinearLayout>
+
+
+                        <!-- February -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_margin="8dp"
+                            android:background="@drawable/month_tile_background"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:padding="10dp"
+                            app:layout_columnWeight="1">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="February"
+                                android:textColor="#000000"
+                                android:textSize="16sp"
+                                android:fontFamily="@font/jost_medium" />
+                        </LinearLayout>
+
+
+                        <!-- March -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_margin="8dp"
+                            android:background="@drawable/month_tile_background"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:padding="10dp"
+                            app:layout_columnWeight="1">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="January"
+                                android:textColor="#000000"
+                                android:textSize="16sp"
+                                android:fontFamily="@font/jost_medium" />
+                        </LinearLayout>
+
+                        <!-- April -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_margin="8dp"
+                            android:background="@drawable/month_tile_background"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:padding="10dp"
+                            app:layout_columnWeight="1">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="April"
+                                android:textColor="#000000"
+                                android:textSize="16sp"
+                                android:fontFamily="@font/jost_medium" />
+                        </LinearLayout>
+
+                        <!--May-->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_margin="8dp"
+                            android:background="@drawable/month_tile_background"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:padding="10dp"
+                            app:layout_columnWeight="1">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="May"
+                                android:textColor="#000000"
+                                android:textSize="16sp"
+                                android:fontFamily="@font/jost_medium" />
+                        </LinearLayout>
+
+
+                        <!-- June -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_margin="8dp"
+                            android:background="@drawable/month_tile_background"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:padding="10dp"
+                            app:layout_columnWeight="1">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="June"
+                                android:textColor="#000000"
+                                android:textSize="16sp"
+                                android:fontFamily="@font/jost_medium" />
+                        </LinearLayout>
+
+
+                        <!-- July -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_margin="8dp"
+                            android:background="@drawable/month_tile_background"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:padding="10dp"
+                            app:layout_columnWeight="1">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="July"
+                                android:textColor="#000000"
+                                android:textSize="16sp"
+                                android:fontFamily="@font/jost_medium" />
+                        </LinearLayout>
+
+
+                        <!-- August -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_margin="8dp"
+                            android:background="@drawable/month_tile_background"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:padding="10dp"
+                            app:layout_columnWeight="1">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="August"
+                                android:textColor="#000000"
+                                android:textSize="16sp"
+                                android:fontFamily="@font/jost_medium" />
+                        </LinearLayout>
+
+
+                        <!-- Septemeber -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_margin="8dp"
+                            android:background="@drawable/month_tile_background"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:padding="10dp"
+                            app:layout_columnWeight="1">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="September"
+                                android:textColor="#000000"
+                                android:textSize="16sp"
+                                android:fontFamily="@font/jost_medium"
+
+                                android:maxLines="1"
+                                android:autoSizeTextType="uniform"
+                                android:autoSizeMinTextSize="12sp"
+                                android:autoSizeMaxTextSize="16sp"
+                                android:autoSizeStepGranularity="1sp" />
+
+                        </LinearLayout>
+
+
+                        <!--October -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_margin="8dp"
+                            android:background="@drawable/month_tile_background"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:padding="10dp"
+                            app:layout_columnWeight="1">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="October"
+                                android:textColor="#000000"
+                                android:textSize="16sp"
+                                android:fontFamily="@font/jost_medium" />
+                        </LinearLayout>
+
+
+                        <!-- October -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_margin="8dp"
+                            android:background="@drawable/month_tile_background"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:padding="10dp"
+                            app:layout_columnWeight="1">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="November"
+                                android:textColor="#000000"
+                                android:textSize="16sp"
+                                android:fontFamily="@font/jost_medium"
+
+                                android:maxLines="1"
+                                android:autoSizeTextType="uniform"
+                                android:autoSizeMinTextSize="12sp"
+                                android:autoSizeMaxTextSize="16sp"
+                                android:autoSizeStepGranularity="1sp"/>
+                        </LinearLayout>
+
+
+                        <!-- December -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="80dp"
+                            android:layout_margin="8dp"
+                            android:background="@drawable/month_tile_background"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:padding="10dp"
+                            app:layout_columnWeight="1">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="December"
+                                android:textColor="#000000"
+                                android:textSize="16sp"
+                                android:fontFamily="@font/jost_medium"
+
+                                android:maxLines="1"
+                                android:autoSizeTextType="uniform"
+                                android:autoSizeMinTextSize="12sp"
+                                android:autoSizeMaxTextSize="16sp"
+                                android:autoSizeStepGranularity="1sp"/>
+                        </LinearLayout>
+
+
+
+
+
+
+
+
+
+                    </androidx.gridlayout.widget.GridLayout>
+
+
+
+
+
+
+
+
+
+
+
+                </LinearLayout>
+
+
+
+
+
+
+
+            </LinearLayout>
+
+
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+</ScrollView>
+
