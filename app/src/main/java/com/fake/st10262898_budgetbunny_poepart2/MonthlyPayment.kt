@@ -38,8 +38,8 @@ class MonthlyPayment : AppCompatActivity() {
         // Get the EditText where the user will input the amount
         val amountEditText = findViewById<EditText>(R.id.enterAnAmount)
 
-        // Define the username
-        val username = "User1"  // This should come from the logged-in session or similar.
+        val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val username = sharedPreferences.getString("username", "") ?: ""
 
         // Setup the button that saves the data
         val saveButton = findViewById<Button>(R.id.button)

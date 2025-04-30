@@ -60,6 +60,12 @@ class MainActivity : AppCompatActivity()
                     //If compiler can find the user this is what happens
                     Toast.makeText(applicationContext, "Login successful!", Toast.LENGTH_SHORT).show()
 
+                    // Save the username when the user logs in
+                    val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+                    val editor = sharedPreferences.edit()
+                    editor.putString("username", username)  // Use the entered username
+                    editor.apply()
+
                     //This allows the user to navigate to HomePage after a sucessful login:
                     val intent = Intent(this@MainActivity, HomePageActivity::class.java)
                     startActivity(intent)

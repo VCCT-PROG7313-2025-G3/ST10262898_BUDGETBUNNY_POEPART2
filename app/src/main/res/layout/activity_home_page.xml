@@ -303,6 +303,12 @@
                         android:translationX="50dp"
                         android:fontFamily="@font/jost_medium" />
 
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_transactions"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"/>
+
 
 
 
