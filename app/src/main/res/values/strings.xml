@@ -74,4 +74,10 @@
     <string name="hobbies">hobbies</string>
     <string name="custom_button">customButton</string>
 
+    <!-- These are the strings for the budget goals Overview page -->
+    <string name="BudgetBunny">Budget Bunny</string>
+    <string name="budgetGoalTitle">Savings for the month</string>
+    <string name="Categories"><u>Categories</u></string>
+
+
 </resources>

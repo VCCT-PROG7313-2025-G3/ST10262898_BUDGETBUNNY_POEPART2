@@ -17,6 +17,9 @@
             android:name=".ExpenseList"
             android:exported="false" />
         <activity
+            android:name=".BudgetGoalsOverviewActivity"
+            android:exported="false" />
+        <activity
             android:name=".TransactionsActivity"
             android:exported="false" />
         <activity
