@@ -12,6 +12,12 @@ import androidx.core.view.WindowInsetsCompat
 class ExpenseList : AppCompatActivity() {
 
 
+    private fun openMonthlyPayment(expenseName: String) {
+        val intent = Intent(this, MonthlyPayment::class.java)
+        intent.putExtra("EXPENSE_NAME", expenseName)
+        startActivity(intent)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -39,7 +45,15 @@ class ExpenseList : AppCompatActivity() {
             startActivity(intent)
         }
 
-
+        //this ensures that when an image button is clicked that in the table this name is saved:
+        billsButton.setOnClickListener { openMonthlyPayment("Bills") }
+        carButton.setOnClickListener { openMonthlyPayment("Car") }
+        emergenciesButton.setOnClickListener { openMonthlyPayment("Emergencies") }
+        entertainmentButton.setOnClickListener { openMonthlyPayment("Entertainment") }
+        foodButton.setOnClickListener { openMonthlyPayment("Food") }
+        hobbiesButton.setOnClickListener { openMonthlyPayment("Hobbies") }
+        rentButton.setOnClickListener { openMonthlyPayment("Rent") }
+        customButton.setOnClickListener { openMonthlyPayment("Custom") }
 
 
         // Padding handling only
@@ -52,4 +66,7 @@ class ExpenseList : AppCompatActivity() {
 
 
     }
+
+
+
 }
