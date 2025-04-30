@@ -68,7 +68,7 @@
         app:layout_constraintVertical_bias="0.47" />
 
     <EditText
-        android:id="@+id/editTextNumber"
+        android:id="@+id/ExpenseAmount"
         android:layout_width="317dp"
         android:layout_height="62dp"
         android:background="@drawable/custum"

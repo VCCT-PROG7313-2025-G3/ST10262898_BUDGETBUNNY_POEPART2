@@ -99,6 +99,8 @@
     <string name="yourExpenses"><u>Top Expenses</u></string>
     <string name="transactions"><u>Transactions</u></string>
     <string name="monthsAtAGlance"><u>Months at a glance</u></string>
+    <string name="monthly_payment_amount">Monthly payment amount?</string>
+    <string name="enter_an_amount_">Enter an amount</string>
 
 
 
