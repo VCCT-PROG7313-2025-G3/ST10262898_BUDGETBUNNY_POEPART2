@@ -61,6 +61,13 @@ class MainActivity : AppCompatActivity()
                 {
                     //If compiler can find the user this is what happens
                     Toast.makeText(applicationContext, "Login successful!", Toast.LENGTH_SHORT).show()
+
+                    //This allows the user to navigate to HomePage after a sucessful login:
+                    val intent = Intent(this@MainActivity, HomePageActivity::class.java)
+                    startActivity(intent)
+
+
+                    finish()
                 }
                 else
                 {

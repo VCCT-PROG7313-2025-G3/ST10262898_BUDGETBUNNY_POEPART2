@@ -79,5 +79,25 @@
     <string name="budgetGoalTitle">Savings for the month</string>
     <string name="Categories"><u>Categories</u></string>
 
+    <!-- These are the strings for the activity expense entry -->
+    <string name="enter_an_expense">Please enter an expense</string>
+    <string name="expense_amount">Expense Amount</string>
+    <string name="expense_name">Expense Name</string>
+    <string name="expense_category">Expense Category</string>
+    <string name="choose_a_category">Choose a category</string>
+    <string name="expensename">Enter Name</string>
+
+    <string-array name="dropdown_items">
+        <item>Food</item>
+        <item>Transport</item>
+        <item>Entertainment</item>
+        <item>Health</item>
+        <item>Utilities</item>
+    </string-array>
+
+    <!-- These are strings from the transactions page -->
+    <string name="yourExpenses"><u>Top Expenses</u></string>
+    <string name="transactions"><u>Transactions</u></string>
+    <string name="monthsAtAGlance"><u>Months at a glance</u></string>
 
 </resources>
