@@ -21,7 +21,7 @@ class ExpenseEntry : AppCompatActivity() {
 
 // Bind the views
         expenseNameEditText = findViewById(R.id.editTextText)
-        expenseAmountEditText = findViewById(R.id.editTextNumber)
+        expenseAmountEditText = findViewById(R.id.ExpenseAmount)
         categorySpinner = findViewById(R.id.mySpinner)
         nextButton = findViewById(R.id.button)
 
