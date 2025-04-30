@@ -61,4 +61,10 @@ dependencies {
     kapt(libs.room.compiler)
 
     implementation(libs.lifecycle.viewmodel.ktx)
+
+    implementation("androidx.gridlayout:gridlayout:1.0.0") //Added for grid layouts in transaction page
+
+
+    //This is to implement graphs and charts:
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }

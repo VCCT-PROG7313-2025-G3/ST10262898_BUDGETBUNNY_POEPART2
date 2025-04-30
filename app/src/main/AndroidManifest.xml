@@ -13,11 +13,32 @@
         android:theme="@style/Theme.ST10262898_BUDGETBUNNY_POEPART2"
         tools:targetApi="31">
         <activity
-            android:name=".MonthlyPayment"
+            android:name=".Settings"
+            android:exported="false" />
+        <activity
+            android:name=".ExpenseList"
+            android:exported="false" />
+        <activity
+            android:name=".BudgetGoalsOverviewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".TransactionsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".customBudgetPage"
+            android:exported="false" />
+        <activity
+            android:name=".CategoryBudgetGoal"
+            android:exported="false" />
+        <activity
+            android:name=".CustomExpense"
             android:exported="false" />
         <activity
             android:name=".bugetGoalsPage"
             android:exported="false" />
+        <activity
+            android:name=".HomePageActivity"
+            android:exported="true" />
         <activity
             android:name=".signUpPage"
             android:exported="false" />

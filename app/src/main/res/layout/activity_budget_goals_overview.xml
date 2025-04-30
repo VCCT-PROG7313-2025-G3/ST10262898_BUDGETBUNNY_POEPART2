@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/bg_date"
+    tools:context=".BudgetGoalsOverviewActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="40dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/budgetBunny"
+            android:fontFamily="@font/pacifico"
+            android:textSize="30sp"
+            android:textColor="#FFFFFF"
+            android:gravity="center" />
+
+        <TextView
+            android:id="@+id/tv_dateTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CurrentDateAndTime"
+            android:textColor="#FFFFFF"
+            android:fontFamily="@font/jost_medium"
+            android:gravity="center" />
+        
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+
+
+        <!-- Card View to store the bar for Budget Monthly Goal -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="8dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="6dp"
+            app:cardBackgroundColor="#80A9A9A9" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp" >
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/budgetGoalTitle"
+                android:fontFamily="@font/jost_medium"
+                android:textSize="16sp"
+                android:textColor="#FFFFFF"
+                android:layout_gravity="center" />
+                
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp" />
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    style="@android:style/Widget.ProgressBar.Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="12dp"
+                    android:progress="50"
+                    android:max="100"
+                    android:progressTint="@color/dark_pastel_purple"
+                    android:backgroundTint="#000000" />
+
+                <TextView
+                    android:id="@+id/budgetForMonth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="R500 of R1000 saved"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/jost_medium"
+                    android:layout_gravity="center"/>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="40dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/Categories"
+            android:textColor="#FFFFFF"
+            android:textSize="30sp"
+            android:fontFamily="@font/jost_medium"
+            android:gravity="center" />
+
+
+
+
+
+    </LinearLayout>
+
+    </ScrollView>
+
