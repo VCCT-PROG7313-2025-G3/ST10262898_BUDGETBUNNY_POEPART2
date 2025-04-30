@@ -50,4 +50,9 @@
     <string name="RecentTransactions"><u>Recent Transactions</u></string>
     <string name="BudgetOverview"><u>Budget Overview</u></string>
 
+    <!-- These are the strings for the budget goals Overview page -->
+    <string name="BudgetBunny">Budget Bunny</string>
+    <string name="budgetGoalTitle">Savings for the month</string>
+    <string name="Categories"><u>Categories</u></string>
+
 </resources>
