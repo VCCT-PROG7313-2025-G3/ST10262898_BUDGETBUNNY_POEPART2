@@ -64,6 +64,15 @@
     <string name="choose_a_category">Choose a category</string>
     <string name="expensename">ExpenseName</string>
     <string name="expense_name">Expense Name</string>
+    <string name="what_are_your_expenses">What are your expenses?</string>
+    <string name="food">Food</string>
+    <string name="custom_button">custom button</string>
+    <string name="rent">rent</string>
+    <string name="hobbies">hobbies</string>
+    <string name="entertainment">entertainment</string>
+    <string name="emergencies">emergencies</string>
+    <string name="car">car</string>
+    <string name="bills">bills</string>
 
     <string-array name="dropdown_items">
         <item>Bills</item>
