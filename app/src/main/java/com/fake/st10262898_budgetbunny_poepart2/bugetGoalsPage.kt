@@ -10,6 +10,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 class bugetGoalsPage : AppCompatActivity() {
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -20,9 +22,37 @@ class bugetGoalsPage : AppCompatActivity() {
             insets
         }
 
+        val holidayButton = findViewById<Button>(R.id.holiday_button)
+        val houseButton = findViewById<Button>(R.id.house_button)
+        val tuitionButton = findViewById<Button>(R.id.tuition_button)
+        val investmentsButton = findViewById<Button>(R.id.investments_button)
+        val babyButton = findViewById<Button>(R.id.baby_button)
+
+        // Helper function to launch CategoryBudgetGoal
+        fun openCategoryGoalPage(category: String) {
+            val intent = Intent(this, CategoryBudgetGoal::class.java)
+            intent.putExtra("CATEGORY_NAME", category)
+            startActivity(intent)
+        }
+
+        // Set click listeners
+        holidayButton.setOnClickListener { openCategoryGoalPage("Holiday") }
+        houseButton.setOnClickListener { openCategoryGoalPage("House") }
+        tuitionButton.setOnClickListener { openCategoryGoalPage("Tuition") }
+        investmentsButton.setOnClickListener { openCategoryGoalPage("Investments") }
+        babyButton.setOnClickListener { openCategoryGoalPage("Baby") }
+
+
         //Find the items on the xml:
+        val btn_addCustomButton = findViewById<Button>(R.id.addCustom_button)
         val btn_next = findViewById<Button>(R.id.next_button)
         val amountEditText = findViewById<EditText>(R.id.amountEditText)
+
+        //sends user to custom budget when its clicked
+        btn_addCustomButton.setOnClickListener{
+            val intent = Intent(this, customBudgetPage::class.java)
+            startActivity(intent)
+        }
 
         //Sends the user to the next page when clicking next
         btn_next.setOnClickListener {
@@ -30,5 +60,6 @@ class bugetGoalsPage : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
 
 }

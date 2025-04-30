@@ -10,6 +10,9 @@
     android:background="@drawable/bg_nodate">
 
 
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -45,7 +48,8 @@
         android:background="@drawable/edittext_background"
         android:layout_gravity="center"
         android:hint=" Enter name"
-        android:textColorHint="#A9A9A9"/>
+        android:textColorHint="#A9A9A9"
+        android:textColor="#FFFFFF"/>
 
     <Button
         android:id="@+id/btn_next"

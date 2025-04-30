@@ -18,6 +18,7 @@ class ExpenseList : AppCompatActivity() {
         setContentView(R.layout.activity_expense_list)
 
 
+
             val nextButton = findViewById<Button>(R.id.btn_next)
             val billsButton = findViewById<ImageButton>(R.id.bills)
             val carButton = findViewById<ImageButton>(R.id.carButton)
@@ -32,6 +33,12 @@ class ExpenseList : AppCompatActivity() {
                 val intent = Intent(this,bugetGoalsPage::class.java)
                 startActivity(intent)
             }
+
+        customButton.setOnClickListener {
+            val intent = Intent(this@ExpenseList, CustomExpense::class.java)
+            startActivity(intent)
+        }
+
 
 
 

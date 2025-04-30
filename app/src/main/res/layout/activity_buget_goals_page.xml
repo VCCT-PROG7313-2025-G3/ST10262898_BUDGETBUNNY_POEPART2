@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:hint="@string/enter_an_amount"
         android:textColorHint="#B3FFFFFF"
-
+        android:textColor="#FFFFFF"
         android:background="@drawable/edittext_background"
         android:inputType="numberDecimal"
         android:padding="8dp"
