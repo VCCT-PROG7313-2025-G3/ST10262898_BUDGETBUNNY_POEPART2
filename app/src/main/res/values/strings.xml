@@ -57,5 +57,24 @@
     <!--These are the strings on the name bunny page -->
     <string name="settingUp">We are almost done setting you up </string>
     <string name="nameBunnyPrompt"><u>Name your bunny</u></string>
+    <string name="enter_an_expense">Enter an expense</string>
+    <string name="expense_category">Expense Category:</string>
+    <string name="shop_name">Shop Name</string>
+    <string name="expense_amount">Expense Amount:</string>
+    <string name="choose_a_category">Choose a category</string>
+    <string name="expensename">ExpenseName</string>
+    <string name="expense_name">Expense Name</string>
+
+    <string-array name="dropdown_items">
+        <item>Bills</item>
+        <item>Car</item>
+        <item>Emergencies</item>
+        <item>Entertainment</item>
+        <item>Rent</item>
+        <item>Hobbies</item>
+        <item>Food</item>
+        <item>Custom Expense</item>
+
+    </string-array>
 
 </resources>
