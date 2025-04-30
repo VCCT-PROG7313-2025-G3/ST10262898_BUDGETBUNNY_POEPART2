@@ -194,18 +194,9 @@ class HomePageActivity : AppCompatActivity() {
         }
 
 
-        lifecycleScope.launch {
-            val newExpense = Expense(
-                expenseName = "Electricity",
-                expenseAmount = 350.0,
-                username = currentUserId // or userId, depending on your entity
-            )
-            expenseDao.insertExpense(newExpense)
 
-            // Fetch updated list and refresh RecyclerView
-            val updatedExpenses = expenseDao.getExpenseForUser(currentUserId)
-            expenseAdapter.updateExpenses(updatedExpenses)
-        }
+
+
 
 
 
