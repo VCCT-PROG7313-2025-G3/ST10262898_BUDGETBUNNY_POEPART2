@@ -50,4 +50,13 @@
     <string name="RecentTransactions"><u>Recent Transactions</u></string>
     <string name="BudgetOverview"><u>Budget Overview</u></string>
 
+    <!-- These are the Strings on the budget goals -->
+    <string name="budget_goal_question">What is your %s budget goal</string>
+    <string name="enter_an_amount"> Enter an amount</string>
+
+    <!-- These are the strings on the custom budget page -->
+    <string name="custom_category"> Enter a cateorgy</string>
+    <string name="custom_category_goal"> Enter a goal</string>
+
+
 </resources>

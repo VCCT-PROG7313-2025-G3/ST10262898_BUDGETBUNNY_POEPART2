@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".customBudgetPage"
+    android:background="@drawable/bg_nodate">
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="170dp" />
+
+    <TextView
+        android:id="@+id/customCategorgyQ1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/assistant_bold"
+        android:gravity="center"
+        android:text="What is your custom\n  budget category?"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="25sp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+    <EditText
+
+        android:layout_gravity="center"
+
+        android:width="300dp"
+        android:id="@+id/customBudgetCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/custom_category"
+        android:textColorHint="#B3FFFFFF"
+
+        android:background="@drawable/edittext_background"
+        android:padding="8dp"
+        android:textSize="16sp"
+        android:layout_margin="-20dp"
+        />
+       <!-- android:inputType="numberDecimal" -->
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+
+    <TextView
+        android:id="@+id/customCategorgyQ2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/assistant_bold"
+        android:gravity="center"
+        android:text="What is your category's\n   budget goal?"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="25sp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+    <EditText
+
+        android:layout_gravity="center"
+
+        android:width="300dp"
+        android:id="@+id/customCategoryGoal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="@string/custom_category"
+        android:textColorHint="#B3FFFFFF"
+
+        android:background="@drawable/edittext_background"
+        android:inputType="numberDecimal"
+        android:padding="8dp"
+        android:textSize="16sp"
+        android:layout_margin="-20dp"
+        />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+    <Button
+        android:id="@+id/next_button"
+        android:text="Next >"
+        android:layout_marginTop="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/dark_pastel_purple"
+        android:textColor="#FFFFFF"
+        android:layout_gravity="right"
+        android:layout_marginRight="20dp"
+        />
+
+</LinearLayout>
