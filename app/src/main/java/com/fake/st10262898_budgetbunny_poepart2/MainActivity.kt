@@ -5,15 +5,13 @@ import android.os.Bundle
 import android.widget.ImageButton
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.room.Room
 import androidx.lifecycle.lifecycleScope
 import android.widget.Toast
 import android.widget.Button
 import android.widget.EditText
 import kotlinx.coroutines.launch
-import androidx.lifecycle.lifecycleScope
+import com.fake.st10262898_budgetbunny_poepart2.data.BudgetBunnyDatabase
 
 class MainActivity : AppCompatActivity()
 {
