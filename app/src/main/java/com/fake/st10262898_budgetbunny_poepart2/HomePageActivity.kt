@@ -154,7 +154,7 @@ class HomePageActivity : AppCompatActivity() {
 
 
 
-        //Current date and time code:
+
 
         //Find the text view on the xml here:
         val tvDateTime = findViewById<TextView>(R.id.tv_dateTime)
