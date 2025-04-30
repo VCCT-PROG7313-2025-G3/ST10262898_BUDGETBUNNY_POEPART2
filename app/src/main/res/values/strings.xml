@@ -64,5 +64,14 @@
     <!-- These are the strings on the custom budget page -->
     <string name="custom_category"> Enter a cateorgy</string>
     <string name="custom_category_goal"> Enter a goal</string>
+    <string name="what_are_your_expenses">What are your expenses?</string>
+    <string name="bills">bills</string>
+    <string name="car">car\n</string>
+    <string name="emergencies">emergencies</string>
+    <string name="entertainment">entertainment</string>
+    <string name="food">food</string>
+    <string name="rent">rent</string>
+    <string name="hobbies">hobbies</string>
+    <string name="custom_button">customButton</string>
 
 </resources>

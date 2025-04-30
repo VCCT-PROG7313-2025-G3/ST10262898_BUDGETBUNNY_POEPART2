@@ -58,15 +58,15 @@
         android:id="@+id/LogInToStartSaving"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="244dp"
+        android:layout_marginTop="24dp"
         android:fontFamily="@font/noto_sans_tamil_medium"
         android:text="@string/log_in_to_start_saving"
         android:textColor="@color/material_dynamic_tertiary60"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.071"
+        app:layout_constraintHorizontal_bias="0.063"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/BudgetBunny" />
 
     <Button
         android:id="@+id/Login"
@@ -77,10 +77,12 @@
         android:text="@string/log_in"
         android:textColor="@color/black"
         android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <ImageButton
         android:id="@+id/Apple"
@@ -108,10 +110,10 @@
         android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.74"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.146"
+        app:layout_constraintStart_toEndOf="@+id/Apple"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.6"
+        app:layout_constraintVertical_bias="0.599"
         app:srcCompat="@drawable/google_logo" />
 
     <ImageButton
@@ -124,11 +126,11 @@
         android:padding="0dp"
         android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.253"
+        app:layout_constraintEnd_toStartOf="@+id/Apple"
+        app:layout_constraintHorizontal_bias="0.86"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.6"
+        app:layout_constraintVertical_bias="0.599"
         app:srcCompat="@drawable/instagram_logo" />
 
     <TextView
@@ -139,12 +141,11 @@
         android:text="@string/or_log_in_using"
         android:textColor="@color/material_dynamic_tertiary70"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/Apple"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.535" />
+        app:layout_constraintVertical_bias="0.985" />
 
     <ImageButton
         android:id="@+id/SignUp"
@@ -183,6 +184,7 @@
         android:id="@+id/inputUserName"
         android:layout_width="385dp"
         android:layout_height="48dp"
+        android:background="@drawable/custum"
         android:ems="10"
         android:hint="@string/username"
         android:inputType="text"
@@ -191,25 +193,28 @@
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.421"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.354" />
+        app:layout_constraintTop_toBottomOf="@+id/LogInToStartSaving"
+        app:layout_constraintVertical_bias="0.026" />
 
     <EditText
         android:id="@+id/inputPassword"
         android:layout_width="378dp"
         android:layout_height="51dp"
         android:layout_marginTop="16dp"
+        android:background="@drawable/custum"
         android:ems="10"
         android:hint="@string/password"
         android:inputType="text"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/Login"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.333"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputUserName" />
+        app:layout_constraintTop_toBottomOf="@+id/inputUserName"
+        app:layout_constraintVertical_bias="0.0" />
 
     <ImageView
         android:id="@+id/imageView4"
