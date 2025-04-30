@@ -19,6 +19,9 @@
             android:name=".category_budget_goal"
             android:exported="false" />
         <activity
+            android:name=".CustomExpense"
+            android:exported="false" />
+        <activity
             android:name=".bugetGoalsPage"
             android:exported="false" />
         <activity

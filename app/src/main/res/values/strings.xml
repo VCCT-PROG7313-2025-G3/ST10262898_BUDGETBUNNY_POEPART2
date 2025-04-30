@@ -38,6 +38,10 @@
     <string name="expense">Expense</string>
     <string name="choose_an_icon">Choose an icon</string>
     <string name="expensehint">Expense</string>
+    <string name="sun">Sun</string>
+    <string name="pin">Pin</string>
+    <string name="phone">Phone</string>
+    <string name="flower">Flower</string>
 
     <!-- These are the Strings on the HomePage -->
     <string name="Home"><u>Budget Bunny</u></string>
@@ -50,13 +54,8 @@
     <string name="RecentTransactions"><u>Recent Transactions</u></string>
     <string name="BudgetOverview"><u>Budget Overview</u></string>
 
-    <!-- These are the Strings on the budget goals -->
-    <string name="budget_goal_question">What is your %s budget goal</string>
-    <string name="enter_an_amount"> Enter an amount</string>
-
-    <!-- These are the strings on the custom budget page -->
-    <string name="custom_category"> Enter a cateorgy</string>
-    <string name="custom_category_goal"> Enter a goal</string>
-
+    <!--These are the strings on the name bunny page -->
+    <string name="settingUp">We are almost done setting you up </string>
+    <string name="nameBunnyPrompt"><u>Name your bunny</u></string>
 
 </resources>
