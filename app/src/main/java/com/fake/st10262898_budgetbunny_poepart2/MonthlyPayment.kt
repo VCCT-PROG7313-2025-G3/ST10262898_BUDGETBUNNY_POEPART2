@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import com.fake.st10262898_budgetbunny_poepart2.data.BudgetBunnyDatabase
 import com.fake.st10262898_budgetbunny_poepart2.data.Expense
 import com.fake.st10262898_budgetbunny_poepart2.data.ExpenseDao
 import kotlinx.coroutines.launch
@@ -23,7 +24,7 @@ class MonthlyPayment : AppCompatActivity() {
         setContentView(R.layout.activity_monthly_payment)
 
         // Initialize your DAO here (assuming you've set it up correctly)
-        // expenseDao = YourAppDatabase.getInstance(this).expenseDao()
+        expenseDao = BudgetBunnyDatabase.getDatabase(this).expenseDao()
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
