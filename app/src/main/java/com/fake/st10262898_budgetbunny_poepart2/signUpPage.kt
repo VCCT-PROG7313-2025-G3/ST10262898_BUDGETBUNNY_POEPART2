@@ -68,7 +68,10 @@ class signUpPage : AppCompatActivity() {
                             userViewModel.registrationResult.observe(this, Observer<Boolean> { isSuccess ->
                                 if (isSuccess) {
                                     Toast.makeText(this, "Sign up successful", Toast.LENGTH_SHORT).show()
-                                    val intent = Intent(this, MainActivity::class.java)
+
+
+                                    //After a successful sign-up this will take the user to the page where they can choose expenses.
+                                    val intent = Intent(this, ExpenseList::class.java)
                                     startActivity(intent)
                                     finish()
                                 }
