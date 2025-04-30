@@ -27,6 +27,7 @@
     <string name="username">Username</string>
     <string name="don_t_have_an_account">Don\'t have an account?</string>
     <string name="create_an_account_below_to_start">Create an account below to start.</string>
+    <string name="monthly_payment_amount">Monthly payment amount?</string>
 
 
 </resources>
