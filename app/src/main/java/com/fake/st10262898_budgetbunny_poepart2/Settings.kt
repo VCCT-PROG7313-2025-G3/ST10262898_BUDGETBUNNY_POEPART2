@@ -22,13 +22,9 @@ class Settings : AppCompatActivity() {
             insets
         }
 
-
-        // Try this explicit initialization
-        val tvDateTime: TextView = findViewById(R.id.tv_dateTime)
-
         // Set the date and time
+        val tvDateTime: TextView = findViewById(R.id.tv_dateTime)
         val currentDateTime = SimpleDateFormat("dd MMMM yyyy, HH:mm", Locale.getDefault()).format(Date())
         tvDateTime.text = currentDateTime
-
     }
 }

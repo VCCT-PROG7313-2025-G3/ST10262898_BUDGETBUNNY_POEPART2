@@ -6,27 +6,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Settings"
-    android:background="@drawable/bg_date">
+    android:background="@drawable/bg_date"
+    tools:context=".Settings">
 
     <Space
         android:id="@+id/space"
         android:layout_width="match_parent"
         android:layout_height="25dp"/>
 
-    <!--BudgetBunny Text: Change to the Current Month!!!-->
+    <!-- App Title -->
     <TextView
         android:id="@+id/textView"
-        android:layout_width="400dp"
+        android:layout_width="406dp"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/pacifico"
         android:layout_gravity="center"
+        android:fontFamily="@font/pacifico"
         android:text="@string/BudgetBunny"
         android:textAlignment="center"
         android:textColor="@color/white"
-        android:textSize="30sp"/>
+        android:textSize="30sp" />
 
-    <!--Nested constraint layout used for the date & time-->
+    <!-- Date & Time -->
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,19 +37,335 @@
             android:id="@+id/tv_dateTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/jost_medium"
             android:text="CurrentDateAndTime"
             android:textColor="#FFFFFF"
-            android:fontFamily="@font/jost_medium"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="50dp">
-    </Space>
+        android:layout_height="10dp"/>
 
+    <!-- Settings Title -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/settings"
+        android:textColor="@color/white"
+        android:textAlignment="center"
+        android:textSize="33sp"
+        android:fontFamily="@font/jost_medium"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Settings Cards -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Personal and Security Card -->
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/mutated_white"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/personal_and_security"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/jost_medium"
+                        android:textAlignment="center"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="8dp"
+                        android:background="@color/white"/>
+
+                    <!--Profile-->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/set_profile"
+                        android:textColor="@color/white"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/jost_medium"
+                        android:textSize="17sp"
+                        />
+
+                    <View
+                        android:layout_width="310dp"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="9dp"
+                        android:background="@color/light_grey"
+                        android:layout_gravity="center"/>
+
+                    <!--Add Password-->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/set_password"
+                        android:textColor="@color/white"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/jost_medium"
+                        android:textSize="17sp"/>
+
+                    <View
+                        android:layout_width="310dp"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="9dp"
+                        android:background="@color/light_grey"
+                        android:layout_gravity="center"/>
+
+                    <!--Link Another Account-->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/set_link_another_account"
+                        android:textColor="@color/white"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/jost_medium"
+                        android:textSize="17sp"/>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Budget and Financial Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/mutated_white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/set_budget_and_financial"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/jost_medium"
+                        android:textAlignment="center"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="8dp"
+                        android:background="@color/white"/>
+
+                    <!--Budget Goal-->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/set_budget_goal"
+                        android:textColor="@color/white"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/jost_medium"
+                        android:textSize="17sp"/>
+
+                    <View
+                        android:layout_width="310dp"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="9dp"
+                        android:background="@color/light_grey"
+                        android:layout_gravity="center"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/set_budget_currency"
+                        android:textColor="@color/white"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/jost_medium"
+                        android:textSize="17sp"/>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Notifications and Reminders Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/mutated_white"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/set_notifications_and_reminders"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/jost_medium"
+                        android:textAlignment="center"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="8dp"
+                        android:background="@color/white"/>
+
+                    <!-- Set Reminder -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/_set_set_reminder"
+                        android:textColor="@color/white"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/jost_medium"
+                        android:textSize="17sp"/>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- App Customisation Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/mutated_white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/set_app_customisation"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/jost_medium"
+                        android:textAlignment="center"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="8dp"
+                        android:background="@color/white"/>
+
+                    <!-- App Appearance-->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/set_app_appearance"
+                        android:textColor="@color/white"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/jost_medium"
+                        android:textSize="17sp"/>
+
+                    <View
+                        android:layout_width="310dp"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="9dp"
+                        android:background="@color/light_grey"
+                        android:layout_gravity="center"/>
+
+                    <!-- Date and Time-->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/set_date_and_time"
+                        android:textColor="@color/white"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/jost_medium"
+                        android:textSize="17sp"/>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Help and Support Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="#40A9A9A9">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- FAQ -->
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/set_help_and_support"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/jost_medium"
+                        android:textAlignment="center"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="8dp"
+                        android:background="@color/white"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/set_faq"
+                        android:textColor="@color/white"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/jost_medium"
+                        android:textSize="17sp"/>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>
