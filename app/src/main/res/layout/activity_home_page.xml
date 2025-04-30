@@ -191,7 +191,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/ExpensesGraph"
+                            android:text="@string/CategoriesGraph"
                             android:fontFamily="@font/jost_medium"
                             android:textColor="#FFFFFF"
                             android:translationX="30dp"

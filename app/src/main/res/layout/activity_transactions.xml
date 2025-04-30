@@ -250,37 +250,39 @@
 
 
 
-    <!--This is the transactions card-->
-    <androidx.cardview.widget.CardView
-        android:layout_width="350dp"
-        android:layout_height="250dp"
-        app:cardCornerRadius="30dp"
-        android:layout_gravity="center"
-        app:cardBackgroundColor="#40A9A9A9">
-
-        <LinearLayout
-            android:layout_width="match_parent"
+        <!-- This is the transactions card -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="350dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            app:cardCornerRadius="30dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            app:cardBackgroundColor="#40A9A9A9">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/transactions"
-            android:textSize="25sp"
-            android:textColor="#FFFFFF"
-            android:fontFamily="@font/jost_medium"
-            android:layout_gravity="center|top"
-            android:translationX="10dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/transactions"
+                    android:textSize="25sp"
+                    android:textColor="#FFFFFF"
+                    android:fontFamily="@font/jost_medium"
+                    android:layout_gravity="center_horizontal"/>
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_transaction_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"/>
+            </LinearLayout>
 
-        </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
-
-
-
-    </androidx.cardview.widget.CardView>
 
         <Space
             android:layout_width="match_parent"

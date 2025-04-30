@@ -46,7 +46,7 @@
     <!-- These are the Strings on the HomePage -->
     <string name="Home"><u>Budget Bunny</u></string>
     <string name="Overview">Overview</string>
-    <string name="ExpensesGraph"><u>Expenses Graph</u></string>
+    <string name="CategoriesGraph"><u>Categories Graph</u></string>
     <string name="Balances"><u>Income Expenses Balance</u></string>
     <string name="bunnyName"><u>Budget Bunny</u></string>
     <string name="Gamification">Gamification feature</string>
