@@ -1,5 +1,6 @@
 package com.fake.st10262898_budgetbunny_poepart2
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -26,6 +27,7 @@ class CustomExpense : AppCompatActivity() {
         nextButton =findViewById(R.id.button)
         selectedIcon = findViewById(R.id.imageView3)
 
+
         val iconButtons = listOf(
             R.id.imageButton to R.drawable.flower,
             R.id.imageButton2 to R.drawable.phone,
@@ -43,6 +45,12 @@ class CustomExpense : AppCompatActivity() {
         }
 
         nextButton.setOnClickListener {
+            val intent = Intent(this, ExpenseList::class.java)
+            startActivity(intent)
+            finish()
+
+
+            /*
             val expenseName = editExpenseCustom.text.toString()
 
             if (expenseName.isBlank()) {
@@ -54,6 +62,8 @@ class CustomExpense : AppCompatActivity() {
                 Toast.makeText(this, "Please choose an icon", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+            */
+
 //database and saving from here
 
 
@@ -68,5 +78,7 @@ class CustomExpense : AppCompatActivity() {
                 insets
             }
         }
+
+
     }
 }

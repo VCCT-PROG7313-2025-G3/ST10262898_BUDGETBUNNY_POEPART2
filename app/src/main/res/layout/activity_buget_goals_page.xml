@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:hint="@string/enter_an_amount"
         android:textColorHint="#B3FFFFFF"
-
+        android:textColor="#FFFFFF"
         android:background="@drawable/edittext_background"
         android:inputType="numberDecimal"
         android:padding="8dp"
@@ -124,14 +124,13 @@
 
     <Button
         android:id="@+id/next_button"
-        android:text="Next >"
-        android:layout_marginTop="30dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/dark_pastel_purple"
-        android:textColor="#FFFFFF"
+        android:layout_height="36dp"
         android:layout_gravity="right"
+        android:layout_marginTop="30dp"
         android:layout_marginRight="20dp"
-        />
+        android:backgroundTint="@color/dark_pastel_purple"
+        android:text="Next >"
+        android:textColor="#FFFFFF" />
 
 </LinearLayout>

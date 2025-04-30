@@ -76,7 +76,7 @@
 
     <!-- These are the strings for the budget goals Overview page -->
     <string name="BudgetBunny">Budget Bunny</string>
-    <string name="budgetGoalTitle">Savings for the month</string>
+    <string name="budgetGoalTitle">What is your monthly\nbudget goal for %1$s?</string>
     <string name="Categories"><u>Categories</u></string>
 
     <!-- These are the strings for the activity expense entry -->
@@ -99,5 +99,8 @@
     <string name="yourExpenses"><u>Top Expenses</u></string>
     <string name="transactions"><u>Transactions</u></string>
     <string name="monthsAtAGlance"><u>Months at a glance</u></string>
+
+
+
 
 </resources>
