@@ -75,7 +75,7 @@
         android:layout_height="wrap_content"
         android:hint="@string/custom_category"
         android:textColorHint="#B3FFFFFF"
-        android:textColor="#FFFFFFF"
+        android:textColor="#FFFFFF"
         android:background="@drawable/edittext_background"
         android:inputType="numberDecimal"
         android:padding="8dp"
