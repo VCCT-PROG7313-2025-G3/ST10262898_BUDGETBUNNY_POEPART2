@@ -22,11 +22,21 @@ class ExpenseViewModel {
         private val _expenses = MutableLiveData<List<Expense>>()
         val expenses: LiveData<List<Expense>> get() = _expenses
 
-        fun addExpense(expenseName: String, expenseAmount: Double, username: String) {
+        fun addExpense(
+            expenseName: String,
+            expenseAmount: Double,
+            username: String,
+            expenseCategory: String?,
+            expenseDate: Long,
+            expenseImage: ByteArray?
+        ) {
             val expense = Expense(
                 expenseName = expenseName,
                 expenseAmount = expenseAmount,
-                username = username
+                username = username,
+                expenseCategory = expenseCategory,
+                expenseDate = expenseDate,
+                expenseImage = expenseImage
             )
             viewModelScope.launch(Dispatchers.IO) {
                 repository.insertExpense(expense)
