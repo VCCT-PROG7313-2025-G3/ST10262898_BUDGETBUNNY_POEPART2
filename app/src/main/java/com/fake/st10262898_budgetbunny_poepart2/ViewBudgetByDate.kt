@@ -1,6 +1,5 @@
 package com.fake.st10262898_budgetbunny_poepart2
 
-import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -12,16 +11,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.room.Room
-import com.fake.st10262898_budgetbunny_poepart2.Adapters.CategoryTotalAdapter
-import com.fake.st10262898_budgetbunny_poepart2.data.Budget
 import com.fake.st10262898_budgetbunny_poepart2.data.BudgetBunnyDatabase
 import com.fake.st10262898_budgetbunny_poepart2.data.CategoryTotal
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
-import java.util.Locale
 
 
 class ViewBudgetByDate : AppCompatActivity() {

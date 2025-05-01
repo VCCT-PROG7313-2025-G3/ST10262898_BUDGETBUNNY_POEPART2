@@ -1,6 +1,5 @@
 package com.fake.st10262898_budgetbunny_poepart2
 
-import com.fake.st10262898_budgetbunny_poepart2.Adapters.ExpenseAdapter
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -24,7 +23,6 @@ import java.util.Date
 import java.util.Locale
 
 //Added:
-import com.fake.st10262898_budgetbunny_poepart2.BudgetGoalsOverviewActivity
 
 class HomePageActivity : AppCompatActivity() {
 

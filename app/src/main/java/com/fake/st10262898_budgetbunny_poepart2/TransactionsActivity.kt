@@ -1,6 +1,5 @@
 package com.fake.st10262898_budgetbunny_poepart2
 
-import ExpenseAdapter
 //changing for commits in case
 //Added this for the picture START
 import android.Manifest
