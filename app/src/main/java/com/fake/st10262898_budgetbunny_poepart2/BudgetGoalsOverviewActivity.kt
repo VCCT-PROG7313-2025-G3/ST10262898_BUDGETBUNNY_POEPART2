@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.cardview.widget.CardView
@@ -26,6 +27,10 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
         // Layout where cards will go
         val goalsContainer = findViewById<LinearLayout>(R.id.goalsContainer)
 
+        // Progress bar and text
+        val progressBar = findViewById<ProgressBar>(R.id.progressBar)
+        val budgetText = findViewById<TextView>(R.id.budgetForMonth)
+
         // Get username from SharedPreferences
         val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
         val username = sharedPreferences.getString("USERNAME", "") ?: return
@@ -37,7 +42,16 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
                 db.budgetDao().getBudgetForUser(username)
             }
 
-            // Dynamically add CardViews
+            // 🔹 Set progress bar info
+            val totalBudgetGoal = budgetGoals.sumOf { it.totalBudgetGoal }
+            val currentSavedAmount = 0.0 // Placeholder for now
+
+            progressBar.max = totalBudgetGoal.toInt()
+            progressBar.progress = currentSavedAmount.toInt()
+
+            budgetText.text = "R${currentSavedAmount.toInt()} of R${totalBudgetGoal.toInt()} saved"
+
+            // 🔹 Dynamically add category cards
             for (goal in budgetGoals) {
                 val card = layoutInflater.inflate(R.layout.item_goal_card, goalsContainer, false) as CardView
                 val categoryText = card.findViewById<TextView>(R.id.tv_category)
@@ -51,9 +65,7 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
         }
 
 
-
     }
-
 
 
 }

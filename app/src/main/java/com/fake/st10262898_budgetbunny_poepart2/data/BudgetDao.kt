@@ -14,6 +14,14 @@ interface BudgetDao {
     @Query("SELECT * FROM budget_table WHERE username = :username")
     suspend fun getBudgetForUser(username: String): List<Budget>
 
+
+    @Query("SELECT minTotalBudgetGoal FROM budget_table WHERE username = :username")
+    suspend fun getMinTotalBudgetGoalForUser(username: String): Double
+
+    @Query("UPDATE budget_table SET minTotalBudgetGoal = :minTotalBudgetGoal WHERE username = :username")
+    suspend fun updateMinTotalBudgetGoalForUser(username: String, minTotalBudgetGoal: Double)
+
+
     @Query("DELETE FROM budget_table WHERE id = :id")
     suspend fun deleteBudget(id: Int)
 }
