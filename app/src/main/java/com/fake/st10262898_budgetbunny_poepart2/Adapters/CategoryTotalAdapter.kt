@@ -1,5 +1,6 @@
 package com.fake.st10262898_budgetbunny_poepart2.Adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,8 +18,10 @@ class CategoryTotalAdapter (private val categoryTotals: List<CategoryTotal>) :
         return CategoryTotalViewHolder(view)
     }
 
+
     override fun onBindViewHolder(holder: CategoryTotalViewHolder, position: Int) {
         val categoryTotal = categoryTotals[position]
+        Log.d("ADAPTER_BIND", "Binding category: ${categoryTotal.budgetCategory}, Total: ${categoryTotal.total}")
         holder.bind(categoryTotal)
     }
 

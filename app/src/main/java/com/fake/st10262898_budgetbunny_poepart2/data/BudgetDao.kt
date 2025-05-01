@@ -42,4 +42,10 @@ interface BudgetDao {
         endDate: Long
     ): List<CategoryTotal>
 
+    @Query("SELECT * FROM budget_table WHERE username = :username")
+    suspend fun getAllBudgetsForUser(username: String): List<Budget>
+
+    @Query("SELECT * FROM budget_table")
+    fun getAllBudgets(): List<Budget>
+
 }
