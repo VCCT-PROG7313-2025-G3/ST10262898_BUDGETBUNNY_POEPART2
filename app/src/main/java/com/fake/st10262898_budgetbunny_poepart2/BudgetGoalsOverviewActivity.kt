@@ -23,7 +23,6 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_budget_goals_overview)
 
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
@@ -33,37 +32,29 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
         val maxGoalLabel = findViewById<TextView>(R.id.maxGoalLabel)
         val budgetText = findViewById<TextView>(R.id.budgetForMonth)
 
-        // Get username from SharedPreferences
         val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
         val username = sharedPreferences.getString("USERNAME", "") ?: return
 
-        // Load budget goals
         lifecycleScope.launch {
             val budgetGoals = withContext(Dispatchers.IO) {
                 val db = BudgetBunnyDatabase.getDatabase(this@BudgetGoalsOverviewActivity)
                 db.budgetDao().getBudgetForUser(username)
             }
 
-            // Get the minimum and maximum budget goals
             val minGoal = budgetGoals.minOfOrNull { it.totalBudgetGoal } ?: 0.0
             val totalBudgetGoal = budgetGoals.sumOf { it.totalBudgetGoal }
+            val currentSavedAmount = 0.0 // Placeholder
 
-            // Set progress bar info
-            val currentSavedAmount = 0.0 // Placeholder for now
             progressBar.max = totalBudgetGoal.toInt()
             progressBar.progress = currentSavedAmount.toInt()
-
-            // Update the progress text
             budgetText.text = "R${currentSavedAmount.toInt()} of R${totalBudgetGoal.toInt()} saved"
 
-            // Post the changes to ensure the ProgressBar is fully laid out
             progressBar.post {
-                // Calculate the position of the Min Goal Marker
                 val progressBarWidth = progressBar.width
                 val minGoalMarkerPosition = (minGoal / totalBudgetGoal * progressBarWidth).toInt()
-                val maxGoalMarkerPosition = (totalBudgetGoal / totalBudgetGoal * progressBarWidth).toInt()
+                val maxGoalMarkerPosition = progressBarWidth // always at the end
 
-                // Set the position of the markers
+                // Position markers
                 minGoalMarker.layoutParams = (minGoalMarker.layoutParams as FrameLayout.LayoutParams).apply {
                     leftMargin = minGoalMarkerPosition
                 }
@@ -72,9 +63,22 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
                     leftMargin = maxGoalMarkerPosition
                 }
 
-                // Set the label texts
+                // Update labels
                 minGoalLabel.text = "Min Goal: R${minGoal.toInt()}"
                 maxGoalLabel.text = "Max Goal: R${totalBudgetGoal.toInt()}"
+
+                // Position labels after layout pass
+                minGoalLabel.post {
+                    minGoalLabel.layoutParams = (minGoalLabel.layoutParams as FrameLayout.LayoutParams).apply {
+                        leftMargin = minGoalMarkerPosition - (minGoalLabel.width / 2)
+                    }
+                }
+
+                maxGoalLabel.post {
+                    maxGoalLabel.layoutParams = (maxGoalLabel.layoutParams as FrameLayout.LayoutParams).apply {
+                        leftMargin = maxGoalMarkerPosition - (maxGoalLabel.width / 2)
+                    }
+                }
             }
         }
     }

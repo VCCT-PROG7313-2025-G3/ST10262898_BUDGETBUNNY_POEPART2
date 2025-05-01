@@ -69,12 +69,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="10dp" />
 
-                <!-- FrameLayout containing ProgressBar -->
+                <!-- FrameLayout containing ProgressBar and Marker Views -->
                 <FrameLayout
+                    android:id="@+id/progressContainer"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="60dp"
                     android:layout_marginTop="12dp">
 
+                    <!-- ProgressBar -->
                     <ProgressBar
                         android:id="@+id/progressBar"
                         style="@android:style/Widget.ProgressBar.Horizontal"
@@ -82,25 +84,28 @@
                         android:layout_height="20dp"
                         android:max="100"
                         android:progressTint="@color/dark_pastel_purple"
-                        android:backgroundTint="#000000" />
+                        android:backgroundTint="#000000"
+                        android:layout_gravity="center_vertical" />
 
-                    <!-- Min Goal Marker -->
+                    <!-- Min Marker -->
                     <View
                         android:id="@+id/minGoalMarker"
                         android:layout_width="4dp"
                         android:layout_height="20dp"
-                        android:layout_gravity="start"
-                        android:background="#FFFFFF" />
+                        android:layout_marginTop="0dp"
+                        android:background="#00FF00"
+                    android:layout_gravity="top|start" />
 
-                    <!-- Max Goal Marker -->
+                    <!-- Max Marker -->
                     <View
                         android:id="@+id/maxGoalMarker"
                         android:layout_width="4dp"
                         android:layout_height="20dp"
-                        android:layout_gravity="end"
-                        android:background="#FFFFFF" />
+                        android:layout_marginTop="0dp"
+                        android:background="#FF0000"
+                    android:layout_gravity="top|start" />
 
-                    <!-- Min Goal Label -->
+                    <!-- Min Label -->
                     <TextView
                         android:id="@+id/minGoalLabel"
                         android:layout_width="wrap_content"
@@ -108,11 +113,10 @@
                         android:text="Min Goal: R0"
                         android:textColor="#FFFFFF"
                         android:textSize="12sp"
-                        android:layout_gravity="start|bottom"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginStart="4dp"/>
+                        android:layout_marginTop="24dp"
+                        android:layout_marginStart="0dp" />
 
-                    <!-- Max Goal Label -->
+                    <!-- Max Label -->
                     <TextView
                         android:id="@+id/maxGoalLabel"
                         android:layout_width="wrap_content"
@@ -120,9 +124,8 @@
                         android:text="Max Goal: R0"
                         android:textColor="#FFFFFF"
                         android:textSize="12sp"
-                        android:layout_gravity="end|bottom"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginEnd="4dp"/>
+                        android:layout_marginTop="24dp"
+                        android:layout_marginStart="0dp" />
 
                 </FrameLayout>
 
@@ -136,7 +139,7 @@
                     android:textSize="14sp"
                     android:layout_marginTop="8dp"
                     android:fontFamily="@font/jost_medium"
-                    android:layout_gravity="center"/>
+                    android:layout_gravity="center" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
