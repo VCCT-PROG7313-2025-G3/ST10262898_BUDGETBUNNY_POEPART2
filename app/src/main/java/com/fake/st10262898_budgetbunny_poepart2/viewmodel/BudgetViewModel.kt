@@ -33,19 +33,20 @@ class BudgetViewModel (application: Application) : AndroidViewModel(application)
             username = username
         )
 
+        Log.d("BudgetViewModel", "Adding Budget: $budget")
+
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 repository.insertBudget(budget)
                 loadBudgets(username)
                 _budgetSaved.postValue(true)  // Notify success
+                Log.d("BudgetViewModel", "Budget saved successfully!")
             } catch (e: Exception) {
                 _budgetSaved.postValue(false)  // Notify failure
-                // Log the error for debugging purposes
                 Log.e("BudgetViewModel", "Error saving budget: ${e.message}")
             }
         }
     }
-
     fun loadBudgets(username: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val data = repository.getBudgetsForUser(username)

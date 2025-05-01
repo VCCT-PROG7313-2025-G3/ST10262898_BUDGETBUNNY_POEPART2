@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -24,6 +25,16 @@ class ExpenseList : AppCompatActivity() {
         setContentView(R.layout.activity_expense_list)
 
 
+        val username = intent.getStringExtra("USERNAME") ?: ""
+
+        // Save the username in SharedPreferences
+        val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("USERNAME", username)
+        editor.apply()
+
+        // Use the username as needed in ExpenseList
+        Toast.makeText(this, "Welcome, $username!", Toast.LENGTH_SHORT).show()
 
             val nextButton = findViewById<Button>(R.id.btn_next)
             val billsButton = findViewById<ImageButton>(R.id.bills)
@@ -35,10 +46,12 @@ class ExpenseList : AppCompatActivity() {
             val rentButton = findViewById<ImageButton>(R.id.rentButton)
             val customButton = findViewById<ImageButton>(R.id.customButton)
 
-            nextButton.setOnClickListener {
-                val intent = Intent(this,bugetGoalsPage::class.java)
-                startActivity(intent)
-            }
+        nextButton.setOnClickListener {
+            val intent = Intent(this, bugetGoalsPage::class.java)
+            val username = sharedPreferences.getString("USERNAME", "") ?: ""
+            intent.putExtra("USERNAME", username)  // Pass the username to the next activity
+            startActivity(intent)
+        }
 
         customButton.setOnClickListener {
             val intent = Intent(this@ExpenseList, CustomExpense::class.java)
