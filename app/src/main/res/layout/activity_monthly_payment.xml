@@ -30,6 +30,7 @@
         android:ems="10"
         android:hint="@string/enter_an_amount_"
         android:importantForAutofill="no"
+        android:textColor="#FFFFFF"
         android:inputType="number"
         app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toEndOf="parent"

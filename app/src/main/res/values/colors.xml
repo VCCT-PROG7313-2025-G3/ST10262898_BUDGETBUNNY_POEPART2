@@ -10,6 +10,6 @@
     <color name="orange">#FF990A</color>
     <color name="ucla_blue">#4D60AA</color>
     <color name="outrageous_orange">#ff6d41</color>
-
-
-</resources>
+    <color name="mutated_white">"#40A9A9A9"</color>
+    <color name="light_grey">#6d6c73</color>
+    <color n
