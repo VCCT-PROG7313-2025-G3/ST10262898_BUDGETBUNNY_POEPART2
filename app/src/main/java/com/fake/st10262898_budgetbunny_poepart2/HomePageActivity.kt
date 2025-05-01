@@ -52,9 +52,45 @@ class HomePageActivity : AppCompatActivity() {
 
         //This is the section where the  data is prepeared for the pie chart:
         val pieEntries = ArrayList<PieEntry>()
-        pieEntries.add(PieEntry(40f,"Budget Goals")) //Leaving the labels open allows there to be more space on the pie chart (less cluttered)
-        pieEntries.add(PieEntry(35f,"Expenses"))
-        pieEntries.add(PieEntry(25f,"Savings"))
+
+        val db = BudgetBunnyDatabase.getDatabase(this)
+        val expenseDao = db.expenseDao()
+
+        lifecycleScope.launch {
+            val expenses = expenseDao.getExpenseForUser(currentUserId)
+
+            // Group by category and calculate totals
+            val categoryTotals = expenses.groupBy { it.expenseCategory }
+                .mapValues { entry ->
+                    entry.value.sumOf { it.expenseAmount }
+                }
+                .toList()
+                .sortedByDescending { it.second }
+
+            // Take top 4 categories
+            val topCategories = categoryTotals.take(4)
+
+            for ((category, total) in topCategories) {
+                pieEntries.add(PieEntry(total.toFloat(), category))
+            }
+
+            // Set Pie chart data dynamically after DB call
+            val pieDataSet = PieDataSet(pieEntries, "")
+            pieDataSet.setColors(
+                Color.rgb(0, 100, 0),
+                Color.rgb(139, 0, 0),
+                Color.rgb(128, 0, 128),
+                Color.rgb(255, 165, 0)
+            )
+            pieDataSet.sliceSpace = 5f
+            pieDataSet.valueTextColor = Color.BLACK
+            pieDataSet.valueTextSize = 14f
+            pieDataSet.valueFormatter = NoDecimalPercentFormatter()
+
+            val pieData = PieData(pieDataSet)
+            pieChart.data = pieData
+            pieChart.invalidate() // Refresh
+        }
 
 
         //Create a dataset for the Pie chart:
@@ -65,7 +101,7 @@ class HomePageActivity : AppCompatActivity() {
             Color.rgb(128,0,128) //This makes Savings dark purple
         )
 
-        pieDataSet.sliceSpace = 5f
+        pieDataSet.sliceSpace = 2f
         pieDataSet.valueTextColor = Color.BLACK
         pieDataSet.valueTextSize = 14f
         pieDataSet.valueFormatter = NoDecimalPercentFormatter() //referring to the class that makes whole numbers
@@ -184,8 +220,7 @@ class HomePageActivity : AppCompatActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.rv_transactions)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        val db = BudgetBunnyDatabase.getDatabase(this)
-        val expenseDao = db.expenseDao()
+
 
         lifecycleScope.launch {
             val expenses = expenseDao.getExpenseForUser(currentUserId)
