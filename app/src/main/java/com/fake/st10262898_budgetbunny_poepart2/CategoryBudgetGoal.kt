@@ -77,12 +77,12 @@ class CategoryBudgetGoal : AppCompatActivity() {
         budgetViewModel.budgetSaved.observe(this) { saved ->
             if (saved) {
                 Toast.makeText(this, "Budget saved successfully!", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this, BunnyNameActivity::class.java)
-                startActivity(intent)
+                finish() // Go back to bugetGoalsPage to allow selecting another category
             } else {
                 Toast.makeText(this, "Failed to save budget. Please try again.", Toast.LENGTH_SHORT).show()
             }
         }
+
     }
 
     // Helper function to parse the amount
