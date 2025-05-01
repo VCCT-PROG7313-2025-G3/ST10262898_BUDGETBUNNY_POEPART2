@@ -48,4 +48,12 @@ interface BudgetDao {
     @Query("SELECT * FROM budget_table")
     fun getAllBudgets(): List<Budget>
 
+    @Query("""
+        SELECT budgetCategory, SUM(budgetAmount) as total 
+        FROM budget_table 
+        WHERE username = :username 
+        GROUP BY budgetCategory
+    """)
+    suspend fun getCategoryTotals(username: String): List<CategoryTotal>
+
 }

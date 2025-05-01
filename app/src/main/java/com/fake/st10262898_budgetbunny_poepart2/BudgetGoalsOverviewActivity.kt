@@ -24,6 +24,7 @@ import kotlinx.coroutines.withContext
 
 class BudgetGoalsOverviewActivity : AppCompatActivity() {
 
+    //This is the part I started using Deepseek.
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

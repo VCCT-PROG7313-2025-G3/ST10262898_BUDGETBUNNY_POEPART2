@@ -1,7 +1,9 @@
 package com.fake.st10262898_budgetbunny_poepart2
 
+import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.DatePicker
 import android.widget.TextView
@@ -49,6 +51,11 @@ class ViewBudgetByDate : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
+
+
+        // Add this extension function:
+        fun Int.dpToPx(): Int = (this * resources.displayMetrics.density).toInt()
+
         submitButton.setOnClickListener {
             Log.d(TAG, "Checking SharedPreferences for username")
 
@@ -76,46 +83,34 @@ class ViewBudgetByDate : AppCompatActivity() {
             Log.d(TAG, "StartMillis: $startDateMillis (${SimpleDateFormat("yyyy-MM-dd").format(Date(startDateMillis))})")
             Log.d(TAG, "EndMillis: $endDateMillis (${SimpleDateFormat("yyyy-MM-dd").format(Date(endDateMillis))})")
 
-            val db = Room.databaseBuilder(
-                applicationContext,
-                BudgetBunnyDatabase::class.java, "budget_database"
-            ).build()
+            val db = BudgetBunnyDatabase.getDatabase(applicationContext)
 
             Log.d(TAG, "Valid username found. Fetching category totals for date range...")
 
             lifecycleScope.launch {
-                // ✅ Step 1: Log all budget entries for this user
-                val allBudgets = db.budgetDao().getAllBudgetsForUser(username)
-                Log.d(TAG, "----- All Budget Entries for $username -----")
-                for (budget in allBudgets) {
-                    val formattedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(budget.budgetDate))
-                    Log.d(TAG, "Category: ${budget.budgetCategory}, Amount: ${budget.budgetAmount}, Date: $formattedDate")
-                }
-                Log.d(TAG, "----- End of Budget Entries -----")
+                try {
+                    // First test with the simple query (no date range)
+                    val categoryTotals = db.budgetDao().getCategoryTotals(username)
 
-                // ✅ Step 2: Run actual query
-                val categoryTotals: List<CategoryTotal> =
-                    db.budgetDao().getCategoryTotalsForDateRange(
-                        username,
-                        startDateMillis,
-                        endDateMillis
-                    )
-
-                Log.d(TAG, "Query result: ${categoryTotals.size} categories returned")
-                for (categoryTotal in categoryTotals) {
-                    Log.d(TAG, "Category: ${categoryTotal.budgetCategory}, Total: ${categoryTotal.total}")
-                }
-
-                runOnUiThread {
-                    if (categoryTotals.isNotEmpty()) {
-                        headingTextView.text = "Totals by Category"
-                        headingTextView.visibility = TextView.VISIBLE
-                    } else {
-                        headingTextView.text = "No data found in this range."
-                        headingTextView.visibility = TextView.VISIBLE
+                    Log.d(TAG, "Simple query result: ${categoryTotals.size} categories")
+                    for (categoryTotal in categoryTotals) {
+                        Log.d(TAG, "Category: ${categoryTotal.budgetCategory}, Total: ${categoryTotal.total}")
                     }
 
-                    updateRecyclerView(categoryTotals)
+                    runOnUiThread {
+                        if (categoryTotals.isNotEmpty()) {
+                            headingTextView.text = "All Category Totals"
+                            updateRecyclerView(categoryTotals)
+                        } else {
+                            headingTextView.text = "No budget data found for user"
+                        }
+                        headingTextView.visibility = View.VISIBLE
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error in simple query", e)
+                    runOnUiThread {
+                        Toast.makeText(this@ViewBudgetByDate, "Error loading data", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
