@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_date"
     tools:context=".TransactionsActivity">
-
+<!--added transactions ignore this-->
     <LinearLayout
         android:id="@+id/main"
         android:layout_width="match_parent"
@@ -261,24 +261,38 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="250dp"
                 android:orientation="vertical"
                 android:padding="16dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/transactions"
-                    android:textSize="25sp"
-                    android:textColor="#FFFFFF"
+                    android:layout_gravity="center_horizontal"
                     android:fontFamily="@font/jost_medium"
-                    android:layout_gravity="center_horizontal"/>
+                    android:text="@string/transactions"
+                    android:textColor="#FFFFFF"
+                    android:textSize="25sp" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_transaction_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"/>
+                    android:layout_marginTop="8dp" />
+
+                <!--Added this for the picture START-->
+                <Button
+                    android:id="@+id/btnUploadReceipt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Upload Receipt"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/custum"
+                    android:textColor="#FFFFFF"
+                    android:padding="8dp"/>
+                <!--Added this for the picture END-->
+
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>
