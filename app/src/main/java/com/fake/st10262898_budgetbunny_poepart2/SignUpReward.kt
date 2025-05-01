@@ -17,12 +17,12 @@ class SignUpReward : AppCompatActivity() {
 
 
         //Takes the user  to the home page
-        val closeButton=findViewById<Button>(R.id.closeButton)
-        closeButton.setOnClickListener{
-                val intent = Intent(this,HomePageActivity::class.java)
-                startActivity(intent)
-                finish()
-            }
+        val closeButton = findViewById<Button>(R.id.closeButton)
+        closeButton.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
 
 
 
