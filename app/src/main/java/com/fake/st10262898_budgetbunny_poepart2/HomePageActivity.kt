@@ -215,6 +215,16 @@ class HomePageActivity : AppCompatActivity() {
                     startActivity(intent)
                     true
                 }
+                R.id.nav_budgetGoal -> {
+                    val intent = Intent(this, BudgetGoalsOverviewActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.nav_settings -> {
+                    val intent = Intent(this, Settings::class.java)
+                    startActivity(intent)
+                    true
+                }
                 else -> false
             }
         }
