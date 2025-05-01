@@ -52,9 +52,45 @@ class HomePageActivity : AppCompatActivity() {
 
         //This is the section where the  data is prepeared for the pie chart:
         val pieEntries = ArrayList<PieEntry>()
-        pieEntries.add(PieEntry(40f,"Budget Goals")) //Leaving the labels open allows there to be more space on the pie chart (less cluttered)
-        pieEntries.add(PieEntry(35f,"Expenses"))
-        pieEntries.add(PieEntry(25f,"Savings"))
+
+        val db = BudgetBunnyDatabase.getDatabase(this)
+        val expenseDao = db.expenseDao()
+
+        lifecycleScope.launch {
+            val expenses = expenseDao.getExpenseForUser(currentUserId)
+
+            // Group by category and calculate totals
+            val categoryTotals = expenses.groupBy { it.expenseCategory }
+                .mapValues { entry ->
+                    entry.value.sumOf { it.expenseAmount }
+                }
+                .toList()
+                .sortedByDescending { it.second }
+
+            // Take top 4 categories
+            val topCategories = categoryTotals.take(4)
+
+            for ((category, total) in topCategories) {
+                pieEntries.add(PieEntry(total.toFloat(), category))
+            }
+
+            // Set Pie chart data dynamically after DB call
+            val pieDataSet = PieDataSet(pieEntries, "")
+            pieDataSet.setColors(
+                Color.rgb(0, 100, 0),
+                Color.rgb(139, 0, 0),
+                Color.rgb(128, 0, 128),
+                Color.rgb(255, 165, 0)
+            )
+            pieDataSet.sliceSpace = 5f
+            pieDataSet.valueTextColor = Color.BLACK
+            pieDataSet.valueTextSize = 14f
+            pieDataSet.valueFormatter = NoDecimalPercentFormatter()
+
+            val pieData = PieData(pieDataSet)
+            pieChart.data = pieData
+            pieChart.invalidate() // Refresh
+        }
 
 
         //Create a dataset for the Pie chart:
@@ -65,7 +101,7 @@ class HomePageActivity : AppCompatActivity() {
             Color.rgb(128,0,128) //This makes Savings dark purple
         )
 
-        pieDataSet.sliceSpace = 5f
+        pieDataSet.sliceSpace = 2f
         pieDataSet.valueTextColor = Color.BLACK
         pieDataSet.valueTextSize = 14f
         pieDataSet.valueFormatter = NoDecimalPercentFormatter() //referring to the class that makes whole numbers
@@ -114,56 +150,61 @@ class HomePageActivity : AppCompatActivity() {
         //This is where the barchart in the xml
         val barChart: com.github.mikephil.charting.charts.BarChart = findViewById(R.id.barChart)
 
-        //This is the static data which the bar graph will use:
-        val entries = ArrayList<com.github.mikephil.charting.data.BarEntry>()
-        entries.add(com.github.mikephil.charting.data.BarEntry(0f, 5000f)) // This is the bar for the Car
-        entries.add(com.github.mikephil.charting.data.BarEntry(1f, 8000f)) // This is the bar for the House
-        entries.add(com.github.mikephil.charting.data.BarEntry(2f, 3000f)) // This is the bar for the Food
-        entries.add(com.github.mikephil.charting.data.BarEntry(3f, 1500f)) // This is the bar for the Hobbies
-        entries.add(com.github.mikephil.charting.data.BarEntry(4f, 2000f)) // This is the bar for the Entertainment
+        lifecycleScope.launch {
+            val expenses = expenseDao.getExpenseForUser(currentUserId)
 
-        //These are the Labels for each bar
-        val labels = arrayOf("Car", "House", "Food", "Hobbies", "Entertainment")
+            val categoryTotals = expenses.groupBy { it.expenseCategory }
+                .mapValues { entry -> entry.value.sumOf { it.expenseAmount } }
+                .toList()
+                .sortedByDescending { it.second }
+                .take(5)
 
-        //This is where all the colours of the graphs are set
-        val barDataSet = com.github.mikephil.charting.data.BarDataSet(entries, "Expenses")
-        barDataSet.setColors(
-            Color.rgb(0, 100, 0),
-            Color.rgb(139, 0, 0),
-            Color.rgb(255, 165, 0),
-            Color.rgb(75, 0, 130),
-            Color.rgb(0, 191, 255)
-        )
-        barDataSet.valueTextColor = Color.BLACK
-        barDataSet.valueTextSize = 12f
+            val entries = ArrayList<com.github.mikephil.charting.data.BarEntry>()
+            val labels = ArrayList<String>()
 
+            categoryTotals.forEachIndexed { index, (category, total) ->
+                if (category != null) {
+                    entries.add(com.github.mikephil.charting.data.BarEntry(index.toFloat(), total.toFloat()))
+                    labels.add(category)
+                }
+            }
 
-        val data = com.github.mikephil.charting.data.BarData(barDataSet)
-        barChart.data = data
+            val barDataSet = com.github.mikephil.charting.data.BarDataSet(entries, "Top Categories")
+            barDataSet.setColors(
+                Color.rgb(0, 100, 0),
+                Color.rgb(139, 0, 0),
+                Color.rgb(255, 165, 0),
+                Color.rgb(75, 0, 130),
+                Color.rgb(0, 191, 255)
+            )
+            barDataSet.valueTextColor = Color.BLACK
+            barDataSet.valueTextSize = 12f
 
-        // Styling the Bar Chart
-        barChart.description.isEnabled = false
-        barChart.setFitBars(true)
-        barChart.setBackgroundColor(Color.TRANSPARENT)
-        barChart.animateY(1000)
-        barChart.legend.isEnabled = false // Hide the default legend
+            val data = com.github.mikephil.charting.data.BarData(barDataSet)
+            barChart.data = data
 
+            // X-axis labels
+            val xAxis = barChart.xAxis
+            xAxis.setDrawLabels(true)
+            xAxis.valueFormatter = object : ValueFormatter() {
+                override fun getFormattedValue(value: Float): String {
+                    return labels.getOrNull(value.toInt()) ?: ""
+                }
+            }
+            xAxis.granularity = 1f
+            xAxis.labelRotationAngle = -45f
+            xAxis.textColor = Color.WHITE
 
-        // Set the labels on X-axis off (So they will not appear, they clash when they appear, not enough space)
-        val xAxis = barChart.xAxis
-        xAxis.setDrawLabels(false)
-
-
-        // Remove the left and right axis lines
-        val leftAxis = barChart.axisLeft
-        leftAxis.textColor = Color.WHITE
-        leftAxis.setDrawGridLines(false)
-
-        val rightAxis = barChart.axisRight
-        rightAxis.isEnabled = false
-
-        // Refresh the chart
-        barChart.invalidate()
+            // Axis Styling
+            barChart.axisLeft.textColor = Color.WHITE
+            barChart.axisLeft.setDrawGridLines(false)
+            barChart.axisRight.isEnabled = false
+            barChart.description.isEnabled = false
+            barChart.setFitBars(true)
+            barChart.setBackgroundColor(Color.TRANSPARENT)
+            barChart.animateY(1000)
+            barChart.invalidate()
+        }
 
 
 
@@ -184,8 +225,7 @@ class HomePageActivity : AppCompatActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.rv_transactions)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        val db = BudgetBunnyDatabase.getDatabase(this)
-        val expenseDao = db.expenseDao()
+
 
         lifecycleScope.launch {
             val expenses = expenseDao.getExpenseForUser(currentUserId)

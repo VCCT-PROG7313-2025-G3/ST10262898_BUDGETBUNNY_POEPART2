@@ -33,6 +33,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fake.st10262898_budgetbunny_poepart2.data.BudgetBunnyDatabase
 import kotlinx.coroutines.launch
+import android.widget.TextView
 
 class TransactionsActivity : AppCompatActivity() {
 
@@ -82,6 +83,43 @@ class TransactionsActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val expenses = expenseDao.getExpenseForUser(currentUserId)
             expenseAdapter.updateExpenses(expenses)
+
+            // Step 1: Group by category and calculate total for each
+            val categoryTotals = expenses.groupBy { it.expenseCategory }
+                .mapValues { entry ->
+                    entry.value.sumOf { it.expenseAmount }
+                }
+                .toList()
+                .sortedByDescending { it.second }
+
+            // Step 2: Prepare top 4 categories (or less)
+            val topCategories = categoryTotals.take(4)
+
+            // Step 3: Update the tile views
+            val nameViews = listOf<TextView>(
+                findViewById(R.id.nameOfExpense1),
+                findViewById(R.id.nameOfExpense2),
+                findViewById(R.id.nameOfExpense3),
+                findViewById(R.id.nameOfExpense4)
+            )
+            val amountViews = listOf<TextView>(
+                findViewById(R.id.expenseAmountOne),
+                findViewById(R.id.expenseAmount2),
+                findViewById(R.id.expenseAmounnt3),
+                findViewById(R.id.expenseAmount4)
+            )
+
+            // Step 4: Populate tiles
+            for (i in 0..3) {
+                if (i < topCategories.size) {
+                    val (category, total) = topCategories[i]
+                    nameViews[i].text = category
+                    amountViews[i].text = "Total: R%.2f".format(total)
+                } else {
+                    nameViews[i].text = "Add category"
+                    amountViews[i].text = "Total: R0"
+                }
+            }
         }
     }
 

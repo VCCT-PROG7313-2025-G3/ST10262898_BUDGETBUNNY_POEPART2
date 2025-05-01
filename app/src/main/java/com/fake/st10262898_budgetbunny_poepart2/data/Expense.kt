@@ -10,5 +10,9 @@ class Expense (
     val id: Int = 0,
     val expenseName: String,
     val expenseAmount: Double,
-    val username: String //This will be how the user is linked to an expense.
+    val username: String, //This will be how the user is linked to an expense.
+
+    val expenseCategory: String?,
+    val expenseDate: Long,
+    val expenseImage: ByteArray?
 )

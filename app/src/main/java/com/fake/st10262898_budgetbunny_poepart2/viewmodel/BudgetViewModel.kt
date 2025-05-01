@@ -34,14 +34,18 @@ class BudgetViewModel (application: Application) : AndroidViewModel(application)
         budgetCategory: String,
         budgetAmount: Double,
         username: String,
-        minTotalBudgetGoal: Double // New parameter for the minimum total budget goal
+        minTotalBudgetGoal: Double,
+        budgetDate: Long,              // NEW
+        budgetIncome: Double           // NEW
     ) {
         val budget = Budget(
             totalBudgetGoal = totalBudgetGoal,
             budgetCategory = budgetCategory,
             budgetAmount = budgetAmount,
             username = username,
-            minTotalBudgetGoal = minTotalBudgetGoal
+            minTotalBudgetGoal = minTotalBudgetGoal,
+            budgetDate = budgetDate,               // NEW
+            budgetIncome = budgetIncome            // NEW
         )
 
         Log.d("BudgetViewModel", "Adding Budget: $budget")

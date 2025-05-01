@@ -49,13 +49,13 @@
     <!-- These are the Strings on the HomePage -->
     <string name="Home"><u>Budget Bunny</u></string>
     <string name="Overview">Overview</string>
-    <string name="CategoriesGraph"><u>Categories Graph</u></string>
+    <string name="CategoriesGraph"><u>Goal Categories Graph</u></string>
     <string name="Balances"><u>Income Expenses Balance</u></string>
     <string name="bunnyName"><u>Budget Bunny</u></string>
     <string name="Gamification">Gamification feature</string>
     <string name="ComingSoon">Coming Soon!</string>
     <string name="RecentTransactions"><u>Recent Transactions</u></string>
-    <string name="BudgetOverview"><u>Budget Overview</u></string>
+    <string name="BudgetOverview"><u>Expense Categories</u></string>
 
     <!--These are the strings on the name bunny page -->
     <string name="settingUp">We are almost done setting you up </string>
@@ -99,7 +99,7 @@
     </string-array>
 
     <!-- These are strings from the transactions page -->
-    <string name="yourExpenses"><u>Top Expenses</u></string>
+    <string name="yourExpenses"><u>Top Expense Categories</u></string>
     <string name="transactions"><u>Transactions</u></string>
     <string name="monthsAtAGlance"><u>Months at a glance</u></string>
     <string name="monthly_payment_amount">Monthly payment amount?</string>

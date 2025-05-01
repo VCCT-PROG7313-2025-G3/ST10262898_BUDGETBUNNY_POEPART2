@@ -21,6 +21,9 @@ interface BudgetDao {
     @Query("UPDATE budget_table SET minTotalBudgetGoal = :minTotalBudgetGoal WHERE username = :username")
     suspend fun updateMinTotalBudgetGoalForUser(username: String, minTotalBudgetGoal: Double)
 
+    @Query("SELECT * FROM budget_table WHERE username = :username AND budgetDate BETWEEN :start AND :end")
+    suspend fun getBudgetsInDateRange(username: String, start: Long, end: Long): List<Budget>
+
 
     @Query("DELETE FROM budget_table WHERE id = :id")
     suspend fun deleteBudget(id: Int)

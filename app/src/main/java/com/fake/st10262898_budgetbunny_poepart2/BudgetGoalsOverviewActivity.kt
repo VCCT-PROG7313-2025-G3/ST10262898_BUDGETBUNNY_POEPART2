@@ -1,12 +1,14 @@
 package com.fake.st10262898_budgetbunny_poepart2
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.LinearLayout
 import android.widget.ProgressBar
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.cardview.widget.CardView
@@ -31,6 +33,9 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
         val minGoalLabel = findViewById<TextView>(R.id.minGoalLabel)
         val maxGoalLabel = findViewById<TextView>(R.id.maxGoalLabel)
         val budgetText = findViewById<TextView>(R.id.budgetForMonth)
+        val tvMinGoalValue = findViewById<TextView>(R.id.tv_minGoalValue)
+        val tvMaxGoalValue = findViewById<TextView>(R.id.tv_maxGoalValue)
+        val goalsContainer = findViewById<LinearLayout>(R.id.goalsContainer)
 
         val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
         val username = sharedPreferences.getString("USERNAME", "") ?: return
@@ -43,42 +48,61 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
 
             val minGoal = budgetGoals.minOfOrNull { it.totalBudgetGoal } ?: 0.0
             val totalBudgetGoal = budgetGoals.sumOf { it.totalBudgetGoal }
-            val currentSavedAmount = 0.0 // Placeholder
+            val currentSavedAmount = 0.0 // You can change this if you track actual savings
 
             progressBar.max = totalBudgetGoal.toInt()
             progressBar.progress = currentSavedAmount.toInt()
             budgetText.text = "R${currentSavedAmount.toInt()} of R${totalBudgetGoal.toInt()} saved"
 
+            tvMinGoalValue.text = "Min Goal: R${minGoal.toInt()}"
+            tvMaxGoalValue.text = "Max Goal: R${totalBudgetGoal.toInt()}"
+
+            maxGoalMarker.visibility = View.VISIBLE
+            maxGoalMarker.bringToFront()
+
             progressBar.post {
                 val progressBarWidth = progressBar.width
                 val minGoalMarkerPosition = (minGoal / totalBudgetGoal * progressBarWidth).toInt()
-                val maxGoalMarkerPosition = progressBarWidth // always at the end
 
-                // Position markers
-                minGoalMarker.layoutParams = (minGoalMarker.layoutParams as FrameLayout.LayoutParams).apply {
+                minGoalMarker.layoutParams = (minGoalMarker.layoutParams as RelativeLayout.LayoutParams).apply {
                     leftMargin = minGoalMarkerPosition
                 }
 
-                maxGoalMarker.layoutParams = (maxGoalMarker.layoutParams as FrameLayout.LayoutParams).apply {
-                    leftMargin = maxGoalMarkerPosition
+                maxGoalMarker.post {
+                    val maxMarkerWidth = maxGoalMarker.width
+                    val maxGoalMarkerPosition = progressBarWidth - maxMarkerWidth
+
+                    maxGoalMarker.layoutParams = (maxGoalMarker.layoutParams as RelativeLayout.LayoutParams).apply {
+                        leftMargin = maxGoalMarkerPosition
+                    }
                 }
 
-                // Update labels
-                minGoalLabel.text = "Min Goal: R${minGoal.toInt()}"
-                maxGoalLabel.text = "Max Goal: R${totalBudgetGoal.toInt()}"
-
-                // Position labels after layout pass
                 minGoalLabel.post {
-                    minGoalLabel.layoutParams = (minGoalLabel.layoutParams as FrameLayout.LayoutParams).apply {
+                    minGoalLabel.layoutParams = (minGoalLabel.layoutParams as RelativeLayout.LayoutParams).apply {
                         leftMargin = minGoalMarkerPosition - (minGoalLabel.width / 2)
                     }
                 }
 
                 maxGoalLabel.post {
-                    maxGoalLabel.layoutParams = (maxGoalLabel.layoutParams as FrameLayout.LayoutParams).apply {
-                        leftMargin = maxGoalMarkerPosition - (maxGoalLabel.width / 2)
+                    maxGoalLabel.layoutParams = (maxGoalLabel.layoutParams as RelativeLayout.LayoutParams).apply {
+                        leftMargin = progressBarWidth - (maxGoalLabel.width / 2)
                     }
                 }
+            }
+
+            // 🔽 Inflate item_goal_card for each budget goal
+            val inflater = LayoutInflater.from(this@BudgetGoalsOverviewActivity)
+            goalsContainer.removeAllViews()
+
+            for (goal in budgetGoals) {
+                val cardView = inflater.inflate(R.layout.item_goal_card, goalsContainer, false)
+                val tvCategory = cardView.findViewById<TextView>(R.id.tv_category)
+                val tvAmount = cardView.findViewById<TextView>(R.id.tv_amount)
+
+                tvCategory.text = goal.budgetCategory
+                tvAmount.text = "Amount: R${goal.budgetAmount}"
+
+                goalsContainer.addView(cardView)
             }
         }
     }

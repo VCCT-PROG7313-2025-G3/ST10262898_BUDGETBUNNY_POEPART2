@@ -1,5 +1,6 @@
 package com.fake.st10262898_budgetbunny_poepart2
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
@@ -12,10 +13,13 @@ import androidx.activity.viewModels
 import com.fake.st10262898_budgetbunny_poepart2.viewmodel.BudgetViewModel
 import java.text.DecimalFormat
 import java.text.ParseException
+import java.util.Calendar
 
 class CategoryBudgetGoal : AppCompatActivity() {
 
     private val budgetViewModel: BudgetViewModel by viewModels()
+    private var selectedDate: Long = 0L
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,28 +35,42 @@ class CategoryBudgetGoal : AppCompatActivity() {
 
         val amountEditText = findViewById<EditText>(R.id.amountEditText)
 
+        val dateTextView = findViewById<TextView>(R.id.dateTextView)
+        val calendar = Calendar.getInstance()
+
+        dateTextView.setOnClickListener {
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+            val datePickerDialog = DatePickerDialog(this, { _, selectedYear, selectedMonth, selectedDay ->
+                val dateString = "${selectedDay}/${selectedMonth + 1}/${selectedYear}"
+                dateTextView.text = dateString
+
+                val sdf = java.text.SimpleDateFormat("d/M/yyyy")
+                val date = sdf.parse(dateString)
+                selectedDate = date?.time ?: 0L
+            }, year, month, day)
+
+            datePickerDialog.show()
+        }
+
         findViewById<Button>(R.id.next_button).setOnClickListener {
             val amountText = amountEditText.text.toString().trim()
-
-            // Log the raw input text for debugging purposes
-            Log.d("CategoryBudgetGoal", "Raw Amount Input: $amountText")
-
-            // Try to parse the amount using DecimalFormat to handle decimal points correctly
             val amount = parseAmount(amountText)
 
-            Log.d("CategoryBudgetGoal", "Parsed Amount: $amount")
-
-            // Ensure the amount is not null and username is provided
-            if (amount != null && username.isNotBlank()) {
-                Log.d("CategoryBudgetGoal", "Proceeding to save budget with Amount: $amount, Category: $categoryName, Total Goal: $totalGoal")
+            if (amount != null && username.isNotBlank() && selectedDate != 0L) {
                 budgetViewModel.addBudget(
                     totalBudgetGoal = totalGoal,
                     budgetCategory = categoryName,
                     budgetAmount = amount,
                     username = username,
-                    minTotalBudgetGoal = minGoal
-
+                    minTotalBudgetGoal = minGoal,
+                    budgetDate = selectedDate,
+                    budgetIncome = 0.0
                 )
+            }else {
+                Toast.makeText(this, "Please enter a valid amount and select a date.", Toast.LENGTH_SHORT).show()
             }
         }
 

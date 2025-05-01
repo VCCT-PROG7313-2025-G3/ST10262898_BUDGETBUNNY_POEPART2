@@ -1,43 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_date"
+    android:orientation="vertical"
+    android:padding="16dp"
     tools:context=".MonthlyPayment">
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="69dp" />
+
+    <TextView
+        android:id="@+id/categoryTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Expense Category: "
+        android:textSize="30sp"
+        android:textColor="#FFFFFF"
+        android:fontFamily="@font/noto_sans_tamil_medium" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="16dp" />
+
+    <TextView
+        android:id="@+id/tv_expenseNamePrompt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/assistant_extrabold"
+        android:text="Enter the company or place where you paid for this expense."
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:layout_gravity="center"
+        android:layout_marginTop="40dp" />
+
+    <EditText
+        android:id="@+id/enterExpenseName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter expense name"
+        android:background="@drawable/edittext_background"
+        android:layout_marginTop="16dp"
+        android:padding="12dp"
+        android:inputType="text"
+        android:textColor="#FFFFFF"
+        android:fontFamily="@font/jost_medium" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="16dp" />
+
+
 
     <TextView
         android:id="@+id/monthpay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="320dp"
         android:fontFamily="@font/assistant_extrabold"
         android:text="@string/monthly_payment_amount"
         android:textColor="@color/white"
         android:textSize="30sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.355"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
 
     <EditText
-        android:id="@+id/enterAnAmount"
-        android:layout_width="362dp"
+        android:id="@+id/enterAmount"
+        android:layout_width="match_parent"
         android:layout_height="57dp"
-        android:background="@drawable/custum"
+        android:background="@drawable/edittext_background"
         android:ems="10"
         android:hint="@string/enter_an_amount_"
         android:importantForAutofill="no"
         android:textColor="#FFFFFF"
         android:inputType="number"
-        app:layout_constraintBottom_toTopOf="@+id/button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.326"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/monthpay"
-        tools:ignore="LabelFor" />
+        android:layout_marginTop="10dp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+    <TextView
+        android:id="@+id/tv_datePrompt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/assistant_extrabold"
+        android:text="Please enter a date"
+        android:textColor="@color/white"
+        android:textSize="30sp"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp" />
+
+    <EditText
+        android:id="@+id/enterDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter expense date"
+        android:background="@drawable/edittext_background"
+        android:layout_marginTop="16dp"
+        android:padding="12dp"
+        android:textColor="#FFFFFF"
+        android:fontFamily="@font/jost_medium"
+        android:inputType="none" />
 
     <Button
         android:id="@+id/button"
@@ -48,13 +120,7 @@
         android:text="@string/next"
         android:textColor="@color/black"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.928"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.593"
+        android:layout_gravity="end"
         app:rippleColor="@color/regalia" />
 
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
