@@ -1,56 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/scrollView"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_date"
     tools:context=".TransactionsActivity">
 
-    <LinearLayout
-        android:id="@+id/main"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingBottom="20dp">
-    
-
+    <!-- Space at the top -->
     <Space
+        android:id="@+id/space1"
         android:layout_width="match_parent"
-        android:layout_height="50dp" />
+        android:layout_height="50dp"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Budget Bunny"
-        android:fontFamily="@font/pacifico"
-        android:textSize="30sp"
-        android:textColor="#FFFFFF"
-        android:layout_gravity="center" />
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/pacifico"
+            android:text="Budget Bunny"
+            android:textColor="#FFFFFF"
+            android:textSize="30sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/space1" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="CurrentDateandTime"
-        android:textColor="#FFFFFF"
-        android:fontFamily="@font/jost_medium"
-        android:textSize="15sp"
-        android:layout_gravity="center" />
-    
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="20dp" />
+        <TextView
+            android:id="@+id/dateText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/jost_medium"
+            android:text="CurrentDateandTime"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/titleText" />
 
+        <Space
+            android:id="@+id/space2"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            app:layout_constraintTop_toBottomOf="@id/dateText" />
 
-
+        <!-- First CardView -->
         <androidx.cardview.widget.CardView
+            android:id="@+id/expensesCard"
             android:layout_width="350dp"
             android:layout_height="wrap_content"
+            app:cardBackgroundColor="#40A9A9A9"
             app:cardCornerRadius="30dp"
-            android:layout_gravity="center"
-            app:cardBackgroundColor="#40A9A9A9">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/space2">
 
+            <!-- ... (keep the same inner content as your original) ... -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -59,20 +66,20 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/jost_medium"
                     android:text="@string/yourExpenses"
                     android:textColor="#FFFFFF"
-                    android:fontFamily="@font/jost_medium"
                     android:textSize="20sp"
-                    android:layout_gravity="center"
-                    android:translationX="10dp"/>
+                    android:translationX="10dp" />
 
                 <!-- This is the grid which will hold all the tiles of the expense -->
                 <androidx.gridlayout.widget.GridLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:alignmentMode="alignMargins"
                     app:columnCount="2"
                     app:orientation="horizontal"
-                    app:alignmentMode="alignMargins"
                     app:useDefaultMargins="true">
 
                     <!-- Tile 1 -->
@@ -84,35 +91,32 @@
                         android:gravity="center"
                         android:orientation="horizontal"
                         android:padding="10dp"
+                        app:layout_column="0"
                         app:layout_columnWeight="1"
-                        app:layout_row="0"
-                        app:layout_column="0">
+                        app:layout_row="0">
 
                         <TextView
                             android:id="@+id/nameOfExpense1"
                             android:layout_width="40dp"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/jost_medium"
                             android:gravity="start"
                             android:text="Name"
                             android:textColor="#000000"
-                            android:textSize="15sp"
-                            android:fontFamily="@font/jost_medium"/>
+                            android:textSize="15sp" />
 
                         <View
                             android:layout_width="2dp"
                             android:layout_height="match_parent"
                             android:layout_marginStart="8dp"
                             android:layout_marginEnd="8dp"
-                            android:background="#000000"/>
+                            android:background="#000000" />
 
                         <TextView
                             android:id="@+id/expenseAmountOne"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Total amount: R0" />
-
-
-
 
                     </LinearLayout>
 
@@ -125,26 +129,26 @@
                         android:gravity="center"
                         android:orientation="horizontal"
                         android:padding="10dp"
+                        app:layout_column="1"
                         app:layout_columnWeight="1"
-                        app:layout_row="0"
-                        app:layout_column="1">
+                        app:layout_row="0">
 
                         <TextView
                             android:id="@+id/nameOfExpense2"
                             android:layout_width="40dp"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/jost_medium"
+                            android:gravity="start"
                             android:text="Name"
                             android:textColor="#000000"
-                            android:gravity="start"
-                            android:textSize="15sp"
-                            android:fontFamily="@font/jost_medium" />
+                            android:textSize="15sp" />
 
                         <View
                             android:layout_width="2dp"
                             android:layout_height="match_parent"
                             android:layout_marginStart="8dp"
                             android:layout_marginEnd="8dp"
-                            android:background="#000000"/>
+                            android:background="#000000" />
 
                         <TextView
                             android:id="@+id/expenseAmount2"
@@ -163,26 +167,26 @@
                         android:gravity="center"
                         android:orientation="horizontal"
                         android:padding="10dp"
+                        app:layout_column="0"
                         app:layout_columnWeight="1"
-                        app:layout_row="1"
-                        app:layout_column="0">
+                        app:layout_row="1">
 
                         <TextView
                             android:id="@+id/nameOfExpense3"
                             android:layout_width="40dp"
                             android:layout_height="wrap_content"
-                            android:text="Name"
+                            android:fontFamily="@font/jost_medium"
                             android:gravity="start"
+                            android:text="Name"
                             android:textColor="#000000"
-                            android:textSize="15sp"
-                            android:fontFamily="@font/jost_medium" />
+                            android:textSize="15sp" />
 
                         <View
                             android:layout_width="2dp"
                             android:layout_height="match_parent"
                             android:layout_marginStart="8dp"
                             android:layout_marginEnd="8dp"
-                            android:background="#000000"/>
+                            android:background="#000000" />
 
                         <TextView
                             android:id="@+id/expenseAmounnt3"
@@ -200,24 +204,25 @@
                         android:gravity="center"
                         android:orientation="horizontal"
                         android:padding="10dp"
+                        app:layout_column="1"
                         app:layout_columnWeight="1"
-                        app:layout_row="1"
-                        app:layout_column="1">
+                        app:layout_row="1">
 
                         <TextView
                             android:id="@+id/nameOfExpense4"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/jost_medium"
                             android:text="Name"
                             android:textColor="#000000"
-                            android:textSize="15sp"
-                            android:fontFamily="@font/jost_medium" />
+                            android:textSize="15sp" />
+
                         <View
                             android:layout_width="2dp"
                             android:layout_height="match_parent"
                             android:layout_marginStart="8dp"
                             android:layout_marginEnd="8dp"
-                            android:background="#000000"/>
+                            android:background="#000000" />
 
                         <TextView
                             android:id="@+id/expenseAmount4"
@@ -227,118 +232,125 @@
 
                     </LinearLayout>
 
-
-
                 </androidx.gridlayout.widget.GridLayout>
 
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Add an expense"
-                    android:layout_gravity="center" />
+                    android:layout_gravity="center"
+                    android:text="Add an expense" />
 
             </LinearLayout>
-
-
-
         </androidx.cardview.widget.CardView>
 
-
         <Space
-        android:layout_width="match_parent"
-        android:layout_height="50dp"/>
+            android:id="@+id/space3"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            app:layout_constraintTop_toBottomOf="@id/expensesCard" />
 
-
-
-        <!-- This is the transactions card -->
+        <!-- Transactions CardView -->
         <androidx.cardview.widget.CardView
+            android:id="@+id/transactionsCard"
             android:layout_width="350dp"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="30dp"
-            android:layout_gravity="center"
             android:layout_marginTop="16dp"
-            app:cardBackgroundColor="#40A9A9A9">
+            app:cardBackgroundColor="#40A9A9A9"
+            app:cardCornerRadius="30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/space3">
 
+            <!-- ... (keep the same inner content as your original) ... -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="250dp"
                 android:orientation="vertical"
                 android:padding="16dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/transactions"
-                    android:textSize="25sp"
-                    android:textColor="#FFFFFF"
+                    android:layout_gravity="center_horizontal"
                     android:fontFamily="@font/jost_medium"
-                    android:layout_gravity="center_horizontal"/>
+                    android:text="@string/transactions"
+                    android:textColor="#FFFFFF"
+                    android:textSize="25sp" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_transaction_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"/>
-            </LinearLayout>
+                    android:layout_marginTop="8dp" />
 
+                <Button
+                    android:id="@+id/btnUploadReceipt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/custum"
+                    android:padding="8dp"
+                    android:text="Upload Receipt"
+                    android:textColor="#FFFFFF" />
+
+            </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-
         <Space
+            android:id="@+id/space4"
             android:layout_width="match_parent"
-            android:layout_height="50dp" />
+            android:layout_height="50dp"
+            app:layout_constraintTop_toBottomOf="@id/transactionsCard" />
 
-
-
-
-        <!-- This is the card view to view information in monthly format: -->
+        <!-- Monthly CardView -->
         <androidx.cardview.widget.CardView
+            android:id="@+id/monthlyCard"
             android:layout_width="350dp"
             android:layout_height="wrap_content"
+            app:cardBackgroundColor="#40A9A9A9"
             app:cardCornerRadius="30dp"
-            android:layout_gravity="center"
-            app:cardBackgroundColor="#40A9A9A9">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/space4">
 
-
+            <!-- ... (keep the same inner content as your original) ... -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="25sp"
-                            android:text="@string/monthsAtAGlance"
-                            android:textColor="#FFFFFF"
-                            android:fontFamily="@font/jost_medium"
-                            android:layout_gravity="center_horizontal"
-                            />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:fontFamily="@font/jost_medium"
+                    android:text="@string/monthsAtAGlance"
+                    android:textColor="#FFFFFF"
+                    android:textSize="25sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/jost_medium"
+                    android:paddingBottom="12dp"
                     android:text="Select Month"
                     android:textColor="#FFFFFF"
-                    android:textSize="20sp"
-                    android:fontFamily="@font/jost_medium"
-                    android:layout_gravity="center"
-                    android:paddingBottom="12dp" />
+                    android:textSize="20sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp" >
+                    android:padding="16dp">
 
-                    <!--This is going to store all the twelve months: -->
                     <androidx.gridlayout.widget.GridLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:columnCount="3"
                         app:alignmentMode="alignMargins"
-                        app:useDefaultMargins="true" >
-
+                        app:columnCount="3"
+                        app:useDefaultMargins="true">
 
                         <!-- January -->
                         <LinearLayout
@@ -346,20 +358,19 @@
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
                             android:background="@drawable/month_tile_background"
-                            android:orientation="vertical"
                             android:gravity="center"
+                            android:orientation="vertical"
                             android:padding="10dp"
                             app:layout_columnWeight="1">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:fontFamily="@font/jost_medium"
                                 android:text="January"
                                 android:textColor="#000000"
-                                android:textSize="16sp"
-                                android:fontFamily="@font/jost_medium" />
+                                android:textSize="16sp" />
                         </LinearLayout>
-
 
                         <!-- February -->
                         <LinearLayout
@@ -367,20 +378,19 @@
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
                             android:background="@drawable/month_tile_background"
-                            android:orientation="vertical"
                             android:gravity="center"
+                            android:orientation="vertical"
                             android:padding="10dp"
                             app:layout_columnWeight="1">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:fontFamily="@font/jost_medium"
                                 android:text="February"
                                 android:textColor="#000000"
-                                android:textSize="16sp"
-                                android:fontFamily="@font/jost_medium" />
+                                android:textSize="16sp" />
                         </LinearLayout>
-
 
                         <!-- March -->
                         <LinearLayout
@@ -388,18 +398,18 @@
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
                             android:background="@drawable/month_tile_background"
-                            android:orientation="vertical"
                             android:gravity="center"
+                            android:orientation="vertical"
                             android:padding="10dp"
                             app:layout_columnWeight="1">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:fontFamily="@font/jost_medium"
                                 android:text="January"
                                 android:textColor="#000000"
-                                android:textSize="16sp"
-                                android:fontFamily="@font/jost_medium" />
+                                android:textSize="16sp" />
                         </LinearLayout>
 
                         <!-- April -->
@@ -408,18 +418,18 @@
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
                             android:background="@drawable/month_tile_background"
-                            android:orientation="vertical"
                             android:gravity="center"
+                            android:orientation="vertical"
                             android:padding="10dp"
                             app:layout_columnWeight="1">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:fontFamily="@font/jost_medium"
                                 android:text="April"
                                 android:textColor="#000000"
-                                android:textSize="16sp"
-                                android:fontFamily="@font/jost_medium" />
+                                android:textSize="16sp" />
                         </LinearLayout>
 
                         <!--May-->
@@ -428,20 +438,19 @@
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
                             android:background="@drawable/month_tile_background"
-                            android:orientation="vertical"
                             android:gravity="center"
+                            android:orientation="vertical"
                             android:padding="10dp"
                             app:layout_columnWeight="1">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:fontFamily="@font/jost_medium"
                                 android:text="May"
                                 android:textColor="#000000"
-                                android:textSize="16sp"
-                                android:fontFamily="@font/jost_medium" />
+                                android:textSize="16sp" />
                         </LinearLayout>
-
 
                         <!-- June -->
                         <LinearLayout
@@ -449,20 +458,19 @@
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
                             android:background="@drawable/month_tile_background"
-                            android:orientation="vertical"
                             android:gravity="center"
+                            android:orientation="vertical"
                             android:padding="10dp"
                             app:layout_columnWeight="1">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:fontFamily="@font/jost_medium"
                                 android:text="June"
                                 android:textColor="#000000"
-                                android:textSize="16sp"
-                                android:fontFamily="@font/jost_medium" />
+                                android:textSize="16sp" />
                         </LinearLayout>
-
 
                         <!-- July -->
                         <LinearLayout
@@ -470,20 +478,19 @@
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
                             android:background="@drawable/month_tile_background"
-                            android:orientation="vertical"
                             android:gravity="center"
+                            android:orientation="vertical"
                             android:padding="10dp"
                             app:layout_columnWeight="1">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:fontFamily="@font/jost_medium"
                                 android:text="July"
                                 android:textColor="#000000"
-                                android:textSize="16sp"
-                                android:fontFamily="@font/jost_medium" />
+                                android:textSize="16sp" />
                         </LinearLayout>
-
 
                         <!-- August -->
                         <LinearLayout
@@ -491,20 +498,19 @@
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
                             android:background="@drawable/month_tile_background"
-                            android:orientation="vertical"
                             android:gravity="center"
+                            android:orientation="vertical"
                             android:padding="10dp"
                             app:layout_columnWeight="1">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:fontFamily="@font/jost_medium"
                                 android:text="August"
                                 android:textColor="#000000"
-                                android:textSize="16sp"
-                                android:fontFamily="@font/jost_medium" />
+                                android:textSize="16sp" />
                         </LinearLayout>
-
 
                         <!-- Septemeber -->
                         <LinearLayout
@@ -512,27 +518,25 @@
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
                             android:background="@drawable/month_tile_background"
-                            android:orientation="vertical"
                             android:gravity="center"
+                            android:orientation="vertical"
                             android:padding="10dp"
                             app:layout_columnWeight="1">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:autoSizeMaxTextSize="16sp"
+                                android:autoSizeMinTextSize="12sp"
+                                android:autoSizeStepGranularity="1sp"
+                                android:autoSizeTextType="uniform"
+                                android:fontFamily="@font/jost_medium"
+                                android:maxLines="1"
                                 android:text="September"
                                 android:textColor="#000000"
-                                android:textSize="16sp"
-                                android:fontFamily="@font/jost_medium"
-
-                                android:maxLines="1"
-                                android:autoSizeTextType="uniform"
-                                android:autoSizeMinTextSize="12sp"
-                                android:autoSizeMaxTextSize="16sp"
-                                android:autoSizeStepGranularity="1sp" />
+                                android:textSize="16sp" />
 
                         </LinearLayout>
-
 
                         <!--October -->
                         <LinearLayout
@@ -540,47 +544,44 @@
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
                             android:background="@drawable/month_tile_background"
-                            android:orientation="vertical"
                             android:gravity="center"
+                            android:orientation="vertical"
                             android:padding="10dp"
                             app:layout_columnWeight="1">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:fontFamily="@font/jost_medium"
                                 android:text="October"
                                 android:textColor="#000000"
-                                android:textSize="16sp"
-                                android:fontFamily="@font/jost_medium" />
+                                android:textSize="16sp" />
                         </LinearLayout>
 
-
-                        <!-- October -->
+                        <!-- November -->
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
                             android:background="@drawable/month_tile_background"
-                            android:orientation="vertical"
                             android:gravity="center"
+                            android:orientation="vertical"
                             android:padding="10dp"
                             app:layout_columnWeight="1">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:autoSizeMaxTextSize="16sp"
+                                android:autoSizeMinTextSize="12sp"
+                                android:autoSizeStepGranularity="1sp"
+                                android:autoSizeTextType="uniform"
+                                android:fontFamily="@font/jost_medium"
+                                android:maxLines="1"
                                 android:text="November"
                                 android:textColor="#000000"
-                                android:textSize="16sp"
-                                android:fontFamily="@font/jost_medium"
-
-                                android:maxLines="1"
-                                android:autoSizeTextType="uniform"
-                                android:autoSizeMinTextSize="12sp"
-                                android:autoSizeMaxTextSize="16sp"
-                                android:autoSizeStepGranularity="1sp"/>
+                                android:textSize="16sp" />
                         </LinearLayout>
-
 
                         <!-- December -->
                         <LinearLayout
@@ -588,60 +589,41 @@
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
                             android:background="@drawable/month_tile_background"
-                            android:orientation="vertical"
                             android:gravity="center"
+                            android:orientation="vertical"
                             android:padding="10dp"
                             app:layout_columnWeight="1">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:autoSizeMaxTextSize="16sp"
+                                android:autoSizeMinTextSize="12sp"
+                                android:autoSizeStepGranularity="1sp"
+                                android:autoSizeTextType="uniform"
+                                android:fontFamily="@font/jost_medium"
+                                android:maxLines="1"
                                 android:text="December"
                                 android:textColor="#000000"
-                                android:textSize="16sp"
-                                android:fontFamily="@font/jost_medium"
-
-                                android:maxLines="1"
-                                android:autoSizeTextType="uniform"
-                                android:autoSizeMinTextSize="12sp"
-                                android:autoSizeMaxTextSize="16sp"
-                                android:autoSizeStepGranularity="1sp"/>
+                                android:textSize="16sp" />
                         </LinearLayout>
 
-
-
-
-
-
-
-
-
                     </androidx.gridlayout.widget.GridLayout>
-
-
-
-
-
-
-
-
-
-
-
                 </LinearLayout>
-
-
-
-
-
-
-
             </LinearLayout>
-
-
         </androidx.cardview.widget.CardView>
 
-    </LinearLayout>
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigationView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#000000"
+            app:itemIconSize="40dp"
+            app:itemIconTint="#FFFFFF"
+            app:labelVisibilityMode="unlabeled"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:menu="@menu/bottom_nav_menu" />
 
-</ScrollView>
-
+    </androidx.constraintlayout.widget.ConstraintLayout>
