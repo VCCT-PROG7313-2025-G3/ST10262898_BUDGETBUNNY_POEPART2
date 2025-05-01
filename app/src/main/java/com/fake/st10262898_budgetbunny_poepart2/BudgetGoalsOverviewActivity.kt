@@ -1,8 +1,10 @@
 package com.fake.st10262898_budgetbunny_poepart2
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Button
 import android.widget.FrameLayout
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -60,33 +62,44 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
             maxGoalMarker.visibility = View.VISIBLE
             maxGoalMarker.bringToFront()
 
+            //Send users to the date selector page when pressing the button:
+            val viewByDateButton: Button = findViewById(R.id.btn_view_by_date)
+            viewByDateButton.setOnClickListener {
+                val intent = Intent(this@BudgetGoalsOverviewActivity, ViewBudgetByDate::class.java)
+                startActivity(intent)
+            }
+
             progressBar.post {
                 val progressBarWidth = progressBar.width
                 val minGoalMarkerPosition = (minGoal / totalBudgetGoal * progressBarWidth).toInt()
 
-                minGoalMarker.layoutParams = (minGoalMarker.layoutParams as RelativeLayout.LayoutParams).apply {
-                    leftMargin = minGoalMarkerPosition
-                }
+                minGoalMarker.layoutParams =
+                    (minGoalMarker.layoutParams as RelativeLayout.LayoutParams).apply {
+                        leftMargin = minGoalMarkerPosition
+                    }
 
                 maxGoalMarker.post {
                     val maxMarkerWidth = maxGoalMarker.width
                     val maxGoalMarkerPosition = progressBarWidth - maxMarkerWidth
 
-                    maxGoalMarker.layoutParams = (maxGoalMarker.layoutParams as RelativeLayout.LayoutParams).apply {
-                        leftMargin = maxGoalMarkerPosition
-                    }
+                    maxGoalMarker.layoutParams =
+                        (maxGoalMarker.layoutParams as RelativeLayout.LayoutParams).apply {
+                            leftMargin = maxGoalMarkerPosition
+                        }
                 }
 
                 minGoalLabel.post {
-                    minGoalLabel.layoutParams = (minGoalLabel.layoutParams as RelativeLayout.LayoutParams).apply {
-                        leftMargin = minGoalMarkerPosition - (minGoalLabel.width / 2)
-                    }
+                    minGoalLabel.layoutParams =
+                        (minGoalLabel.layoutParams as RelativeLayout.LayoutParams).apply {
+                            leftMargin = minGoalMarkerPosition - (minGoalLabel.width / 2)
+                        }
                 }
 
                 maxGoalLabel.post {
-                    maxGoalLabel.layoutParams = (maxGoalLabel.layoutParams as RelativeLayout.LayoutParams).apply {
-                        leftMargin = progressBarWidth - (maxGoalLabel.width / 2)
-                    }
+                    maxGoalLabel.layoutParams =
+                        (maxGoalLabel.layoutParams as RelativeLayout.LayoutParams).apply {
+                            leftMargin = progressBarWidth - (maxGoalLabel.width / 2)
+                        }
                 }
             }
 

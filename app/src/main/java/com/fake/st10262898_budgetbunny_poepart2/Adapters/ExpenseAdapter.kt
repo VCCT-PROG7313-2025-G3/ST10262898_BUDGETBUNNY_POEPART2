@@ -1,3 +1,5 @@
+package com.fake.st10262898_budgetbunny_poepart2.Adapters
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

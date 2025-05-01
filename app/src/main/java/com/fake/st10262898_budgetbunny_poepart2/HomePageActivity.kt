@@ -1,6 +1,6 @@
 package com.fake.st10262898_budgetbunny_poepart2
 
-import ExpenseAdapter
+import com.fake.st10262898_budgetbunny_poepart2.Adapters.ExpenseAdapter
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -11,18 +11,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fake.st10262898_budgetbunny_poepart2.data.BudgetBunnyDatabase
-import com.fake.st10262898_budgetbunny_poepart2.data.Expense
-import com.fake.st10262898_budgetbunny_poepart2.data.ExpenseDao
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.components.Legend
-import com.github.mikephil.charting.formatter.PercentFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
-import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

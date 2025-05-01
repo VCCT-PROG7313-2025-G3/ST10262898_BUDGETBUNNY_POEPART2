@@ -1,11 +1,9 @@
 package com.fake.st10262898_budgetbunny_poepart2
 
-import ExpenseAdapter
+import com.fake.st10262898_budgetbunny_poepart2.Adapters.ExpenseAdapter
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
