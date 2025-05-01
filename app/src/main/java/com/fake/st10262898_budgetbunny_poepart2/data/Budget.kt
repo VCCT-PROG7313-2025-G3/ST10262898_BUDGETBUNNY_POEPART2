@@ -12,6 +12,9 @@ data class Budget (
     val minTotalBudgetGoal: Double,
     val budgetCategory: String,
     val budgetAmount: Double,
+    val budgetDate: Long,
+    val budgetIncome: Double,
     val username: String // This will link the budget category to a user
+
 
 )
