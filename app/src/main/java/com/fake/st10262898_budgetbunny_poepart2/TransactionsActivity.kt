@@ -34,6 +34,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.fake.st10262898_budgetbunny_poepart2.data.BudgetBunnyDatabase
 import kotlinx.coroutines.launch
 import android.widget.TextView
+import com.google.android.material.bottomnavigation.BottomNavigationView
+
 
 class TransactionsActivity : AppCompatActivity() {
 
@@ -118,6 +120,29 @@ class TransactionsActivity : AppCompatActivity() {
                 } else {
                     nameViews[i].text = "Add category"
                     amountViews[i].text = "Total: R0"
+                }
+            }
+
+            val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+            bottomNavigationView.setOnItemSelectedListener { item ->
+                when (item.itemId) {
+                    R.id.nav_home -> {
+                        startActivity(Intent(this@TransactionsActivity, HomePageActivity::class.java))
+                        true
+                    }
+                    R.id.nav_transactions -> {
+                        //User is currently in the transactions page
+                        true
+                    }
+                    R.id.nav_budgetGoal -> {
+                        startActivity(Intent(this@TransactionsActivity, BudgetGoalsOverviewActivity::class.java))
+                        true
+                    }
+                    R.id.nav_settings -> {
+                        startActivity(Intent(this@TransactionsActivity, Settings::class.java))
+                        true
+                    }
+                    else -> false
                 }
             }
         }
