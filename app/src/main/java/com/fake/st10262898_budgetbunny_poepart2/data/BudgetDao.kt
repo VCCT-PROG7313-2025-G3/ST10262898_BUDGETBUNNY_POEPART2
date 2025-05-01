@@ -27,4 +27,19 @@ interface BudgetDao {
 
     @Query("DELETE FROM budget_table WHERE id = :id")
     suspend fun deleteBudget(id: Int)
+
+    //This is to be able to display the total amount spent on each category
+    @Query("""
+        SELECT budgetCategory, SUM(budgetAmount) as total 
+        FROM budget_table 
+        WHERE username = :username 
+        AND budgetDate BETWEEN :startDate AND :endDate 
+        GROUP BY budgetCategory
+    """)
+    suspend fun getCategoryTotalsForDateRange(
+        username: String,
+        startDate: Long,
+        endDate: Long
+    ): List<CategoryTotal>
+
 }
