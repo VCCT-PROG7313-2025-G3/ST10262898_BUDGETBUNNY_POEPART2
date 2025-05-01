@@ -24,4 +24,8 @@ class BudgetRepository(private val budgetDao: BudgetDao){
         return budgetDao.getMinTotalBudgetGoalForUser(username)
     }
 
+    suspend fun getCategoryTotals(username: String): List<CategoryTotal> {
+        return budgetDao.getCategoryTotals(username)
+    }
+
 }

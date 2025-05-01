@@ -50,7 +50,7 @@ class ExpenseList : AppCompatActivity() {
         nextButton.setOnClickListener {
             val intent = Intent(this, bugetGoalsPage::class.java)
             val username = sharedPreferences.getString("USERNAME", "") ?: ""
-            intent.putExtra("USERNAME", username)  // Pass the username to the next activity
+            intent.putExtra("username", username) // Pass the username to the next activity
             startActivity(intent)
         }
 

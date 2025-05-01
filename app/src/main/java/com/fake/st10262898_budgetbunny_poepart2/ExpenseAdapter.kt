@@ -1,9 +1,10 @@
+package com.fake.st10262898_budgetbunny_poepart2
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.fake.st10262898_budgetbunny_poepart2.R
 import com.fake.st10262898_budgetbunny_poepart2.data.Expense
 
 class ExpenseAdapter(private var expenseList: List<Expense>) :
