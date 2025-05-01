@@ -1,9 +1,12 @@
-package com.fake.st10262898_budgetbunny_poepart2
+package com.fake.st10262898_budgetbunny_poepart2.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.fake.st10262898_budgetbunny_poepart2.data.BudgetBunnyDatabase
+import com.fake.st10262898_budgetbunny_poepart2.data.User
+import com.fake.st10262898_budgetbunny_poepart2.data.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

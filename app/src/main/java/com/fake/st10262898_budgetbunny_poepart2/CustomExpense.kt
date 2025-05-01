@@ -50,21 +50,8 @@ class CustomExpense : AppCompatActivity() {
             finish()
 
 
-            /*
-            val expenseName = editExpenseCustom.text.toString()
 
-            if (expenseName.isBlank()) {
-                Toast.makeText(this, "Please enter a name", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
 
-            if (chosenIconResId == null) {
-                Toast.makeText(this, "Please choose an icon", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            */
-
-//database and saving from here
 
 
 

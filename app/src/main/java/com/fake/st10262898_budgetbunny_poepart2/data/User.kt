@@ -1,4 +1,4 @@
-package com.fake.st10262898_budgetbunny_poepart2
+package com.fake.st10262898_budgetbunny_poepart2.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

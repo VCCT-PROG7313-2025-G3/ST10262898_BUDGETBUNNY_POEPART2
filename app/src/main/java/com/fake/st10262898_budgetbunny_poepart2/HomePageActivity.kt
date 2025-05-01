@@ -1,10 +1,18 @@
 package com.fake.st10262898_budgetbunny_poepart2
 
+import ExpenseAdapter
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.fake.st10262898_budgetbunny_poepart2.data.BudgetBunnyDatabase
+import com.fake.st10262898_budgetbunny_poepart2.data.Expense
+import com.fake.st10262898_budgetbunny_poepart2.data.ExpenseDao
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
@@ -12,6 +20,8 @@ import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.formatter.PercentFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -21,7 +31,7 @@ import java.util.Locale
 
 class HomePageActivity : AppCompatActivity() {
 
-
+    private lateinit var expenseAdapter: ExpenseAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +42,12 @@ class HomePageActivity : AppCompatActivity() {
 
         //Initialise the Pie chart and the bar graph:
         val pieChart : PieChart = findViewById(R.id.pieChart)
+
+
+        // Retrieve the username from SharedPreferences
+        val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val currentUserId = sharedPreferences.getString("username", "") ?: ""
+
 
 
         //This is the section where the  data is prepeared for the pie chart:
@@ -162,6 +178,56 @@ class HomePageActivity : AppCompatActivity() {
         //Specifying the format in which the date and time will be in:
         val currentDateTime = SimpleDateFormat("dd MMMM yyyy, HH:mm", Locale.getDefault()).format(Date())
         tvDateTime.text = currentDateTime
+
+
+
+        val recyclerView = findViewById<RecyclerView>(R.id.rv_transactions)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+
+        val db = BudgetBunnyDatabase.getDatabase(this)
+        val expenseDao = db.expenseDao()
+
+        lifecycleScope.launch {
+            val expenses = expenseDao.getExpenseForUser(currentUserId)
+            expenseAdapter = ExpenseAdapter(expenses)
+            recyclerView.adapter = expenseAdapter
+        }
+
+
+
+
+
+
+
+
+
+
+        //For Navigation bar functionality:
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> {
+                    // Already on Home, do nothing
+                    true
+                }
+                R.id.nav_transactions -> {
+                    val intent = Intent(this, TransactionsActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.nav_budgetGoal -> {
+                    val intent = Intent(this, BudgetGoalsOverviewActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.nav_settings -> {
+                    val intent = Intent(this, Settings::class.java)
+                    startActivity(intent)
+                    true
+                }
+                else -> false
+            }
+        }
 
 
     }

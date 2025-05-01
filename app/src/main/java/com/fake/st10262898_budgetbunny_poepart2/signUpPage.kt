@@ -6,13 +6,11 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.collection.emptyLongSet
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.Observer
 import android.content.Intent
 import android.widget.TextView
+import com.fake.st10262898_budgetbunny_poepart2.viewmodel.UserViewModel
 
 class signUpPage : AppCompatActivity() {
 
@@ -72,8 +70,9 @@ class signUpPage : AppCompatActivity() {
 
                                     //After a successful sign-up this will take the user to the page where they can choose expenses.
                                     val intent = Intent(this, ExpenseList::class.java)
+                                    intent.putExtra("USERNAME", username)  // Pass the username to ExpenseList
                                     startActivity(intent)
-                                    finish()
+                                    finish()  // Finish the sign-up page so user cannot go back to it
                                 }
                                 else
                                 {

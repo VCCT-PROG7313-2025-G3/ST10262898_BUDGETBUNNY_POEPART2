@@ -5,15 +5,13 @@ import android.os.Bundle
 import android.widget.ImageButton
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.room.Room
 import androidx.lifecycle.lifecycleScope
 import android.widget.Toast
 import android.widget.Button
 import android.widget.EditText
 import kotlinx.coroutines.launch
-import androidx.lifecycle.lifecycleScope
+import com.fake.st10262898_budgetbunny_poepart2.data.BudgetBunnyDatabase
 
 class MainActivity : AppCompatActivity()
 {
@@ -61,6 +59,12 @@ class MainActivity : AppCompatActivity()
                 {
                     //If compiler can find the user this is what happens
                     Toast.makeText(applicationContext, "Login successful!", Toast.LENGTH_SHORT).show()
+
+                    // Save the username when the user logs in
+                    val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+                    val editor = sharedPreferences.edit()
+                    editor.putString("username", username)  // Use the entered username
+                    editor.apply()
 
                     //This allows the user to navigate to HomePage after a sucessful login:
                     val intent = Intent(this@MainActivity, HomePageActivity::class.java)

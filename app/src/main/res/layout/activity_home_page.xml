@@ -191,7 +191,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/ExpensesGraph"
+                            android:text="@string/CategoriesGraph"
                             android:fontFamily="@font/jost_medium"
                             android:textColor="#FFFFFF"
                             android:translationX="30dp"
@@ -286,7 +286,7 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cv_transactions"
                     android:layout_width="350dp"
-                    android:layout_height="150dp"
+                    android:layout_height="wrap_content"
                     android:layout_margin="8dp"
                     app:cardCornerRadius="30dp"
                     app:layout_constraintTop_toBottomOf="@id/v_space4"
@@ -294,17 +294,26 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:cardBackgroundColor="#40A9A9A9">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/RecentTransactions"
-                        android:textColor="#FFFFFF"
-                        android:textSize="30dp"
-                        android:translationX="50dp"
-                        android:fontFamily="@font/jost_medium" />
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/RecentTransactions"
+                            android:textColor="#FFFFFF"
+                            android:textSize="20sp"
+                            android:fontFamily="@font/jost_medium" />
 
-
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_transactions"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"/>
+                    </LinearLayout>
 
                 </androidx.cardview.widget.CardView>
 

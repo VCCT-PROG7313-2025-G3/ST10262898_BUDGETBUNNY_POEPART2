@@ -1,15 +1,17 @@
-package com.fake.st10262898_budgetbunny_poepart2
+package com.fake.st10262898_budgetbunny_poepart2.data
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [User::class], version = 1, exportSchema = false )
+@Database(entities = [User::class, Expense::class, Budget::class ], version = 4, exportSchema = false )
 abstract class BudgetBunnyDatabase : RoomDatabase()
 {
 
     abstract fun userDao(): UserDao
+    abstract fun expenseDao(): ExpenseDao
+    abstract fun budgetDao(): BudgetDao
 
     companion object{
         @Volatile
@@ -21,9 +23,11 @@ abstract class BudgetBunnyDatabase : RoomDatabase()
                     context.applicationContext,
                     BudgetBunnyDatabase::class.java,
                     "user_database"
-                ).build()
-                INSTANCE = instance
-                instance
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
+                    INSTANCE = instance
+                    instance
             }
         }
     }
