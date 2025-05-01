@@ -13,11 +13,12 @@ import androidx.core.view.WindowInsetsCompat
 class ExpenseList : AppCompatActivity() {
 
 
-    private fun openMonthlyPayment(expenseName: String) {
+    private fun openMonthlyPayment(expenseCategory: String) {
         val intent = Intent(this, MonthlyPayment::class.java)
-        intent.putExtra("EXPENSE_NAME", expenseName)
+        intent.putExtra("EXPENSE_CATEGORY", expenseCategory)
         startActivity(intent)
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,6 +68,7 @@ class ExpenseList : AppCompatActivity() {
         hobbiesButton.setOnClickListener { openMonthlyPayment("Hobbies") }
         rentButton.setOnClickListener { openMonthlyPayment("Rent") }
         customButton.setOnClickListener { openMonthlyPayment("Custom") }
+
 
 
         // Padding handling only
