@@ -12,15 +12,17 @@
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="131dp" />
+        android:layout_height="40dp" />
 
+
+    <!-- Max Goal -->
     <TextView
         android:id="@+id/budgetGoalsQ1"
         android:layout_width="400dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/assistant_bold"
         android:gravity="center"
-        android:text="What is your monthly\n          budget goal?"
+        android:text="What is your monthly\n    budget goal?"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="25sp" />
@@ -30,9 +32,7 @@
         android:layout_height="20dp" />
 
     <EditText
-
         android:layout_gravity="center"
-
         android:width="300dp"
         android:id="@+id/amountEditText"
         android:layout_width="wrap_content"
@@ -49,7 +49,42 @@
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="34dp" />
+        android:layout_height="40dp" />
+
+
+    <!-- Min Goal-->
+    <TextView
+        android:id="@+id/minBudgetGoalLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enter your Minimum Budget Goal"
+        android:fontFamily="@font/assistant_bold"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:gravity="center" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
+
+    <EditText
+        android:id="@+id/minBudgetEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:width="300dp"
+        android:hint="Minimum Budget"
+        android:textColorHint="#B3FFFFFF"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/edittext_background"
+        android:inputType="numberDecimal"
+        android:digits="0123456789."
+        android:padding="8dp"
+        android:textSize="16sp"
+        android:layout_gravity="center" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="30dp" />
 
     <TextView
         android:id="@+id/budgetGoalsQ2"
@@ -63,7 +98,7 @@
 
     <Space
         android:layout_width="match_parent"
-        android:layout_height="13dp" />
+        android:layout_height="20dp" />
 
     <TextView
         android:id="@+id/budgetGoalsQ3"

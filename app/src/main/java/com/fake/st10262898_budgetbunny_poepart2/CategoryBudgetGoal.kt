@@ -24,6 +24,7 @@ class CategoryBudgetGoal : AppCompatActivity() {
         val categoryName = intent.getStringExtra("CATEGORY_NAME") ?: "Custom"
         val totalGoal = intent.getDoubleExtra("TOTAL_BUDGET_GOAL", 0.0)
         val username = intent.getStringExtra("USERNAME") ?: ""
+        val minGoal = intent.getDoubleExtra("MIN_GOAL", 0.0)
 
         val questionText = findViewById<TextView>(R.id.budgetGoalsQ1)
         questionText.text = getString(R.string.budget_goal_question, categoryName)
@@ -48,7 +49,9 @@ class CategoryBudgetGoal : AppCompatActivity() {
                     totalBudgetGoal = totalGoal,
                     budgetCategory = categoryName,
                     budgetAmount = amount,
-                    username = username
+                    username = username,
+                    minTotalBudgetGoal = minGoal
+
                 )
             }
         }
