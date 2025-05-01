@@ -69,7 +69,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="10dp" />
 
-                <!-- FrameLayout containing ProgressBar and Max Marker -->
+                <!-- FrameLayout containing ProgressBar -->
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -84,27 +84,49 @@
                         android:progressTint="@color/dark_pastel_purple"
                         android:backgroundTint="#000000" />
 
+                    <!-- Min Goal Marker -->
                     <View
-                        android:id="@+id/maxMarker"
-                        android:layout_width="2dp"
+                        android:id="@+id/minGoalMarker"
+                        android:layout_width="4dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="start"
+                        android:background="#FFFFFF" />
+
+                    <!-- Max Goal Marker -->
+                    <View
+                        android:id="@+id/maxGoalMarker"
+                        android:layout_width="4dp"
                         android:layout_height="20dp"
                         android:layout_gravity="end"
-                        android:background="#FFFFFF"
-                        android:alpha="0.8" />
+                        android:background="#FFFFFF" />
 
+                    <!-- Min Goal Label -->
                     <TextView
-                        android:id="@+id/maxGoalText"
+                        android:id="@+id/minGoalLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="end|bottom"
-                        android:text="Max Goal"
+                        android:text="Min Goal: R0"
                         android:textColor="#FFFFFF"
                         android:textSize="12sp"
-                        android:layout_marginBottom="4dp"
-                        android:layout_marginEnd="8dp" />
+                        android:layout_gravity="start|bottom"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginStart="4dp"/>
+
+                    <!-- Max Goal Label -->
+                    <TextView
+                        android:id="@+id/maxGoalLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Max Goal: R0"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp"
+                        android:layout_gravity="end|bottom"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="4dp"/>
+
                 </FrameLayout>
 
-                <!-- ✅ Re-added the budget progress text -->
+                <!-- Budget progress text -->
                 <TextView
                     android:id="@+id/budgetForMonth"
                     android:layout_width="wrap_content"

@@ -1,6 +1,8 @@
 package com.fake.st10262898_budgetbunny_poepart2
 
 import android.os.Bundle
+import android.view.View
+import android.widget.FrameLayout
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.LinearLayout
@@ -24,11 +26,11 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_budget_goals_overview)
 
-        // Layout where cards will go
-        val goalsContainer = findViewById<LinearLayout>(R.id.goalsContainer)
-
-        // Progress bar and text
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
+        val minGoalMarker = findViewById<View>(R.id.minGoalMarker)
+        val maxGoalMarker = findViewById<View>(R.id.maxGoalMarker)
+        val minGoalLabel = findViewById<TextView>(R.id.minGoalLabel)
+        val maxGoalLabel = findViewById<TextView>(R.id.maxGoalLabel)
         val budgetText = findViewById<TextView>(R.id.budgetForMonth)
 
         // Get username from SharedPreferences
@@ -42,29 +44,39 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
                 db.budgetDao().getBudgetForUser(username)
             }
 
-            // 🔹 Set progress bar info
+            // Get the minimum and maximum budget goals
+            val minGoal = budgetGoals.minOfOrNull { it.totalBudgetGoal } ?: 0.0
             val totalBudgetGoal = budgetGoals.sumOf { it.totalBudgetGoal }
-            val currentSavedAmount = 0.0 // Placeholder for now
 
+            // Set progress bar info
+            val currentSavedAmount = 0.0 // Placeholder for now
             progressBar.max = totalBudgetGoal.toInt()
             progressBar.progress = currentSavedAmount.toInt()
 
+            // Update the progress text
             budgetText.text = "R${currentSavedAmount.toInt()} of R${totalBudgetGoal.toInt()} saved"
 
-            // 🔹 Dynamically add category cards
-            for (goal in budgetGoals) {
-                val card = layoutInflater.inflate(R.layout.item_goal_card, goalsContainer, false) as CardView
-                val categoryText = card.findViewById<TextView>(R.id.tv_category)
-                val amountText = card.findViewById<TextView>(R.id.tv_amount)
+            // Post the changes to ensure the ProgressBar is fully laid out
+            progressBar.post {
+                // Calculate the position of the Min Goal Marker
+                val progressBarWidth = progressBar.width
+                val minGoalMarkerPosition = (minGoal / totalBudgetGoal * progressBarWidth).toInt()
+                val maxGoalMarkerPosition = (totalBudgetGoal / totalBudgetGoal * progressBarWidth).toInt()
 
-                categoryText.text = goal.budgetCategory
-                amountText.text = "Goal: R${goal.budgetAmount}"
+                // Set the position of the markers
+                minGoalMarker.layoutParams = (minGoalMarker.layoutParams as FrameLayout.LayoutParams).apply {
+                    leftMargin = minGoalMarkerPosition
+                }
 
-                goalsContainer.addView(card)
+                maxGoalMarker.layoutParams = (maxGoalMarker.layoutParams as FrameLayout.LayoutParams).apply {
+                    leftMargin = maxGoalMarkerPosition
+                }
+
+                // Set the label texts
+                minGoalLabel.text = "Min Goal: R${minGoal.toInt()}"
+                maxGoalLabel.text = "Max Goal: R${totalBudgetGoal.toInt()}"
             }
         }
-
-
     }
 
 
