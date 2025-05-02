@@ -145,16 +145,15 @@
         app:srcCompat="@drawable/rentbutto" />
 
     <ImageButton
-        android:id="@+id/customButton"
-        android:layout_width="146dp"
-        android:layout_height="83dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="28dp"
-        android:background="@drawable/custum"
-        android:contentDescription="@string/custom_button"
-        android:scaleType="fitCenter"
-        app:layout_constraintStart_toEndOf="@+id/rentButton"
-        app:layout_constraintTop_toBottomOf="@+id/hobbiesButton"
-        app:srcCompat="@drawable/custombutton" />
+    android:layout_width="146dp"
+    android:layout_height="83dp"
+    android:layout_marginStart="24dp"
+    android:layout_marginTop="28dp"
+    android:background="@drawable/budgetbunny_tab_icon"
+    android:contentDescription=""
+    android:scaleType="fitCenter"
+    app:layout_constraintStart_toEndOf="@+id/rentButton"
+    app:layout_constraintTop_toBottomOf="@+id/hobbiesButton"
+     />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

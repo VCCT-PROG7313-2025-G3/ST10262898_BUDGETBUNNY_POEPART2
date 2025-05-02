@@ -87,7 +87,7 @@ class bugetGoalsPage : AppCompatActivity() {
         babyButton.setOnClickListener { openCategoryGoalPage("Baby") }
 
         // Find the items on the XML
-        val btn_addCustomButton = findViewById<Button>(R.id.addCustom_button)
+
         val btn_next = findViewById<Button>(R.id.next_button)
 
         // Disable Next button until the user enters a valid minTotalBudget
@@ -106,11 +106,6 @@ class bugetGoalsPage : AppCompatActivity() {
             }
         })
 
-        // Sends user to custom budget when clicked
-        btn_addCustomButton.setOnClickListener {
-            val intent = Intent(this, customBudgetPage::class.java)
-            startActivity(intent)
-        }
 
         // Sends the user to the next page when clicking next
         btn_next.setOnClickListener {

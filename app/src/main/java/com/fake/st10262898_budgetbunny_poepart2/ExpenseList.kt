@@ -45,7 +45,7 @@ class ExpenseList : AppCompatActivity() {
             val foodButton = findViewById<ImageButton>(R.id.foodButton)
             val hobbiesButton = findViewById<ImageButton>(R.id.hobbiesButton)
             val rentButton = findViewById<ImageButton>(R.id.rentButton)
-            val customButton = findViewById<ImageButton>(R.id.customButton)
+
 
         nextButton.setOnClickListener {
             val intent = Intent(this, bugetGoalsPage::class.java)
@@ -54,10 +54,7 @@ class ExpenseList : AppCompatActivity() {
             startActivity(intent)
         }
 
-        customButton.setOnClickListener {
-            val intent = Intent(this@ExpenseList, CustomExpense::class.java)
-            startActivity(intent)
-        }
+
 
         //this ensures that when an image button is clicked that in the table this name is saved:
         billsButton.setOnClickListener { openMonthlyPayment("Bills") }
@@ -67,7 +64,7 @@ class ExpenseList : AppCompatActivity() {
         foodButton.setOnClickListener { openMonthlyPayment("Food") }
         hobbiesButton.setOnClickListener { openMonthlyPayment("Hobbies") }
         rentButton.setOnClickListener { openMonthlyPayment("Rent") }
-        customButton.setOnClickListener { openMonthlyPayment("Custom") }
+
 
 
 
