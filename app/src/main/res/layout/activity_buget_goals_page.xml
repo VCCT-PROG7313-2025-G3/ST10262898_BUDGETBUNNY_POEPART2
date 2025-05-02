@@ -152,9 +152,10 @@
             android:text="Baby" />
 
         <Button
-            android:id="@+id/addCustom_button"
             style="@style/category_button_style"
-            android:text="+ Custom" />
+            android:layout_width="151dp"
+            android:background="@drawable/budgetbunny_tab_icon" />
+
     </GridLayout>
 
     <Button

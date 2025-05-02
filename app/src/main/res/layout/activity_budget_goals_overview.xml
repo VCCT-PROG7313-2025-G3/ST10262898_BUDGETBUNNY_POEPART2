@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/bg_date"
     tools:context=".BudgetGoalsOverviewActivity">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:paddingBottom="80dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
 
         <Space
             android:layout_width="match_parent"
@@ -171,6 +178,19 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"/>
 
+            <Button
+                android:id="@+id/btn_add_goal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Categories"
+                android:textAllCaps="false"
+                android:layout_gravity="center"
+                android:padding="12dp"
+                android:layout_marginTop="16dp"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#7B3E92"
+                android:fontFamily="@font/jost_medium" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -189,12 +209,14 @@
             android:paddingTop="16dp"/>
 
 
+
+
         <!-- Prompt to view entries by date -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:layout_marginBottom="40dp"
+            android:layout_marginBottom="60dp"
             app:cardElevation="6dp"
             app:cardCornerRadius="16dp"
             app:cardBackgroundColor="#80A9A9A9">
@@ -203,7 +225,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp"
+                android:padding="20dp"
                 android:gravity="center">
 
                 <TextView
@@ -233,3 +255,15 @@
 
     </ScrollView>
 
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:menu="@menu/bottom_nav_menu"
+        app:labelVisibilityMode="unlabeled"
+        android:background="#000000"
+        app:itemIconSize="40dp"
+        app:itemIconTint="#FFFFFF"
+        app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"/>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

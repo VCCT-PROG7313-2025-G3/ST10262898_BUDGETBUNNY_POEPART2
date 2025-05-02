@@ -72,7 +72,7 @@ class ViewMonthsExpense : AppCompatActivity() {
             Log.d(TAG, "Observed ${expenses.size} expenses in LiveData")
             if (expenses.isEmpty()) {
                 Log.w(TAG, "Empty expense list received")
-                toast("No expenses found for selected period") // Add this extension function
+                toast("No expenses found for selected period")
             }
             expenseAdapter.submitList(expenses)
         }
@@ -113,7 +113,7 @@ class ViewMonthsExpense : AppCompatActivity() {
     }
 
     private fun getCurrentUsername(): String? {
-        // Change from "user_prefs" to "UserPrefs" to match MainActivity
+
         val sharedPref = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
         val username = sharedPref.getString("username", null)
 

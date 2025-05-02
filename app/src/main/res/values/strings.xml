@@ -79,7 +79,7 @@
 
     <!-- These are the strings for the budget goals Overview page -->
     <string name="BudgetBunny">Budget Bunny</string>
-    <string name="budgetGoalTitle">What is your monthly\nbudget goal for %1$s?</string>
+    <string name="budgetGoalTitle">Monthly Budget?</string>
     <string name="Categories"><u>Categories</u></string>
 
     <!-- These are the strings for the activity expense entry -->
@@ -125,4 +125,16 @@
     <!-- These are the strings for the invitation screen
     <string name="inv_welcome_back_to">Welcome back to</string>
     <string name="inv_budgetbunny">BudgetBunny</string> -->
+
+    <!-- Final Screen strings -->
+    <string name="return_to_dashboard">Finish</string>
+    <string name="you_re_signed_up">You\'re signed up!</string>
+    <string name="now_let_s_set_up_your_profile">now, let\'s set up your profile</string>
+    <string name="goal_budget">Goal Budget</string>
+    <string name="amount">Amount</string>
+    <string name="income">Income</string>
+    <string name="please_enter_date">Please enter date</string>
+    <string name="please_enter_amount">Please enter amount</string>
+    <string name="please_enter_income">Please enter income</string>
+    <string name="date">Date</string>
 </resources>

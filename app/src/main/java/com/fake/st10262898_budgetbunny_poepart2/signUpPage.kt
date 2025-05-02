@@ -45,7 +45,8 @@ class signUpPage : AppCompatActivity() {
 
 
 
-            //This if statement will link the restrictions to the actualy input user inputs (and turn text red if wrong)
+
+            //This if statement will link the restrictions to the actually input user inputs (and turn text red if wrong)
             if (username.isNotEmpty() && password.isNotEmpty())
             {
                         if (!isPasswordValid(password)) { //If password does not meet the requirments this is what will happen:
@@ -69,7 +70,7 @@ class signUpPage : AppCompatActivity() {
 
 
                                     //After a successful sign-up this will take the user to the page where they can choose expenses.
-                                    val intent = Intent(this, ExpenseList::class.java)
+                                    val intent = Intent(this, SignUpThanks::class.java)
                                     intent.putExtra("username", username)   // Pass the username to ExpenseList
                                     startActivity(intent)
                                     finish()  // Finish the sign-up page so user cannot go back to it

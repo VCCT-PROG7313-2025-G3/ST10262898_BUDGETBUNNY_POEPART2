@@ -34,14 +34,14 @@ class bugetGoalsPage : AppCompatActivity() {
         val investmentsButton = findViewById<Button>(R.id.investments_button)
         val babyButton = findViewById<Button>(R.id.baby_button)
         val amountEditText = findViewById<EditText>(R.id.amountEditText)
-        val minBudgetEditText = findViewById<EditText>(R.id.minBudgetEditText) // minTotalGoalBudget field
+        val minBudgetEditText = findViewById<EditText>(R.id.minBudgetEditText)
 
         // Save the username in SharedPreferences
         val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
         val username = sharedPreferences.getString("username", "") ?: ""
 
         val editor = sharedPreferences.edit()
-        editor.putString("username", username) //changed this myself
+        editor.putString("username", username)
         editor.apply()
 
         // Use the username as needed in ExpenseList
@@ -67,7 +67,7 @@ class bugetGoalsPage : AppCompatActivity() {
 
 
 
-                // Proceed with category-specific page
+
                 val intent = Intent(this, CategoryBudgetGoal::class.java)
                 intent.putExtra("CATEGORY_NAME", category)
                 intent.putExtra("USERNAME", username)
@@ -86,12 +86,12 @@ class bugetGoalsPage : AppCompatActivity() {
         investmentsButton.setOnClickListener { openCategoryGoalPage("Investments") }
         babyButton.setOnClickListener { openCategoryGoalPage("Baby") }
 
-        // Find the items on the XML
-        val btn_addCustomButton = findViewById<Button>(R.id.addCustom_button)
+
+
         val btn_next = findViewById<Button>(R.id.next_button)
 
         // Disable Next button until the user enters a valid minTotalBudget
-        btn_next.isEnabled = false // Initially disabled
+        btn_next.isEnabled = false
 
         // Enable the Next button only when both goals are entered
         minBudgetEditText.addTextChangedListener(object : TextWatcher {
@@ -106,11 +106,6 @@ class bugetGoalsPage : AppCompatActivity() {
             }
         })
 
-        // Sends user to custom budget when clicked
-        btn_addCustomButton.setOnClickListener {
-            val intent = Intent(this, customBudgetPage::class.java)
-            startActivity(intent)
-        }
 
         // Sends the user to the next page when clicking next
         btn_next.setOnClickListener {

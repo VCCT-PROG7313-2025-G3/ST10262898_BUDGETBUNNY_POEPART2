@@ -24,7 +24,7 @@ class BudgetViewModel (application: Application) : AndroidViewModel(application)
     private val _budgetSaved = MutableLiveData<Boolean>()
     val budgetSaved: LiveData<Boolean> get() = _budgetSaved
 
-    // New MutableLiveData to track saving of minTotalBudgetGoal
+
     private val _minTotalBudgetGoalSaved = MutableLiveData<Boolean>()
     val minTotalBudgetGoalSaved: LiveData<Boolean> get() = _minTotalBudgetGoalSaved
 
@@ -35,8 +35,8 @@ class BudgetViewModel (application: Application) : AndroidViewModel(application)
         budgetAmount: Double,
         username: String,
         minTotalBudgetGoal: Double,
-        budgetDate: Long,              // NEW
-        budgetIncome: Double           // NEW
+        budgetDate: Long,
+        budgetIncome: Double
     ) {
         val budget = Budget(
             totalBudgetGoal = totalBudgetGoal,
@@ -44,8 +44,8 @@ class BudgetViewModel (application: Application) : AndroidViewModel(application)
             budgetAmount = budgetAmount,
             username = username,
             minTotalBudgetGoal = minTotalBudgetGoal,
-            budgetDate = budgetDate,               // NEW
-            budgetIncome = budgetIncome            // NEW
+            budgetDate = budgetDate,
+            budgetIncome = budgetIncome
         )
 
         Log.d("BudgetViewModel", "Adding Budget: $budget")
@@ -53,8 +53,8 @@ class BudgetViewModel (application: Application) : AndroidViewModel(application)
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 repository.insertBudget(budget)
-                // Optionally, save minTotalBudgetGoal separately if needed
-                updateMinTotalBudgetGoal(username, minTotalBudgetGoal) // New line to update minTotalBudgetGoal
+
+                updateMinTotalBudgetGoal(username, minTotalBudgetGoal)
                 loadBudgets(username)
                 _budgetSaved.postValue(true)  // Notify success
                 Log.d("BudgetViewModel", "Budget saved successfully!")
@@ -65,7 +65,7 @@ class BudgetViewModel (application: Application) : AndroidViewModel(application)
         }
     }
 
-    // New method to save the minTotalBudgetGoal
+
     private fun updateMinTotalBudgetGoal(username: String, minTotalBudgetGoal: Double) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -95,7 +95,7 @@ class BudgetViewModel (application: Application) : AndroidViewModel(application)
         }
     }
 
-    // New method to get the minTotalBudgetGoal for the user (if you need to display or use it elsewhere)
+
     fun getMinTotalBudgetGoalForUser(username: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {

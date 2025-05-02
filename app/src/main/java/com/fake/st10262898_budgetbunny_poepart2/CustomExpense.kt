@@ -54,9 +54,6 @@ class CustomExpense : AppCompatActivity() {
 
 
 
-
-
-//og code for reference or safety
             enableEdgeToEdge()
             setContentView(R.layout.activity_custom_expense)
             ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->

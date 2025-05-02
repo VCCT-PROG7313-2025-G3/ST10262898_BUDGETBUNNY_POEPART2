@@ -109,7 +109,7 @@ class HomePageActivity : AppCompatActivity() {
 
 
 
-        pieChart.description.isEnabled = false  // No description (No space for description)
+        pieChart.description.isEnabled = false
         pieChart.setDrawEntryLabels(false)
         pieChart.setDrawCenterText(false)
         pieChart.isDrawHoleEnabled = true
@@ -249,7 +249,7 @@ class HomePageActivity : AppCompatActivity() {
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {
-                    // Already on Home, do nothing
+
                     true
                 }
                 R.id.nav_transactions -> {
