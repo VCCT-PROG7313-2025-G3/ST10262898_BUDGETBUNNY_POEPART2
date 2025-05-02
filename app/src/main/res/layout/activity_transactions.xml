@@ -9,6 +9,17 @@
     android:background="@drawable/bg_date"
     tools:context=".TransactionsActivity">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView">
+
+        <!-- This is the single required child of ScrollView -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
     <!-- Space at the top -->
     <Space
         android:id="@+id/space1"
@@ -243,11 +254,14 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+
         <Space
             android:id="@+id/space3"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             app:layout_constraintTop_toBottomOf="@id/expensesCard" />
+
+
 
         <!-- Transactions CardView -->
         <androidx.cardview.widget.CardView
@@ -354,6 +368,7 @@
 
                         <!-- January -->
                         <LinearLayout
+                            android:id="@+id/tileJanuary"
                             android:layout_width="0dp"
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
@@ -374,6 +389,7 @@
 
                         <!-- February -->
                         <LinearLayout
+                            android:id="@+id/tileFebruary"
                             android:layout_width="0dp"
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
@@ -394,6 +410,7 @@
 
                         <!-- March -->
                         <LinearLayout
+                            android:id="@+id/tileMarch"
                             android:layout_width="0dp"
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
@@ -414,6 +431,7 @@
 
                         <!-- April -->
                         <LinearLayout
+                            android:id="@+id/tileApril"
                             android:layout_width="0dp"
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
@@ -434,6 +452,7 @@
 
                         <!--May-->
                         <LinearLayout
+                            android:id="@+id/tileMay"
                             android:layout_width="0dp"
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
@@ -454,6 +473,7 @@
 
                         <!-- June -->
                         <LinearLayout
+                            android:id="@+id/tileJune"
                             android:layout_width="0dp"
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
@@ -474,6 +494,7 @@
 
                         <!-- July -->
                         <LinearLayout
+                            android:id="@+id/tileJuly"
                             android:layout_width="0dp"
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
@@ -494,6 +515,7 @@
 
                         <!-- August -->
                         <LinearLayout
+                            android:id="@+id/tileAugust"
                             android:layout_width="0dp"
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
@@ -514,6 +536,7 @@
 
                         <!-- Septemeber -->
                         <LinearLayout
+                            android:id="@+id/tileSeptember"
                             android:layout_width="0dp"
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
@@ -540,6 +563,7 @@
 
                         <!--October -->
                         <LinearLayout
+                            android:id="@+id/tileOctober"
                             android:layout_width="0dp"
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
@@ -560,6 +584,7 @@
 
                         <!-- November -->
                         <LinearLayout
+                            android:id="@+id/tileNovember"
                             android:layout_width="0dp"
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
@@ -585,6 +610,7 @@
 
                         <!-- December -->
                         <LinearLayout
+                            android:id="@+id/tileDecember"
                             android:layout_width="0dp"
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
@@ -613,6 +639,10 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
+
+
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigationView"
             android:layout_width="match_parent"
@@ -625,5 +655,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:menu="@menu/bottom_nav_menu" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>

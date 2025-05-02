@@ -237,6 +237,8 @@ class HomePageActivity : AppCompatActivity() {
 
 
 
+
+
         //For Navigation bar functionality:
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         bottomNavigationView.setOnItemSelectedListener { item ->

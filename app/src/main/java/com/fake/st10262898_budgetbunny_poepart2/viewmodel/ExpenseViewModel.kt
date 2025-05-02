@@ -12,9 +12,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-class ExpenseViewModel {
+class ExpenseViewModel(application: Application) : AndroidViewModel(application) {
 
-    class ExpenseViewModel(application: Application) : AndroidViewModel(application) {
 
         private val expenseDao = BudgetBunnyDatabase.getDatabase(application).expenseDao()
         private val repository = ExpenseRepository(expenseDao)
@@ -57,5 +56,14 @@ class ExpenseViewModel {
                 loadExpenses(username)
             }
         }
+
+        private val _filteredExpenses = MutableLiveData<List<Expense>>()
+        val filteredExpenses: LiveData<List<Expense>> get() = _filteredExpenses
+
+        fun loadExpensesBetweenDates(username: String, startDate: Long, endDate: Long) {
+            viewModelScope.launch(Dispatchers.IO) {
+                val data = repository.getExpensesBetweenDates(username, startDate, endDate)
+                _filteredExpenses.postValue(data)
+            }
+        }
     }
-}

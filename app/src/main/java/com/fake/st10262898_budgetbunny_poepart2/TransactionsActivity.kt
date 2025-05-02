@@ -14,6 +14,7 @@ import android.os.Bundle
 //Added this for the picture START
 import android.provider.MediaStore
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.Toast
 //Added this for the picture END
 
@@ -63,6 +64,7 @@ class TransactionsActivity : AppCompatActivity() {
         expenseAdapter = ExpenseAdapter(emptyList())
         recyclerView.adapter = expenseAdapter
 
+        /*
         // Setup camera button
         val btnUploadReceipt = findViewById<Button>(R.id.btnUploadReceipt)
         btnUploadReceipt.setOnClickListener {
@@ -72,6 +74,8 @@ class TransactionsActivity : AppCompatActivity() {
                 requestCameraPermission()
             }
         }
+        */
+
 
         // Get current user from SharedPreferences
         val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
@@ -126,36 +130,73 @@ class TransactionsActivity : AppCompatActivity() {
             bottomNavigationView.setOnItemSelectedListener { item ->
                 when (item.itemId) {
                     R.id.nav_home -> {
-                        startActivity(Intent(this@TransactionsActivity, HomePageActivity::class.java))
+                        startActivity(
+                            Intent(
+                                this@TransactionsActivity,
+                                HomePageActivity::class.java
+                            )
+                        )
                         true
                     }
+
                     R.id.nav_transactions -> {
                         //User is currently in the transactions page
                         true
                     }
+
                     R.id.nav_budgetGoal -> {
-                        startActivity(Intent(this@TransactionsActivity, BudgetGoalsOverviewActivity::class.java))
+                        startActivity(
+                            Intent(
+                                this@TransactionsActivity,
+                                BudgetGoalsOverviewActivity::class.java
+                            )
+                        )
                         true
                     }
+
                     R.id.nav_settings -> {
                         startActivity(Intent(this@TransactionsActivity, Settings::class.java))
                         true
                     }
+
                     else -> false
                 }
             }
         }
-    }
 
+
+        //Adding functionality to the Months at a glance area:
+        val monthTileIds = listOf(
+            R.id.tileJanuary, R.id.tileFebruary, R.id.tileMarch,
+            R.id.tileApril, R.id.tileMay, R.id.tileJune,
+            R.id.tileJuly, R.id.tileAugust, R.id.tileSeptember,
+            R.id.tileOctober, R.id.tileNovember, R.id.tileDecember
+        )
+
+        // Find all views and set click listeners
+        monthTileIds.forEachIndexed { index, tileId ->
+            val tile = findViewById<LinearLayout>(tileId)
+            tile.setOnClickListener {
+                val intent = Intent(this, ViewMonthsExpense::class.java)
+                // Pass the month number (1-12)
+                intent.putExtra("month", index + 1)
+                startActivity(intent)
+            }
+
+
+        }
+
+        /*
     //Added this for the picture START
     private fun checkCameraPermission(): Boolean {
         return (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) ==
                 PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
                 PackageManager.PERMISSION_GRANTED)
-    }
+    }*/
 
 
+        /*
     private fun requestCameraPermission() {
         ActivityCompat.requestPermissions(
             this,
@@ -166,12 +207,16 @@ class TransactionsActivity : AppCompatActivity() {
             CAMERA_PERMISSION_CODE
         )
     }
+    */
 
+
+        /*
     private fun openCamera() {
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE)
-    }
+    } */
 
+        /*
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -192,6 +237,9 @@ class TransactionsActivity : AppCompatActivity() {
     }
     //please commit
 
+*/
+
+        /*
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == CAMERA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
@@ -206,4 +254,7 @@ class TransactionsActivity : AppCompatActivity() {
     }
     //Added this for the picture END
 
+*/
+
+    }
 }

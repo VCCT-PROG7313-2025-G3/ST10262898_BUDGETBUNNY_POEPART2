@@ -13,4 +13,9 @@ class ExpenseRepository (private val expenseDao: ExpenseDao){
     suspend fun deleteExpense(id: Int) {
         expenseDao.deleteExpense(id)
     }
+
+    suspend fun getExpensesBetweenDates(username: String, startDate: Long, endDate: Long): List<Expense> {
+        return expenseDao.getExpensesBetweenDates(username, startDate, endDate)
+    }
+
 }
