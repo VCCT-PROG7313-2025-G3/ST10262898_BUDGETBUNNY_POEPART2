@@ -1,40 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_date"
     android:orientation="vertical"
     android:padding="16dp"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    tools:context=".EditTransactionsActivity">
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fontFamily="@font/assistant_extrabold"
+        android:text="Edit Transaction"
+        android:textColor="@color/white"
+        android:textSize="30sp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="30dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/assistant_extrabold"
+        android:text="Expense Name"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:layout_marginStart="8dp" />
 
     <EditText
         android:id="@+id/etExpenseName"
-        android:hint="Expense Name"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:hint="Enter expense name"
+        android:background="@drawable/edittext_background"
+        android:layout_marginTop="8dp"
+        android:padding="12dp"
+        android:textColor="#FFFFFF"
+        android:fontFamily="@font/jost_medium" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/assistant_extrabold"
+        android:text="Expense Amount"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:layout_marginStart="8dp" />
 
     <EditText
         android:id="@+id/etExpenseAmount"
-        android:hint="Expense Amount"
-        android:inputType="numberDecimal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:hint="Enter amount"
+        android:background="@drawable/edittext_background"
+        android:layout_marginTop="8dp"
+        android:padding="12dp"
+        android:inputType="numberDecimal"
+        android:textColor="#FFFFFF"
+        android:fontFamily="@font/jost_medium" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/assistant_extrabold"
+        android:text="Receipt Image"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:layout_marginStart="8dp" />
 
     <ImageView
         android:id="@+id/ivReceipt"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:layout_marginVertical="12dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/edittext_background"
         android:scaleType="centerCrop"
         android:contentDescription="Receipt Image" />
 
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="16dp" />
+
     <Button
         android:id="@+id/btnTakePicture"
-        android:text="Take Receipt Picture"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="32dp"
+        android:background="@drawable/custum"
+        android:fontFamily="@font/assistant_extrabold"
+        android:padding="12dp"
+        android:text="Take Receipt Picture"
+        android:textColor="@color/black"
+        android:textSize="18sp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="16dp" />
 
     <Button
         android:id="@+id/btnSaveChanges"
-        android:text="Save Changes"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="32dp"
+        android:background="@drawable/custum"
+        android:fontFamily="@font/assistant_extrabold"
+        android:padding="12dp"
+        android:text="Save Changes"
+        android:textColor="@color/black"
+        android:textSize="18sp" />
 
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="30dp" />
 </LinearLayout>
