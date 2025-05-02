@@ -245,11 +245,7 @@
 
                 </androidx.gridlayout.widget.GridLayout>
 
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="Add an expense" />
+
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -309,6 +305,17 @@
                         android:text="Add/View receipt images in edit mode"
                         android:textColor="#FFFFFF"
                         android:textSize="14sp" />
+
+                    <Button
+                        android:id="@+id/btn_add_expense"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="8dp"
+                        android:backgroundTint="#A175D9"
+                        android:text="Add New Expense"
+                        android:textColor="#000000"
+                        android:fontFamily="@font/jost_medium"/>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_transaction_list"

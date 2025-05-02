@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import com.fake.st10262898_budgetbunny_poepart2.data.Budget
 import com.fake.st10262898_budgetbunny_poepart2.data.BudgetBunnyDatabase
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.Dispatchers
@@ -30,50 +31,31 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
     private var maxGoalValue = 0.0
     private lateinit var progressBar: ProgressBar
     private lateinit var budgetText: TextView
+    private lateinit var goalsContainer: LinearLayout
+    private lateinit var tvMinGoalValue: TextView
+    private lateinit var tvMaxGoalValue: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_budget_goals_overview)
 
+        // Initialize all views
         progressBar = findViewById(R.id.progressBar)
         budgetText = findViewById(R.id.budgetForMonth)
-        val minGoalMarker = findViewById<View>(R.id.minGoalMarker)
-        val maxGoalMarker = findViewById<View>(R.id.maxGoalMarker)
-        val minGoalLabel = findViewById<TextView>(R.id.minGoalLabel)
-        val maxGoalLabel = findViewById<TextView>(R.id.maxGoalLabel)
-        val tvMinGoalValue = findViewById<TextView>(R.id.tv_minGoalValue)
-        val tvMaxGoalValue = findViewById<TextView>(R.id.tv_maxGoalValue)
-        val goalsContainer = findViewById<LinearLayout>(R.id.goalsContainer)
+        goalsContainer = findViewById(R.id.goalsContainer)
+        tvMinGoalValue = findViewById(R.id.tv_minGoalValue)
+        tvMaxGoalValue = findViewById(R.id.tv_maxGoalValue)
 
-        // Add Income Button
+        // Setup buttons and other UI elements...
+        setupUI()
+    }
+
+    private fun setupUI() {
+        // Your existing button setup code...
         val addIncomeBtn = Button(this).apply {
-            text = "Add Income"
-            setTextColor(Color.WHITE)
-            backgroundTintList = ContextCompat.getColorStateList(this@BudgetGoalsOverviewActivity, R.color.dark_pastel_purple)
-            setOnClickListener {
-                val input = EditText(this@BudgetGoalsOverviewActivity).apply {
-                    inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
-                }
-                AlertDialog.Builder(this@BudgetGoalsOverviewActivity)
-                    .setTitle("Add Income")
-                    .setView(input)
-                    .setPositiveButton("Add") { _, _ ->
-                        val amount = input.text.toString().toDoubleOrNull() ?: 0.0
-                        if (amount > 0) {
-                            currentSavedAmount += amount
-                            // Update both progress and max value
-                            progressBar.max = maxGoalValue.toInt()
-                            progressBar.progress = currentSavedAmount.toInt()
-                            budgetText.text = "R${currentSavedAmount.toInt()} of R${maxGoalValue.toInt()} saved"
-                            Toast.makeText(this@BudgetGoalsOverviewActivity, "Added R$amount", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                    .setNegativeButton("Cancel", null)
-                    .show()
-            }
+            // ... keep your existing addIncomeBtn code
         }
 
-        //Button to add goals
         val addGoalButton = findViewById<Button>(R.id.btn_add_goal)
         addGoalButton.setOnClickListener {
             val intent = Intent(this, GoalEntry::class.java)
@@ -84,43 +66,103 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
         val cardView = findViewById<CardView>(R.id.card_budgetGoal)
         (cardView.getChildAt(0) as LinearLayout).addView(addIncomeBtn, 1)
 
+        // Setup navigation bar...
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNavigationView.selectedItemId = R.id.nav_budgetGoal
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> {
+                    val intent = Intent(this, HomePageActivity::class.java)
+                    startActivity(intent)
+                    overridePendingTransition(0, 0)
+                    true
+                }
+                R.id.nav_transactions -> {
+                    val intent = Intent(this, TransactionsActivity::class.java)
+                    startActivity(intent)
+                    overridePendingTransition(0, 0)
+                    true
+                }
+                R.id.nav_budgetGoal -> {
+                    // Already on this page
+                    true
+                }
+                R.id.nav_settings -> {
+                    val intent = Intent(this, Settings::class.java)
+                    startActivity(intent)
+                    overridePendingTransition(0, 0)
+                    true
+                }
+                else -> false
+                // ... keep your existing navigation code
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadBudgetGoals()
+    }
+
+    private fun loadBudgetGoals() {
         val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
         val username = sharedPreferences.getString("username", "") ?: return
-
-        val tvDateTime: TextView = findViewById(R.id.tv_dateTime)
-        tvDateTime.text = java.text.SimpleDateFormat("dd MMMM yyyy, HH:mm", java.util.Locale.getDefault())
-            .format(java.util.Date())
 
         lifecycleScope.launch {
             val budgetGoals = withContext(Dispatchers.IO) {
                 val db = BudgetBunnyDatabase.getDatabase(this@BudgetGoalsOverviewActivity)
-                val goals = db.budgetDao().getBudgetForUser(username)
-                Log.d("BudgetDebug", "Retrieved ${goals.size} goals for user $username")
-                goals.forEach { Log.d("BudgetDebug", "Goal: ${it.budgetCategory} - R${it.budgetAmount}") }
-                goals
+                db.budgetDao().getBudgetForUser(username)
             }
 
-            val minGoal = budgetGoals.minOfOrNull { it.totalBudgetGoal } ?: 0.0
-            maxGoalValue = budgetGoals.sumOf { it.totalBudgetGoal } // Store max value in our variable
+            updateUI(budgetGoals)
+        }
+    }
 
-            progressBar.max = maxGoalValue.toInt()
-            progressBar.progress = currentSavedAmount.toInt()
-            budgetText.text = "R${currentSavedAmount.toInt()} of R${maxGoalValue.toInt()} saved"
+    private fun updateUI(budgetGoals: List<Budget>) {
+        // Calculate values
+        val minGoal = budgetGoals.minOfOrNull { it.totalBudgetGoal } ?: 0.0
+        maxGoalValue = budgetGoals.sumOf { it.totalBudgetGoal }
+        currentSavedAmount = budgetGoals.sumOf { it.budgetAmount }
 
-            tvMinGoalValue.text = "Min Goal: R${minGoal.toInt()}"
-            tvMaxGoalValue.text = "Max Goal: R${maxGoalValue.toInt()}"
+        // Update progress bar
+        progressBar.max = maxGoalValue.toInt()
+        progressBar.progress = currentSavedAmount.toInt()
+        budgetText.text = "R${currentSavedAmount.toInt()} of R${maxGoalValue.toInt()} saved"
 
-            maxGoalMarker.visibility = View.VISIBLE
-            maxGoalMarker.bringToFront()
+        // Update min/max labels
+        tvMinGoalValue.text = "Min Goal: R${minGoal.toInt()}"
+        tvMaxGoalValue.text = "Max Goal: R${maxGoalValue.toInt()}"
 
-            val viewByDateButton: Button = findViewById(R.id.btn_view_by_date)
-            viewByDateButton.setOnClickListener {
-                val intent = Intent(this@BudgetGoalsOverviewActivity, ViewBudgetByDate::class.java)
-                startActivity(intent)
+        // Clear and rebuild goals container
+        goalsContainer.removeAllViews()
+        val inflater = LayoutInflater.from(this)
+
+        // Group by category and add to UI
+        budgetGoals.groupBy { it.budgetCategory }.forEach { (category, budgets) ->
+            budgets.forEach { budget ->
+                val cardView = inflater.inflate(R.layout.item_goal_card, goalsContainer, false)
+                val tvCategory = cardView.findViewById<TextView>(R.id.tv_category)
+                val tvAmount = cardView.findViewById<TextView>(R.id.tv_amount)
+
+                tvCategory.text = budget.budgetCategory
+                tvAmount.text = "Goal: R${budget.totalBudgetGoal} (Saved: R${budget.budgetAmount})"
+                goalsContainer.addView(cardView)
             }
+        }
 
-            progressBar.post {
-                val progressBarWidth = progressBar.width
+        // Update marker positions (if needed)
+        updateMarkerPositions(minGoal)
+    }
+
+    private fun updateMarkerPositions(minGoal: Double) {
+        val minGoalMarker = findViewById<View>(R.id.minGoalMarker)
+        val maxGoalMarker = findViewById<View>(R.id.maxGoalMarker)
+        val minGoalLabel = findViewById<TextView>(R.id.minGoalLabel)
+        val maxGoalLabel = findViewById<TextView>(R.id.maxGoalLabel)
+
+        progressBar.post {
+            val progressBarWidth = progressBar.width
+            if (maxGoalValue > 0) {
                 val minGoalMarkerPosition = (minGoal / maxGoalValue * progressBarWidth).toInt()
 
                 minGoalMarker.layoutParams =
@@ -152,52 +194,6 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
                         }
                 }
             }
-
-            val inflater = LayoutInflater.from(this@BudgetGoalsOverviewActivity)
-            goalsContainer.removeAllViews()
-
-            for (goal in budgetGoals) {
-                val cardView = inflater.inflate(R.layout.item_goal_card, goalsContainer, false)
-                val tvCategory = cardView.findViewById<TextView>(R.id.tv_category)
-                val tvAmount = cardView.findViewById<TextView>(R.id.tv_amount)
-
-                tvCategory.text = goal.budgetCategory
-                tvAmount.text = "Amount: R${goal.budgetAmount}"
-
-                goalsContainer.addView(cardView)
-            }
         }
-
-        // Initialize navigation bar
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-        bottomNavigationView.selectedItemId = R.id.nav_budgetGoal // Highlight current tab
-        bottomNavigationView.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_home -> {
-                    val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
-                    overridePendingTransition(0, 0)
-                    true
-                }
-                R.id.nav_transactions -> {
-                    val intent = Intent(this, TransactionsActivity::class.java)
-                    startActivity(intent)
-                    overridePendingTransition(0, 0)
-                    true
-                }
-                R.id.nav_budgetGoal -> {
-                    // Already on this page
-                    true
-                }
-                R.id.nav_settings -> {
-                    val intent = Intent(this, Settings::class.java)
-                    startActivity(intent)
-                    overridePendingTransition(0, 0)
-                    true
-                }
-                else -> false
-            }
-        }
-
     }
 }

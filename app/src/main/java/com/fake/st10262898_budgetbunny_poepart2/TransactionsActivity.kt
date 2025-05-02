@@ -4,13 +4,13 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.os.Bundle
-import android.provider.MediaStore
+import android.util.Log
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -33,9 +33,20 @@ class TransactionsActivity : AppCompatActivity() {
     companion object {
         private const val CAMERA_PERMISSION_CODE = 100
         private const val CAMERA_REQUEST_CODE = 101
+        private const val ADD_EXPENSE_REQUEST = 1
     }
 
     private lateinit var expenseAdapter: ExpenseAdapter
+
+    // Register the launcher for the activity result
+    private val addExpenseLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            Log.d("Transactions", "Expense added, refreshing list")
+            loadExpenses()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +65,12 @@ class TransactionsActivity : AppCompatActivity() {
         )
         tvDateTime.text = currentDateTime
 
+        val btnAddExpense = findViewById<Button>(R.id.btn_add_expense)
+        btnAddExpense.setOnClickListener {
+            val intent = Intent(this, ExpenseEntry::class.java)
+            addExpenseLauncher.launch(intent)
+        }
+
         // Initialize RecyclerView
         val recyclerView = findViewById<RecyclerView>(R.id.rv_transaction_list)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -64,7 +81,7 @@ class TransactionsActivity : AppCompatActivity() {
         }
         recyclerView.adapter = expenseAdapter
 
-        // Load data
+        // Load initial data
         loadExpenses()
 
         // Setup bottom navigation
@@ -72,9 +89,6 @@ class TransactionsActivity : AppCompatActivity() {
 
         // Setup month tiles
         setupMonthTiles()
-
-
-
     }
 
     private fun loadExpenses() {
@@ -83,10 +97,22 @@ class TransactionsActivity : AppCompatActivity() {
         val db = BudgetBunnyDatabase.getDatabase(this)
         val expenseDao = db.expenseDao()
 
+        Log.d("Transactions", "Loading expenses for user: $currentUserId")
+
         lifecycleScope.launch {
-            val expenses = expenseDao.getExpenseForUser(currentUserId)
-            expenseAdapter.updateExpenses(expenses)
-            updateCategoryTiles(expenses)
+            try {
+                val expenses = expenseDao.getExpenseForUser(currentUserId)
+                Log.d("Transactions", "Retrieved ${expenses.size} expenses")
+                expenseAdapter.updateExpenses(expenses)
+                updateCategoryTiles(expenses)
+            } catch (e: Exception) {
+                Log.e("Transactions", "Error loading expenses", e)
+                Toast.makeText(
+                    this@TransactionsActivity,
+                    "Error loading expenses",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
     }
 
@@ -124,21 +150,16 @@ class TransactionsActivity : AppCompatActivity() {
 
     private fun setupBottomNavigation() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-
-
         bottomNavigationView.selectedItemId = R.id.nav_transactions
 
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {
                     startActivity(Intent(this@TransactionsActivity, HomePageActivity::class.java))
-                    overridePendingTransition(0, 0) // Smooth transition
+                    overridePendingTransition(0, 0)
                     true
                 }
-                R.id.nav_transactions -> {
-                    // Already on transactions, do nothing
-                    true
-                }
+                R.id.nav_transactions -> true
                 R.id.nav_budgetGoal -> {
                     startActivity(Intent(this@TransactionsActivity, BudgetGoalsOverviewActivity::class.java))
                     overridePendingTransition(0, 0)
@@ -171,7 +192,6 @@ class TransactionsActivity : AppCompatActivity() {
         }
     }
 
-    // Camera permission functions (keep these if you need them)
     private fun checkCameraPermission(): Boolean {
         return ContextCompat.checkSelfPermission(
             this,
