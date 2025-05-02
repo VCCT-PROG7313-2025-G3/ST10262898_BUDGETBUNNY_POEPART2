@@ -103,6 +103,23 @@
     <string name="enter_an_amount_">Enter an amount</string>
     <string name="please_enter_transaction_name">Please enter transaction name</string>
     <string name="enter_transation_name">Enter transation name</string>
+    <string name="select_start_date">Select Start Date</string>
+    <string name="select_end_date">Select End Date</string>
+    <string name="show_transactions">Show Transactions</string>
+    <string name="back_to_dashboard">Back to Dashboard</string>
+    <string name="end_date">End Date</string>
+    <string name="please_select_dates_to_view_transations">Please select dates to view transations</string>
+    <string name="start_date">Start Date</string>
+    <string name="return_to_dashboard">Return to Dashboard</string>
+    <string name="you_re_signed_up">You\'re signed up!</string>
+    <string name="now_let_s_set_up_your_profile">now, let\'s set up your profile</string>
+    <string name="goal_budget">Goal Budget</string>
+    <string name="date">Date</string>
+    <string name="amount">Amount</string>
+    <string name="income">Income</string>
+    <string name="please_enter_date">Please enter date</string>
+    <string name="please_enter_amount">Please enter amount</string>
+    <string name="please_enter_income">Please enter income</string>
 
 
 </resources>
