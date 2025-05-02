@@ -224,10 +224,15 @@ class HomePageActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             val expenses = expenseDao.getExpenseForUser(currentUserId)
-            expenseAdapter = ExpenseAdapter(expenses)
+            expenseAdapter = ExpenseAdapter(expenses) { expense ->
+                // Handle the item click here, for example:
+                val intent = Intent(this@HomePageActivity, EditTransactionsActivity::class.java)
+                intent.putExtra("expenseId", expense.id)
+                startActivity(intent)
+
+            }
             recyclerView.adapter = expenseAdapter
         }
-
 
 
 

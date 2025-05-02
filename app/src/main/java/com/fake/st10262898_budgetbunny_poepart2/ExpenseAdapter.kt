@@ -8,8 +8,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.fake.st10262898_budgetbunny_poepart2.data.Expense
 
-class ExpenseAdapter(private var expenseList: List<Expense>) :
-    RecyclerView.Adapter<ExpenseAdapter.ExpenseViewHolder>() {
+class ExpenseAdapter(
+    private var expenses: List<Expense>,
+    private val onItemClick: (Expense) -> Unit // Add this parameter
+) : RecyclerView.Adapter<ExpenseAdapter.ExpenseViewHolder>() {
 
     class ExpenseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val expenseName: TextView = itemView.findViewById(R.id.tv_expense_name)
@@ -24,18 +26,21 @@ class ExpenseAdapter(private var expenseList: List<Expense>) :
     }
 
     override fun onBindViewHolder(holder: ExpenseViewHolder, position: Int) {
-        val expense = expenseList[position]
+        val expense = expenses[position]
         holder.expenseName.text = expense.expenseName
         holder.expenseAmount.text = "R ${expense.expenseAmount}"
-        // Removed date formatting as it's not needed
+
+        holder.itemView.setOnClickListener {
+            onItemClick(expense)
+        }
     }
 
-    override fun getItemCount(): Int = expenseList.size
+    override fun getItemCount(): Int = expenses.size
 
     // Keep only one update method (removed redundant submitList)
     fun updateExpenses(newExpenses: List<Expense>) {
-        val diffResult = DiffUtil.calculateDiff(ExpenseDiffCallback(expenseList, newExpenses))
-        expenseList = newExpenses
+        val diffResult = DiffUtil.calculateDiff(ExpenseDiffCallback(expenses, newExpenses))
+        expenses = newExpenses
         diffResult.dispatchUpdatesTo(this)
     }
 

@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 
 @Dao
 interface ExpenseDao {
@@ -19,5 +20,11 @@ interface ExpenseDao {
 
     @Query("SELECT * FROM expense_table WHERE username = :username AND expenseDate BETWEEN :startDate AND :endDate ORDER BY expenseDate DESC")
     suspend fun getExpensesBetweenDates(username: String, startDate: Long, endDate: Long): List<Expense>
+
+    @Query("SELECT * FROM expense_table WHERE Id = :id LIMIT 1")
+    suspend fun getExpenseById(id: Int): Expense
+
+    @Update
+    suspend fun updateExpense(expense: Expense)
 
 }

@@ -1,30 +1,19 @@
 package com.fake.st10262898_budgetbunny_poepart2
 
-//changing for commits in case
-//Added this for the picture START
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-//Added this for the picture END
-
 import android.os.Bundle
-
-//Added this for the picture START
 import android.provider.MediaStore
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
-//Added this for the picture END
-
 import androidx.activity.enableEdgeToEdge
-
-//Added this for the picture START
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-//Added this for the picture END
-
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -32,19 +21,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fake.st10262898_budgetbunny_poepart2.data.BudgetBunnyDatabase
+import com.fake.st10262898_budgetbunny_poepart2.data.Expense
 import kotlinx.coroutines.launch
-import android.widget.TextView
 import com.google.android.material.bottomnavigation.BottomNavigationView
-
 
 class TransactionsActivity : AppCompatActivity() {
 
-    //Added this for the picture START
     companion object {
         private const val CAMERA_PERMISSION_CODE = 100
         private const val CAMERA_REQUEST_CODE = 101
     }
-    //Added this for the picture END
 
     private lateinit var expenseAdapter: ExpenseAdapter
 
@@ -58,114 +44,94 @@ class TransactionsActivity : AppCompatActivity() {
             insets
         }
 
-        // Setup RecyclerView
+        // Initialize RecyclerView
         val recyclerView = findViewById<RecyclerView>(R.id.rv_transaction_list)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        expenseAdapter = ExpenseAdapter(emptyList())
+        expenseAdapter = ExpenseAdapter(emptyList()) { selectedExpense ->
+            val intent = Intent(this, EditTransactionsActivity::class.java)
+            intent.putExtra("expenseId", selectedExpense.id)
+            startActivity(intent)
+        }
         recyclerView.adapter = expenseAdapter
 
-        /*
-        // Setup camera button
-        val btnUploadReceipt = findViewById<Button>(R.id.btnUploadReceipt)
-        btnUploadReceipt.setOnClickListener {
-            if (checkCameraPermission()) {
-                openCamera()
-            } else {
-                requestCameraPermission()
-            }
-        }
-        */
+        // Load data
+        loadExpenses()
 
+        // Setup bottom navigation
+        setupBottomNavigation()
 
-        // Get current user from SharedPreferences
+        // Setup month tiles
+        setupMonthTiles()
+    }
+
+    private fun loadExpenses() {
         val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
         val currentUserId = sharedPreferences.getString("username", "") ?: ""
-
-        // Fetch expenses from DB
         val db = BudgetBunnyDatabase.getDatabase(this)
         val expenseDao = db.expenseDao()
 
         lifecycleScope.launch {
             val expenses = expenseDao.getExpenseForUser(currentUserId)
             expenseAdapter.updateExpenses(expenses)
+            updateCategoryTiles(expenses)
+        }
+    }
 
-            // Step 1: Group by category and calculate total for each
-            val categoryTotals = expenses.groupBy { it.expenseCategory }
-                .mapValues { entry ->
-                    entry.value.sumOf { it.expenseAmount }
-                }
-                .toList()
-                .sortedByDescending { it.second }
+    private fun updateCategoryTiles(expenses: List<Expense>) {
+        val categoryTotals = expenses.groupBy { it.expenseCategory }
+            .mapValues { entry -> entry.value.sumOf { it.expenseAmount } }
+            .toList()
+            .sortedByDescending { it.second }
+            .take(4)
 
-            // Step 2: Prepare top 4 categories (or less)
-            val topCategories = categoryTotals.take(4)
+        val nameViews = listOf<TextView>(
+            findViewById(R.id.nameOfExpense1),
+            findViewById(R.id.nameOfExpense2),
+            findViewById(R.id.nameOfExpense3),
+            findViewById(R.id.nameOfExpense4)
+        )
+        val amountViews = listOf<TextView>(
+            findViewById(R.id.expenseAmountOne),
+            findViewById(R.id.expenseAmount2),
+            findViewById(R.id.expenseAmounnt3),
+            findViewById(R.id.expenseAmount4)
+        )
 
-            // Step 3: Update the tile views
-            val nameViews = listOf<TextView>(
-                findViewById(R.id.nameOfExpense1),
-                findViewById(R.id.nameOfExpense2),
-                findViewById(R.id.nameOfExpense3),
-                findViewById(R.id.nameOfExpense4)
-            )
-            val amountViews = listOf<TextView>(
-                findViewById(R.id.expenseAmountOne),
-                findViewById(R.id.expenseAmount2),
-                findViewById(R.id.expenseAmounnt3),
-                findViewById(R.id.expenseAmount4)
-            )
-
-            // Step 4: Populate tiles
-            for (i in 0..3) {
-                if (i < topCategories.size) {
-                    val (category, total) = topCategories[i]
-                    nameViews[i].text = category
-                    amountViews[i].text = "Total: R%.2f".format(total)
-                } else {
-                    nameViews[i].text = "Add category"
-                    amountViews[i].text = "Total: R0"
-                }
-            }
-
-            val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-            bottomNavigationView.setOnItemSelectedListener { item ->
-                when (item.itemId) {
-                    R.id.nav_home -> {
-                        startActivity(
-                            Intent(
-                                this@TransactionsActivity,
-                                HomePageActivity::class.java
-                            )
-                        )
-                        true
-                    }
-
-                    R.id.nav_transactions -> {
-                        //User is currently in the transactions page
-                        true
-                    }
-
-                    R.id.nav_budgetGoal -> {
-                        startActivity(
-                            Intent(
-                                this@TransactionsActivity,
-                                BudgetGoalsOverviewActivity::class.java
-                            )
-                        )
-                        true
-                    }
-
-                    R.id.nav_settings -> {
-                        startActivity(Intent(this@TransactionsActivity, Settings::class.java))
-                        true
-                    }
-
-                    else -> false
-                }
+        for (i in 0..3) {
+            if (i < categoryTotals.size) {
+                val (category, total) = categoryTotals[i]
+                nameViews[i].text = category
+                amountViews[i].text = "Total: R%.2f".format(total)
+            } else {
+                nameViews[i].text = "Add category"
+                amountViews[i].text = "Total: R0"
             }
         }
+    }
 
+    private fun setupBottomNavigation() {
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> {
+                    startActivity(Intent(this@TransactionsActivity, HomePageActivity::class.java))
+                    true
+                }
+                R.id.nav_transactions -> true
+                R.id.nav_budgetGoal -> {
+                    startActivity(Intent(this@TransactionsActivity, BudgetGoalsOverviewActivity::class.java))
+                    true
+                }
+                R.id.nav_settings -> {
+                    startActivity(Intent(this@TransactionsActivity, Settings::class.java))
+                    true
+                }
+                else -> false
+            }
+        }
+    }
 
-        //Adding functionality to the Months at a glance area:
+    private fun setupMonthTiles() {
         val monthTileIds = listOf(
             R.id.tileJanuary, R.id.tileFebruary, R.id.tileMarch,
             R.id.tileApril, R.id.tileMay, R.id.tileJune,
@@ -173,88 +139,28 @@ class TransactionsActivity : AppCompatActivity() {
             R.id.tileOctober, R.id.tileNovember, R.id.tileDecember
         )
 
-        // Find all views and set click listeners
         monthTileIds.forEachIndexed { index, tileId ->
-            val tile = findViewById<LinearLayout>(tileId)
-            tile.setOnClickListener {
+            findViewById<LinearLayout>(tileId).setOnClickListener {
                 val intent = Intent(this, ViewMonthsExpense::class.java)
-                // Pass the month number (1-12)
                 intent.putExtra("month", index + 1)
                 startActivity(intent)
             }
-
-
         }
+    }
 
-        /*
-    //Added this for the picture START
+    // Camera permission functions (keep these if you need them)
     private fun checkCameraPermission(): Boolean {
-        return (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) ==
-                PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
-                PackageManager.PERMISSION_GRANTED)
-    }*/
+        return ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+    }
 
-
-        /*
     private fun requestCameraPermission() {
         ActivityCompat.requestPermissions(
             this,
-            arrayOf(
-                Manifest.permission.CAMERA,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ),
+            arrayOf(Manifest.permission.CAMERA),
             CAMERA_PERMISSION_CODE
         )
-    }
-    */
-
-
-        /*
-    private fun openCamera() {
-        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE)
-    } */
-
-        /*
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == CAMERA_PERMISSION_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openCamera()
-            } else {
-                Toast.makeText(
-                    this,
-                    "Camera permission is required to upload receipts",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
-    }
-    //please commit
-
-*/
-
-        /*
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CAMERA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            // Here you'll get the receipt image
-            val receiptImage = data?.extras?.get("data") as Bitmap
-
-            // TODO: Save this image to your database
-            // You can convert it to a byte array or save it to storage first
-
-            Toast.makeText(this, "Receipt captured successfully!", Toast.LENGTH_SHORT).show()
-        }
-    }
-    //Added this for the picture END
-
-*/
-
     }
 }
