@@ -30,30 +30,37 @@ class Settings : AppCompatActivity() {
         val currentDateTime = SimpleDateFormat("dd MMMM yyyy, HH:mm", Locale.getDefault()).format(Date())
         tvDateTime.text = currentDateTime
 
-        //This is for the navigation bar
+        // This is for the navigation bar
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+
+// Highlight the current tab (budget goals in this case)
+        bottomNavigationView.selectedItemId = R.id.nav_budgetGoal
+
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {
-                    //takes user to home page
+                    // Takes user to home page
                     val intent = Intent(this, HomePageActivity::class.java)
                     startActivity(intent)
+                    overridePendingTransition(0, 0) // Smooth transition
                     true
                 }
                 R.id.nav_transactions -> {
-                    //takes user to transactions page
+                    // Takes user to transactions page
                     val intent = Intent(this, TransactionsActivity::class.java)
                     startActivity(intent)
+                    overridePendingTransition(0, 0)
                     true
                 }
                 R.id.nav_budgetGoal -> {
-                    //takes user to budget goals page
-                    val intent = Intent(this, BudgetGoalsOverviewActivity::class.java)
-                    startActivity(intent)
+                    // Already on budget goals page, do nothing
                     true
                 }
                 R.id.nav_settings -> {
-                    //User is currently on settings activity
+                    // Takes user to settings page
+                    val intent = Intent(this, Settings::class.java)
+                    startActivity(intent)
+                    overridePendingTransition(0, 0)
                     true
                 }
                 else -> false

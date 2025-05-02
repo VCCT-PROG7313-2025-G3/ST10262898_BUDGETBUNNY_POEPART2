@@ -151,10 +151,7 @@
             style="@style/category_button_style"
             android:text="Baby" />
 
-        <Button
-            android:id="@+id/addCustom_button"
-            style="@style/category_button_style"
-            android:text="+ Custom" />
+
     </GridLayout>
 
     <Button

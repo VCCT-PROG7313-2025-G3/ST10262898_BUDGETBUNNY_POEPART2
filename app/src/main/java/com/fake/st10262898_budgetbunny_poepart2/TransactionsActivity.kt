@@ -74,6 +74,7 @@ class TransactionsActivity : AppCompatActivity() {
         setupMonthTiles()
 
 
+
     }
 
     private fun loadExpenses() {
@@ -123,19 +124,29 @@ class TransactionsActivity : AppCompatActivity() {
 
     private fun setupBottomNavigation() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+
+
+        bottomNavigationView.selectedItemId = R.id.nav_transactions
+
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {
                     startActivity(Intent(this@TransactionsActivity, HomePageActivity::class.java))
+                    overridePendingTransition(0, 0) // Smooth transition
                     true
                 }
-                R.id.nav_transactions -> true
+                R.id.nav_transactions -> {
+                    // Already on transactions, do nothing
+                    true
+                }
                 R.id.nav_budgetGoal -> {
                     startActivity(Intent(this@TransactionsActivity, BudgetGoalsOverviewActivity::class.java))
+                    overridePendingTransition(0, 0)
                     true
                 }
                 R.id.nav_settings -> {
                     startActivity(Intent(this@TransactionsActivity, Settings::class.java))
+                    overridePendingTransition(0, 0)
                     true
                 }
                 else -> false

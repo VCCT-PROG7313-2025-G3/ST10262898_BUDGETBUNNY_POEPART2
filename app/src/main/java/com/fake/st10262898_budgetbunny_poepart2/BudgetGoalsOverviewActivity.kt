@@ -19,6 +19,7 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.fake.st10262898_budgetbunny_poepart2.data.BudgetBunnyDatabase
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -159,5 +160,37 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
                 goalsContainer.addView(cardView)
             }
         }
+
+        // Initialize navigation bar
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNavigationView.selectedItemId = R.id.nav_budgetGoal // Highlight current tab
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> {
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                    overridePendingTransition(0, 0)
+                    true
+                }
+                R.id.nav_transactions -> {
+                    val intent = Intent(this, TransactionsActivity::class.java)
+                    startActivity(intent)
+                    overridePendingTransition(0, 0)
+                    true
+                }
+                R.id.nav_budgetGoal -> {
+                    // Already on this page
+                    true
+                }
+                R.id.nav_settings -> {
+                    val intent = Intent(this, Settings::class.java)
+                    startActivity(intent)
+                    overridePendingTransition(0, 0)
+                    true
+                }
+                else -> false
+            }
+        }
+
     }
 }
