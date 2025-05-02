@@ -128,4 +128,6 @@
 
     <!-- Final Strings -->
     <string name="return_to_dashboard">Finish</string>
+    <string name="you_re_signed_up">You\'re signed up!</string>
+    <string name="now_let_s_set_up_your_profile">now, let\'s set up your profile</string>
 </resources>
