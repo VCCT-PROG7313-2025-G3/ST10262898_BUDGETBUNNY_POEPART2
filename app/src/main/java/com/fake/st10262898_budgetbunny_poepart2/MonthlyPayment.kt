@@ -3,7 +3,6 @@ package com.fake.st10262898_budgetbunny_poepart2
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.widget.Button
-import android.widget.DatePicker
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -23,6 +22,7 @@ import java.util.Locale
 class MonthlyPayment : AppCompatActivity() {
 
     private lateinit var expenseDao: ExpenseDao
+    private val calendar = Calendar.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,30 +42,34 @@ class MonthlyPayment : AppCompatActivity() {
         // Get EditText fields for expense name, amount, and date
         val expenseNameEditText = findViewById<EditText>(R.id.enterExpenseName)
         val amountEditText = findViewById<EditText>(R.id.enterAmount)
-        val dateEditText = findViewById<EditText>(R.id.enterDate)  // New EditText for date
+        val dateEditText = findViewById<EditText>(R.id.enterDate)
+
+        // Set up the DatePickerDialog
+        val datePickerListener = DatePickerDialog.OnDateSetListener { _, year, month, day ->
+            calendar.set(Calendar.YEAR, year)
+            calendar.set(Calendar.MONTH, month)
+            calendar.set(Calendar.DAY_OF_MONTH, day)
+
+            // Format the date and set it in the EditText
+            val dateFormat = "dd/MM/yyyy"
+            val sdf = SimpleDateFormat(dateFormat, Locale.getDefault())
+            dateEditText.setText(sdf.format(calendar.time))
+        }
+
+        // Open DatePickerDialog when the user clicks the date EditText
+        dateEditText.setOnClickListener {
+            DatePickerDialog(
+                this,
+                datePickerListener,
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+            ).show()
+        }
 
         // Shared preferences to get the username
         val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
         val username = sharedPreferences.getString("username", "") ?: ""
-
-        // Set up the DatePickerDialog
-        val calendar = Calendar.getInstance()
-        val datePickerDialog = DatePickerDialog(
-            this,
-            { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
-                // Set the date in the EditText
-                val date = "$dayOfMonth/${month + 1}/$year"
-                dateEditText.setText(date)
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-
-        // Open DatePickerDialog when the user clicks the date EditText
-        dateEditText.setOnClickListener {
-            datePickerDialog.show()
-        }
 
         // Save button logic
         val saveButton = findViewById<Button>(R.id.button)
@@ -78,8 +82,8 @@ class MonthlyPayment : AppCompatActivity() {
             if (expenseName.isNotEmpty() && amountString.isNotEmpty() && dateString.isNotEmpty()) {
                 val amount = amountString.toDoubleOrNull()
                 if (amount != null) {
-                    // Convert the date string to a timestamp or use it as a string
-                    val expenseDate = parseDate(dateString)
+                    // Use the calendar time which was set by the date picker
+                    val expenseDate = calendar.timeInMillis
                     saveExpenseToDatabase(expenseCategory, expenseName, amount, username, expenseDate)
                 } else {
                     Toast.makeText(this, "Please enter a valid amount", Toast.LENGTH_SHORT).show()
@@ -90,21 +94,14 @@ class MonthlyPayment : AppCompatActivity() {
         }
     }
 
-    private fun parseDate(dateString: String): Long {
-        // Convert the date string to a timestamp (for example, using SimpleDateFormat)
-        val dateFormat = SimpleDateFormat("d/M/yyyy", Locale.getDefault())
-        val date = dateFormat.parse(dateString)
-        return date?.time ?: System.currentTimeMillis() // Default to current time if parsing fails
-    }
-
     private fun saveExpenseToDatabase(expenseCategory: String, expenseName: String, amount: Double, username: String, expenseDate: Long) {
         val expense = Expense(
             expenseCategory = expenseCategory,
             expenseName = expenseName,
             expenseAmount = amount,
             username = username,
-            expenseDate = expenseDate,  // Use the parsed date
-            expenseImage = null  // No image for now
+            expenseDate = expenseDate,
+            expenseImage = null
         )
 
         lifecycleScope.launch {
