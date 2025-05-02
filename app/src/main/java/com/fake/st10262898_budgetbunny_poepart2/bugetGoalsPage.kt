@@ -65,15 +65,7 @@ class bugetGoalsPage : AppCompatActivity() {
                 // Save the minTotalBudget goal to the database
                 val currentTimestamp = System.currentTimeMillis()
 
-                budgetViewModel.addBudget(
-                    totalBudgetGoal = goal,
-                    budgetCategory = category,
-                    budgetAmount = goal,  // Assuming budgetAmount is the same as totalGoal for now
-                    username = username,
-                    minTotalBudgetGoal = minGoal,
-                    budgetDate = currentTimestamp,     // Add current time as the budget date
-                    budgetIncome = 0.0                 // Set income to 0.0 for now
-                )
+
 
                 // Proceed with category-specific page
                 val intent = Intent(this, CategoryBudgetGoal::class.java)

@@ -2,6 +2,7 @@ package com.fake.st10262898_budgetbunny_poepart2
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
@@ -40,18 +41,24 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
         val tvMaxGoalValue = findViewById<TextView>(R.id.tv_maxGoalValue)
         val goalsContainer = findViewById<LinearLayout>(R.id.goalsContainer)
 
+
         val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
         val username = sharedPreferences.getString("username", "") ?: return
 
         lifecycleScope.launch {
             val budgetGoals = withContext(Dispatchers.IO) {
                 val db = BudgetBunnyDatabase.getDatabase(this@BudgetGoalsOverviewActivity)
-                db.budgetDao().getBudgetForUser(username)
+                val goals = db.budgetDao().getBudgetForUser(username)
+                Log.d("BudgetDebug", "Retrieved ${goals.size} goals for user $username")
+                goals.forEach { Log.d("BudgetDebug", "Goal: ${it.budgetCategory} - R${it.budgetAmount}") }
+                goals
             }
+
+
 
             val minGoal = budgetGoals.minOfOrNull { it.totalBudgetGoal } ?: 0.0
             val totalBudgetGoal = budgetGoals.sumOf { it.totalBudgetGoal }
-            val currentSavedAmount = 0.0 
+            val currentSavedAmount = 0.0
 
             progressBar.max = totalBudgetGoal.toInt()
             progressBar.progress = currentSavedAmount.toInt()

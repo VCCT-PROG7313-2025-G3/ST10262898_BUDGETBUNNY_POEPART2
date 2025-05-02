@@ -57,9 +57,23 @@ class CategoryBudgetGoal : AppCompatActivity() {
 
         findViewById<Button>(R.id.next_button).setOnClickListener {
             val amountText = amountEditText.text.toString().trim()
-            val amount = parseAmount(amountText)
 
-            if (amount != null && username.isNotBlank() && selectedDate != 0L) {
+            if (amountText.isEmpty()) {
+                Toast.makeText(this, "Please enter an amount", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val amount = parseAmount(amountText) ?: run {
+                Toast.makeText(this, "Invalid amount format", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (amount <= 0) {
+                Toast.makeText(this, "Amount must be positive", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (username.isNotBlank() && selectedDate != 0L) {
                 budgetViewModel.addBudget(
                     totalBudgetGoal = totalGoal,
                     budgetCategory = categoryName,
@@ -69,8 +83,8 @@ class CategoryBudgetGoal : AppCompatActivity() {
                     budgetDate = selectedDate,
                     budgetIncome = 0.0
                 )
-            }else {
-                Toast.makeText(this, "Please enter a valid amount and select a date.", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Please select a valid date.", Toast.LENGTH_SHORT).show()
             }
         }
 
