@@ -41,7 +41,7 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
         val goalsContainer = findViewById<LinearLayout>(R.id.goalsContainer)
 
         val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-        val username = sharedPreferences.getString("USERNAME", "") ?: return
+        val username = sharedPreferences.getString("username", "") ?: return
 
         lifecycleScope.launch {
             val budgetGoals = withContext(Dispatchers.IO) {
@@ -51,7 +51,7 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
 
             val minGoal = budgetGoals.minOfOrNull { it.totalBudgetGoal } ?: 0.0
             val totalBudgetGoal = budgetGoals.sumOf { it.totalBudgetGoal }
-            val currentSavedAmount = 0.0 // You can change this if you track actual savings
+            val currentSavedAmount = 0.0 
 
             progressBar.max = totalBudgetGoal.toInt()
             progressBar.progress = currentSavedAmount.toInt()

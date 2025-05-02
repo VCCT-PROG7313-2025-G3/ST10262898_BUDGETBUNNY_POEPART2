@@ -38,10 +38,10 @@ class bugetGoalsPage : AppCompatActivity() {
 
         // Save the username in SharedPreferences
         val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-        val username = sharedPreferences.getString("USERNAME", "") ?: ""
+        val username = sharedPreferences.getString("username", "") ?: ""
 
         val editor = sharedPreferences.edit()
-        editor.putString("USERNAME", username)
+        editor.putString("username", username) //changed this myself
         editor.apply()
 
         // Use the username as needed in ExpenseList

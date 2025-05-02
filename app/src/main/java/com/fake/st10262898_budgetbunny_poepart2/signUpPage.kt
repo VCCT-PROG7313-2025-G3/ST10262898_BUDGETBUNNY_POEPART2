@@ -70,7 +70,7 @@ class signUpPage : AppCompatActivity() {
 
                                     //After a successful sign-up this will take the user to the page where they can choose expenses.
                                     val intent = Intent(this, ExpenseList::class.java)
-                                    intent.putExtra("USERNAME", username)  // Pass the username to ExpenseList
+                                    intent.putExtra("username", username)   // Pass the username to ExpenseList
                                     startActivity(intent)
                                     finish()  // Finish the sign-up page so user cannot go back to it
                                 }
