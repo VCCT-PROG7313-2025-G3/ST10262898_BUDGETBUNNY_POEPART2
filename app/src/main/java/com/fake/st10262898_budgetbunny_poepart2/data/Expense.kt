@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "expense_table")
-class Expense (
+data class Expense (
 
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,

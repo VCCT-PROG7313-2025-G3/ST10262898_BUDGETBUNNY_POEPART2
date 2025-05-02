@@ -26,12 +26,12 @@ class ExpenseList : AppCompatActivity() {
         setContentView(R.layout.activity_expense_list)
 
 
-        val username = intent.getStringExtra("USERNAME") ?: ""
+        val username = intent.getStringExtra("username") ?: ""
 
         // Save the username in SharedPreferences
         val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
         val editor = sharedPreferences.edit()
-        editor.putString("USERNAME", username)
+        editor.putString("username", username)
         editor.apply()
 
         // Use the username as needed in ExpenseList

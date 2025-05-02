@@ -38,10 +38,10 @@ class bugetGoalsPage : AppCompatActivity() {
 
         // Save the username in SharedPreferences
         val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-        val username = sharedPreferences.getString("USERNAME", "") ?: ""
+        val username = sharedPreferences.getString("username", "") ?: ""
 
         val editor = sharedPreferences.edit()
-        editor.putString("USERNAME", username)
+        editor.putString("username", username) //changed this myself
         editor.apply()
 
         // Use the username as needed in ExpenseList
@@ -65,15 +65,7 @@ class bugetGoalsPage : AppCompatActivity() {
                 // Save the minTotalBudget goal to the database
                 val currentTimestamp = System.currentTimeMillis()
 
-                budgetViewModel.addBudget(
-                    totalBudgetGoal = goal,
-                    budgetCategory = category,
-                    budgetAmount = goal,  // Assuming budgetAmount is the same as totalGoal for now
-                    username = username,
-                    minTotalBudgetGoal = minGoal,
-                    budgetDate = currentTimestamp,     // Add current time as the budget date
-                    budgetIncome = 0.0                 // Set income to 0.0 for now
-                )
+
 
                 // Proceed with category-specific page
                 val intent = Intent(this, CategoryBudgetGoal::class.java)
