@@ -24,6 +24,9 @@ import com.fake.st10262898_budgetbunny_poepart2.data.BudgetBunnyDatabase
 import com.fake.st10262898_budgetbunny_poepart2.data.Expense
 import kotlinx.coroutines.launch
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class TransactionsActivity : AppCompatActivity() {
 
@@ -44,6 +47,13 @@ class TransactionsActivity : AppCompatActivity() {
             insets
         }
 
+        // Set the date and time
+        val tvDateTime: TextView = findViewById(R.id.dateText)
+        val currentDateTime = SimpleDateFormat("dd MMMM yyyy, HH:mm", Locale.getDefault()).format(
+            Date()
+        )
+        tvDateTime.text = currentDateTime
+
         // Initialize RecyclerView
         val recyclerView = findViewById<RecyclerView>(R.id.rv_transaction_list)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -62,6 +72,8 @@ class TransactionsActivity : AppCompatActivity() {
 
         // Setup month tiles
         setupMonthTiles()
+
+
     }
 
     private fun loadExpenses() {
