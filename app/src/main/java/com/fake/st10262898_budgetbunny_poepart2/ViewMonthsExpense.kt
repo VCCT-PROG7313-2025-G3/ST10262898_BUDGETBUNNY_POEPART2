@@ -3,23 +3,17 @@ package com.fake.st10262898_budgetbunny_poepart2
 import android.app.DatePickerDialog
 import android.content.Context
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-
-import android.widget.*
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
-import java.util.*
-
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.fake.st10262898_budgetbunny_poepart2.databinding.ActivityViewMonthsExpenseBinding
 import com.fake.st10262898_budgetbunny_poepart2.viewmodel.ExpenseViewModel
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class ViewMonthsExpense : AppCompatActivity() {
 
@@ -28,6 +22,11 @@ class ViewMonthsExpense : AppCompatActivity() {
     private var startDate: Long? = null
     private var endDate: Long? = null
     private lateinit var expenseAdapter: ExpenseDateAdapter
+
+    private val TAG = ViewMonthsExpense::class.java.simpleName
+
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,14 +46,34 @@ class ViewMonthsExpense : AppCompatActivity() {
 
         // Set click listener for view expenses button
         binding.btnViewExpenses.setOnClickListener {
-            val username = getCurrentUsername() // Implement this method to get current user
-            if (startDate != null && endDate != null && username != null) {
-                expenseViewModel.loadExpensesBetweenDates(username, startDate!!, endDate!!)
+            Log.d(TAG, "View Expenses button clicked")
+
+            val username = getCurrentUsername()
+            Log.d(TAG, "Current username: ${username ?: "null"}")
+
+            if (startDate == null || endDate == null) {
+                Log.w(TAG, "Dates not selected - Start: $startDate, End: $endDate")
+                toast("Please select both dates")
+                return@setOnClickListener
             }
+
+            if (username == null) {
+                Log.e(TAG, "No username found")
+                toast("User not logged in")
+                return@setOnClickListener
+            }
+
+            Log.d(TAG, "Loading expenses between ${Date(startDate!!)} and ${Date(endDate!!)}")
+            expenseViewModel.loadExpensesBetweenDates(username, startDate!!, endDate!!)
         }
 
         // Observe the filtered expenses
         expenseViewModel.filteredExpenses.observe(this) { expenses ->
+            Log.d(TAG, "Observed ${expenses.size} expenses in LiveData")
+            if (expenses.isEmpty()) {
+                Log.w(TAG, "Empty expense list received")
+                toast("No expenses found for selected period") // Add this extension function
+            }
             expenseAdapter.submitList(expenses)
         }
     }
@@ -94,10 +113,18 @@ class ViewMonthsExpense : AppCompatActivity() {
     }
 
     private fun getCurrentUsername(): String? {
-        // Implement this to return the current logged-in username
-        // For example, from SharedPreferences or your authentication system
-        val sharedPref = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-        return sharedPref.getString("username", null)
+        // Change from "user_prefs" to "UserPrefs" to match MainActivity
+        val sharedPref = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+        val username = sharedPref.getString("username", null)
+
+        Log.d(TAG, "Retrieving username from SharedPreferences: $username")
+        Log.d(TAG, "All SharedPreferences contents: ${sharedPref.all}")
+
+        return username
+    }
+
+    private fun toast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
 }
