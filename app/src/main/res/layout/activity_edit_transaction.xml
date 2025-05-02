@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--Refererences: https://stackoverflow.com/questions/46337519/how-insert-image-in-room-persistence-library
+https://medium.com/@myofficework000/creating-a-photo-post-and-storing-it-in-room-database-in-android-a3bb2bec59a2
+https://github.com/Coding-Meet/Store-Images-in-Room-Database-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
