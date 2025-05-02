@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--References: https://www.geeksforgeeks.org/find-days-between-two-dates-in-android/
+https://stackoverflow.com/questions/23323792/android-days-between-two-dates-->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"

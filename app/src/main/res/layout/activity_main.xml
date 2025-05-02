@@ -1,4 +1,5 @@
 
+<!--References: https://stackoverflow.com/questions/53813792/nested-constraint-layout-is-it-a-bad-practice-or-not-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"

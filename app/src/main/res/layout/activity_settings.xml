@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--References:https://developer.android.com/develop/ui/views/layout/cardview
+https://developer.android.com/develop/ui/views/layout/cardview-->
+
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"

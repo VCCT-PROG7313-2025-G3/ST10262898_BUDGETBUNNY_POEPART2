@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--References: https://www.geeksforgeeks.org/android-creating-a-calendar-view-app/-->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
