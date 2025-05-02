@@ -177,6 +177,19 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"/>
 
+            <Button
+                android:id="@+id/btn_add_goal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Categories"
+                android:textAllCaps="false"
+                android:layout_gravity="center"
+                android:padding="12dp"
+                android:layout_marginTop="16dp"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#7B3E92"
+                android:fontFamily="@font/jost_medium" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -193,6 +206,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingTop="16dp"/>
+
+
 
 
         <!-- Prompt to view entries by date -->

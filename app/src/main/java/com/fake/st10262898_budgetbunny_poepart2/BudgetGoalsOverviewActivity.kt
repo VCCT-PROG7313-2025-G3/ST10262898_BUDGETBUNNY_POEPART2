@@ -73,6 +73,13 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
             }
         }
 
+        //Button to add goals
+        val addGoalButton = findViewById<Button>(R.id.btn_add_goal)
+        addGoalButton.setOnClickListener {
+            val intent = Intent(this, GoalEntry::class.java)
+            startActivity(intent)
+        }
+
         // Add button to the top of the card
         val cardView = findViewById<CardView>(R.id.card_budgetGoal)
         (cardView.getChildAt(0) as LinearLayout).addView(addIncomeBtn, 1)
