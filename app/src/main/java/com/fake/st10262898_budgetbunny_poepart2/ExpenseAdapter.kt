@@ -16,7 +16,7 @@ class ExpenseAdapter(
     class ExpenseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val expenseName: TextView = itemView.findViewById(R.id.tv_expense_name)
         val expenseAmount: TextView = itemView.findViewById(R.id.tv_expense_amount)
-        // Removed date and category views as they're not needed
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExpenseViewHolder {
@@ -37,7 +37,7 @@ class ExpenseAdapter(
 
     override fun getItemCount(): Int = expenses.size
 
-    // Keep only one update method (removed redundant submitList)
+
     fun updateExpenses(newExpenses: List<Expense>) {
         val diffResult = DiffUtil.calculateDiff(ExpenseDiffCallback(expenses, newExpenses))
         expenses = newExpenses

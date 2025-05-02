@@ -33,7 +33,7 @@ class Settings : AppCompatActivity() {
         // This is for the navigation bar
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
 
-// Highlight the current tab (budget goals in this case)
+
         bottomNavigationView.selectedItemId = R.id.nav_budgetGoal
 
         bottomNavigationView.setOnItemSelectedListener { item ->

@@ -48,7 +48,7 @@ class ViewBudgetByDate : AppCompatActivity() {
 
 
 
-        // Add this extension function:
+
         fun Int.dpToPx(): Int = (this * resources.displayMetrics.density).toInt()
 
         submitButton.setOnClickListener {
@@ -84,7 +84,7 @@ class ViewBudgetByDate : AppCompatActivity() {
 
             lifecycleScope.launch {
                 try {
-                    // First test with the simple query (no date range)
+
                     val categoryTotals = db.budgetDao().getCategoryTotals(username)
 
                     Log.d(TAG, "Simple query result: ${categoryTotals.size} categories")

@@ -46,14 +46,14 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
         tvMinGoalValue = findViewById(R.id.tv_minGoalValue)
         tvMaxGoalValue = findViewById(R.id.tv_maxGoalValue)
 
-        // Setup buttons and other UI elements...
+
         setupUI()
     }
 
     private fun setupUI() {
-        // Your existing button setup code...
+
         val addIncomeBtn = Button(this).apply {
-            // ... keep your existing addIncomeBtn code
+
         }
 
         val addGoalButton = findViewById<Button>(R.id.btn_add_goal)
@@ -84,7 +84,7 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_budgetGoal -> {
-                    // Already on this page
+
                     true
                 }
                 R.id.nav_settings -> {
@@ -94,7 +94,7 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
                     true
                 }
                 else -> false
-                // ... keep your existing navigation code
+
             }
         }
     }

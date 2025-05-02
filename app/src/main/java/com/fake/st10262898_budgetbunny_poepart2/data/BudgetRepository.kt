@@ -14,12 +14,12 @@ class BudgetRepository(private val budgetDao: BudgetDao){
         budgetDao.deleteBudget(id)
     }
 
-    // New method to update the minTotalBudgetGoal for a specific user
+
     suspend fun updateMinTotalBudgetGoalForUser(username: String, minTotalBudgetGoal: Double) {
         budgetDao.updateMinTotalBudgetGoalForUser(username, minTotalBudgetGoal)
     }
 
-    // New method to get the minTotalBudgetGoal for a specific user
+
     suspend fun getMinTotalBudgetGoalForUser(username: String): Double {
         return budgetDao.getMinTotalBudgetGoalForUser(username)
     }

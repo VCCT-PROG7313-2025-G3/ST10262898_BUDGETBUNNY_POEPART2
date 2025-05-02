@@ -17,13 +17,10 @@ class SignUpThanks : AppCompatActivity() {
 
 
         val nextButton = findViewById<Button>(R.id.nextButtonThanks)
-
-
-
-                nextButton.setOnClickListener {
-                    val intent = Intent(this, ExpenseList::class.java)
-                    startActivity(intent)
-                }
+        nextButton.setOnClickListener {
+            val intent = Intent(this, ExpenseList::class.java)
+            startActivity(intent)
+        }
 
 
 
