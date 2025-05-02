@@ -125,4 +125,7 @@
     <!-- These are the strings for the invitation screen
     <string name="inv_welcome_back_to">Welcome back to</string>
     <string name="inv_budgetbunny">BudgetBunny</string> -->
+
+    <!-- Final Strings -->
+    <string name="return_to_dashboard">Finish</string>
 </resources>

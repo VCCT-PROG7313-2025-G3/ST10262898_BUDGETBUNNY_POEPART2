@@ -109,7 +109,9 @@
         android:padding="12dp"
         android:textColor="#FFFFFF"
         android:fontFamily="@font/jost_medium"
-        android:inputType="none" />
+        android:inputType="none"
+        android:focusable="false"
+        android:clickable="true"/>
 
     <Button
         android:id="@+id/button"

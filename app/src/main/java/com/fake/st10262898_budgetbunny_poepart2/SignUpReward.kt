@@ -16,13 +16,23 @@ class SignUpReward : AppCompatActivity() {
         setContentView(R.layout.activity_sign_up_reward)
 
 
-        //Takes the user  to the home page
+
         val closeButton = findViewById<Button>(R.id.closeButton)
+
         closeButton.setOnClickListener {
+
             val intent = Intent(this, MainActivity::class.java)
+
+            // Clear the back stack so user can't return to this reward screen
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+
+            // Start the activity and finish current one
             startActivity(intent)
             finish()
+
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
+
 
 
 

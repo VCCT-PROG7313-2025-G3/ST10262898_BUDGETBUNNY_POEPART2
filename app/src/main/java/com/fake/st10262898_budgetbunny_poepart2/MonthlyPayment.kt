@@ -29,17 +29,11 @@ class MonthlyPayment : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_monthly_payment)
 
-        // Initialize your DAO
         expenseDao = BudgetBunnyDatabase.getDatabase(this).expenseDao()
-
-        // Retrieve the expense category passed from the previous activity
         val expenseCategory = intent.getStringExtra("EXPENSE_CATEGORY") ?: "Unknown Category"
-
-        // Show the expense category in the TextView
         val categoryTextView = findViewById<TextView>(R.id.categoryTextView)
         categoryTextView.text = "Expense Category: $expenseCategory"
 
-        // Get EditText fields for expense name, amount, and date
         val expenseNameEditText = findViewById<EditText>(R.id.enterExpenseName)
         val amountEditText = findViewById<EditText>(R.id.enterAmount)
         val dateEditText = findViewById<EditText>(R.id.enterDate)
@@ -50,39 +44,38 @@ class MonthlyPayment : AppCompatActivity() {
             calendar.set(Calendar.MONTH, month)
             calendar.set(Calendar.DAY_OF_MONTH, day)
 
-            // Format the date and set it in the EditText
             val dateFormat = "dd/MM/yyyy"
             val sdf = SimpleDateFormat(dateFormat, Locale.getDefault())
             dateEditText.setText(sdf.format(calendar.time))
         }
 
-        // Open DatePickerDialog when the user clicks the date EditText
-        dateEditText.setOnClickListener {
-            DatePickerDialog(
-                this,
-                datePickerListener,
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-            ).show()
+        // Configure date EditText for single-click response
+        dateEditText.apply {
+            isFocusable = false
+            isClickable = true
+            setOnClickListener {
+                DatePickerDialog(
+                    this@MonthlyPayment,
+                    datePickerListener,
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH)
+                ).show()
+            }
         }
 
-        // Shared preferences to get the username
         val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
         val username = sharedPreferences.getString("username", "") ?: ""
 
-        // Save button logic
         val saveButton = findViewById<Button>(R.id.button)
         saveButton.setOnClickListener {
             val expenseName = expenseNameEditText.text.toString()
             val amountString = amountEditText.text.toString()
             val dateString = dateEditText.text.toString()
 
-            // Validate if all fields are filled
             if (expenseName.isNotEmpty() && amountString.isNotEmpty() && dateString.isNotEmpty()) {
                 val amount = amountString.toDoubleOrNull()
                 if (amount != null) {
-                    // Use the calendar time which was set by the date picker
                     val expenseDate = calendar.timeInMillis
                     saveExpenseToDatabase(expenseCategory, expenseName, amount, username, expenseDate)
                 } else {
