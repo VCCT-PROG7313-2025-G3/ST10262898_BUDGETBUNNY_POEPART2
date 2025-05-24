@@ -13,23 +13,23 @@ import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
-import com.fake.st10262898_budgetbunny_poepart2.data.Budget
-import com.fake.st10262898_budgetbunny_poepart2.data.BudgetBunnyDatabase
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Locale
+import com.fake.st10262898_budgetbunny_poepart2.data.BudgetFirestore
+import com.fake.st10262898_budgetbunny_poepart2.viewmodel.BudgetViewModel
+import kotlinx.coroutines.launch
 
 class BudgetGoalsOverviewActivity : AppCompatActivity() {
 
-    private var currentSavedAmount = 0.0
+    private val budgetViewModel: BudgetViewModel by viewModels()
     private var maxGoalValue = 0.0
     private lateinit var progressBar: ProgressBar
     private lateinit var budgetText: TextView
@@ -61,76 +61,64 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
-        // Add Income Button
+        // Add Income Button - Now with budget selection
         val addIncomeBtn = Button(this).apply {
             text = "Add Income"
             setTextColor(Color.WHITE)
-            backgroundTintList = ContextCompat.getColorStateList(this@BudgetGoalsOverviewActivity, R.color.dark_pastel_purple)
+            backgroundTintList = ContextCompat.getColorStateList(
+                this@BudgetGoalsOverviewActivity,
+                R.color.dark_pastel_purple
+            )
             setOnClickListener {
-                val input = EditText(this@BudgetGoalsOverviewActivity).apply {
-                    inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
-                }
-                AlertDialog.Builder(this@BudgetGoalsOverviewActivity)
-                    .setTitle("Add Income")
-                    .setView(input)
-                    .setPositiveButton("Add") { _, _ ->
-                        val amount = input.text.toString().toDoubleOrNull() ?: 0.0
-                        if (amount > 0) {
-                            currentSavedAmount += amount
-                            progressBar.progress = currentSavedAmount.toInt()
-                            budgetText.text = "R${currentSavedAmount.toInt()} of R${maxGoalValue.toInt()} saved"
-                            Toast.makeText(this@BudgetGoalsOverviewActivity, "Added R$amount", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                    .setNegativeButton("Cancel", null)
-                    .show()
+                // Open BudgetSelectionActivity instead of showing dialogs
+                startActivity(Intent(this@BudgetGoalsOverviewActivity, BudgetSelectionActivity::class.java))
             }
         }
 
-        // Button to add goals
-        val addGoalButton = findViewById<Button>(R.id.btn_add_goal)
-        addGoalButton.setOnClickListener {
-            val intent = Intent(this, GoalEntry::class.java)
-            startActivity(intent)
+
+        val addGoalButton = findViewById<Button>(R.id.btn_add_goal).apply {
+            setOnClickListener {
+                startActivity(Intent(this@BudgetGoalsOverviewActivity, GoalEntry::class.java))
+            }
         }
 
-        // Add button to the top of the card
         val cardView = findViewById<CardView>(R.id.card_budgetGoal)
         (cardView.getChildAt(0) as LinearLayout).addView(addIncomeBtn, 1)
 
-        // Date time display
-        val tvDateTime: TextView = findViewById(R.id.tv_dateTime)
-        tvDateTime.text = SimpleDateFormat("dd MMMM yyyy, HH:mm", Locale.getDefault())
-            .format(System.currentTimeMillis())
+        findViewById<TextView>(R.id.tv_dateTime).text =
+            SimpleDateFormat("dd MMMM yyyy, HH:mm", Locale.getDefault())
+                .format(System.currentTimeMillis())
 
-        // View by date button
-        val viewByDateButton: Button = findViewById(R.id.btn_view_by_date)
-        viewByDateButton.setOnClickListener {
-            val intent = Intent(this, ViewBudgetByDate::class.java)
-            startActivity(intent)
+        findViewById<Button>(R.id.btn_view_by_date).setOnClickListener {
+            startActivity(Intent(this, ViewBudgetByDate::class.java))
         }
 
-        // Initialize navigation bar
+        setupBottomNavigation()
+    }
+
+
+
+
+
+    private fun setupBottomNavigation() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         bottomNavigationView.selectedItemId = R.id.nav_budgetGoal // Highlight current tab
+
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {
-                    val intent = Intent(this, HomePageActivity::class.java)
-                    startActivity(intent)
+                    startActivity(Intent(this@BudgetGoalsOverviewActivity, HomePageActivity::class.java))
                     overridePendingTransition(0, 0)
                     true
                 }
                 R.id.nav_transactions -> {
-                    val intent = Intent(this, TransactionsActivity::class.java)
-                    startActivity(intent)
+                    startActivity(Intent(this@BudgetGoalsOverviewActivity, TransactionsActivity::class.java))
                     overridePendingTransition(0, 0)
                     true
                 }
                 R.id.nav_budgetGoal -> true // Already on this page
                 R.id.nav_settings -> {
-                    val intent = Intent(this, Settings::class.java)
-                    startActivity(intent)
+                    startActivity(Intent(this@BudgetGoalsOverviewActivity, Settings::class.java))
                     overridePendingTransition(0, 0)
                     true
                 }
@@ -142,62 +130,53 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         loadBudgetGoals()
+
+        // Add this new observer
+        budgetViewModel.updateStatus.observe(this) { (success, _) ->
+            if (success) loadBudgetGoals() // Double refresh on updates
+        }
     }
 
     private fun loadBudgetGoals() {
-        val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-        val username = sharedPreferences.getString("username", "") ?: return
-
-        lifecycleScope.launch {
-            val budgetGoals = withContext(Dispatchers.IO) {
-                val db = BudgetBunnyDatabase.getDatabase(this@BudgetGoalsOverviewActivity)
-                val goals = db.budgetDao().getBudgetForUser(username)
-                Log.d("BudgetDebug", "Retrieved ${goals.size} goals for user $username")
-                goals.forEach { Log.d("BudgetDebug", "Goal: ${it.budgetCategory} - R${it.budgetAmount}") }
-                goals
-            }
-
-            updateUI(budgetGoals)
+        getSharedPreferences("UserPrefs", MODE_PRIVATE).getString("username", "")?.let { username ->
+            budgetViewModel.budgets.observe(this) { updateUI(it) }
+            budgetViewModel.loadBudgets(username)
         }
     }
 
-    private fun updateUI(budgetGoals: List<Budget>) {
-        // Calculate values
-        val minGoal = budgetGoals.minOfOrNull { it.totalBudgetGoal } ?: 0.0
-        maxGoalValue = budgetGoals.sumOf { it.totalBudgetGoal }
-        currentSavedAmount = budgetGoals.sumOf { it.budgetAmount }
+    private fun updateUI(budgetGoals: List<BudgetFirestore>) {
+        val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val currentUserId = sharedPreferences.getString("username", "") ?: return
 
-        // Update progress bar
+        // Get user's goals
+        val userMinGoal = sharedPreferences.getFloat("MIN_GOAL", 0f).toDouble()
+        maxGoalValue = sharedPreferences.getFloat("TOTAL_BUDGET_GOAL", 0f).toDouble()
+
+        // Filter and process budgets
+        val userBudgets = budgetGoals.filter { it.username == currentUserId }
+        val totalIncome = userBudgets.sumOf { it.budgetIncome }
+
+        // Update progress
         progressBar.max = maxGoalValue.toInt()
-        progressBar.progress = currentSavedAmount.toInt()
-        budgetText.text = "R${currentSavedAmount.toInt()} of R${maxGoalValue.toInt()} saved"
+        progressBar.progress = totalIncome.toInt()
+        budgetText.text = "R${totalIncome.toInt()} of R${maxGoalValue.toInt()} saved"
 
-        // Update min/max labels
-        tvMinGoalValue.text = "Min Goal: R${minGoal.toInt()}"
+        // Update labels
+        tvMinGoalValue.text = "Min Goal: R${userMinGoal.toInt()}"
         tvMaxGoalValue.text = "Max Goal: R${maxGoalValue.toInt()}"
 
-        maxGoalMarker.visibility = View.VISIBLE
-        maxGoalMarker.bringToFront()
-
-        // Clear and rebuild goals container
+        // Update budget list
         goalsContainer.removeAllViews()
-        val inflater = LayoutInflater.from(this)
-
-        // Group by category and add to UI
-        budgetGoals.groupBy { it.budgetCategory }.forEach { (category, budgets) ->
-            budgets.forEach { budget ->
-                val cardView = inflater.inflate(R.layout.item_goal_card, goalsContainer, false)
-                val tvCategory = cardView.findViewById<TextView>(R.id.tv_category)
-                val tvAmount = cardView.findViewById<TextView>(R.id.tv_amount)
-
-                tvCategory.text = budget.budgetCategory
-                tvAmount.text = "Goal: R${budget.totalBudgetGoal} (Saved: R${budget.budgetAmount})"
-                goalsContainer.addView(cardView)
+        userBudgets.groupBy { it.budgetCategory }.forEach { (category, budgets) ->
+            LayoutInflater.from(this).inflate(R.layout.item_goal_card, goalsContainer, false).apply {
+                findViewById<TextView>(R.id.tv_category).text = category ?: "Uncategorized"
+                findViewById<TextView>(R.id.tv_amount).text =
+                    "Goal: R${budgets.sumOf { it.totalBudgetGoal }} (Income: R${budgets.sumOf { it.budgetIncome }})"
+                goalsContainer.addView(this)
             }
         }
 
-        // Update marker positions
-        updateMarkerPositions(minGoal)
+        updateMarkerPositions(userMinGoal)
     }
 
     private fun updateMarkerPositions(minGoal: Double) {

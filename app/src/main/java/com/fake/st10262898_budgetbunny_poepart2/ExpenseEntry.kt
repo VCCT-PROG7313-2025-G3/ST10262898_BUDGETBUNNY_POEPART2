@@ -8,9 +8,10 @@ import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-import com.fake.st10262898_budgetbunny_poepart2.viewmodel.ExpenseViewModel
 import java.util.Calendar
+
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class ExpenseEntry : AppCompatActivity() {
 
@@ -18,14 +19,13 @@ class ExpenseEntry : AppCompatActivity() {
     private lateinit var expenseAmountEditText: EditText
     private lateinit var categorySpinner: Spinner
     private lateinit var nextButton: Button
-    private lateinit var expenseViewModel: ExpenseViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_expense_entry)
 
-        // Initialize ViewModel
-        expenseViewModel = ViewModelProvider(this)[ExpenseViewModel::class.java]
+
 
         // Bind the views
         expenseNameEditText = findViewById(R.id.editTextText)
@@ -56,7 +56,6 @@ class ExpenseEntry : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Get current user
             val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
             val username = sharedPreferences.getString("username", "") ?: ""
 
@@ -65,19 +64,27 @@ class ExpenseEntry : AppCompatActivity() {
 
             Log.d("ExpenseEntry", "Saving expense: $name, $amount, $category for $username")
 
-            // Save expense to database
-            expenseViewModel.addExpense(
-                expenseName = name,
-                expenseAmount = amount,
-                username = username,
-                expenseCategory = category,
-                expenseDate = currentDate,
-                expenseImage = null
+            // Save to Firebase
+            val db = FirebaseFirestore.getInstance()
+            val expense = hashMapOf(
+                "expenseName" to name,
+                "expenseAmount" to amount,
+                "username" to username,
+                "expenseCategory" to category,
+                "expenseDate" to currentDate,
+                "expenseImage" to null
             )
 
-            Toast.makeText(this, "Expense saved successfully", Toast.LENGTH_SHORT).show()
-            setResult(RESULT_OK)
-            finish()
+            db.collection("expenses")
+                .add(expense)
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Expense saved successfully", Toast.LENGTH_SHORT).show()
+                    setResult(RESULT_OK)
+                    finish()
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(this, "Failed to save expense: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
         }
     }
 }

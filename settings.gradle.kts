@@ -18,4 +18,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "ST10262898_BUDGETBUNNY_POEPART2"
 include(":app")
- 
+

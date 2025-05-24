@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import com.fake.st10262898_budgetbunny_poepart2.data.BudgetBunnyDatabase
 import com.fake.st10262898_budgetbunny_poepart2.data.Expense
 import com.fake.st10262898_budgetbunny_poepart2.data.ExpenseDao
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -66,6 +67,7 @@ class MonthlyPayment : AppCompatActivity() {
 
         val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
         val username = sharedPreferences.getString("username", "") ?: ""
+        Toast.makeText(this, "Current user: $username", Toast.LENGTH_SHORT).show()
 
         val saveButton = findViewById<Button>(R.id.button)
         saveButton.setOnClickListener {
@@ -87,24 +89,32 @@ class MonthlyPayment : AppCompatActivity() {
         }
     }
 
-    private fun saveExpenseToDatabase(expenseCategory: String, expenseName: String, amount: Double, username: String, expenseDate: Long) {
-        val expense = Expense(
-            expenseCategory = expenseCategory,
-            expenseName = expenseName,
-            expenseAmount = amount,
-            username = username,
-            expenseDate = expenseDate,
-            expenseImage = null
+    private fun saveExpenseToDatabase(
+        expenseCategory: String,
+        expenseName: String,
+        amount: Double,
+        username: String,
+        expenseDate: Long
+    ) {
+        val db = FirebaseFirestore.getInstance()
+
+        val expense = hashMapOf(
+            "expenseCategory" to expenseCategory,
+            "expenseName" to expenseName,
+            "expenseAmount" to amount,
+            "username" to username,
+            "expenseDate" to expenseDate,
+            "expenseImage" to null
         )
 
-        lifecycleScope.launch {
-            try {
-                expenseDao.insertExpense(expense)
+        db.collection("expenses")
+            .add(expense)
+            .addOnSuccessListener {
                 Toast.makeText(this@MonthlyPayment, "Expense saved", Toast.LENGTH_SHORT).show()
                 finish()
-            } catch (e: Exception) {
-                Toast.makeText(this@MonthlyPayment, "Failed to save expense", Toast.LENGTH_SHORT).show()
             }
-        }
+            .addOnFailureListener { e ->
+                Toast.makeText(this@MonthlyPayment, "Failed to save expense: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 }

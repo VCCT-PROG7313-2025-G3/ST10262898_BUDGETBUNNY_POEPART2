@@ -24,65 +24,107 @@ class ViewMonthsExpense : AppCompatActivity() {
     private lateinit var expenseAdapter: ExpenseDateAdapter
 
     private val TAG = ViewMonthsExpense::class.java.simpleName
-
-
-
+    private val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityViewMonthsExpenseBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Initialize ViewModel
+        setupViewModel()
+        setupUI()
+        setupObservers()
+    }
+
+    private fun setupViewModel() {
         expenseViewModel = ViewModelProvider(this).get(ExpenseViewModel::class.java)
-        setupRecyclerView()
 
-
-
-
-        // Set click listeners for date pickers
-        binding.btnStartDate.setOnClickListener { showDatePicker(true) }
-        binding.btnEndDate.setOnClickListener { showDatePicker(false) }
-
-        // Set click listener for view expenses button
-        binding.btnViewExpenses.setOnClickListener {
-            Log.d(TAG, "View Expenses button clicked")
-
-            val username = getCurrentUsername()
-            Log.d(TAG, "Current username: ${username ?: "null"}")
-
-            if (startDate == null || endDate == null) {
-                Log.w(TAG, "Dates not selected - Start: $startDate, End: $endDate")
-                toast("Please select both dates")
-                return@setOnClickListener
-            }
-
-            if (username == null) {
-                Log.e(TAG, "No username found")
-                toast("User not logged in")
-                return@setOnClickListener
-            }
-
-            Log.d(TAG, "Loading expenses between ${Date(startDate!!)} and ${Date(endDate!!)}")
-            expenseViewModel.loadExpensesBetweenDates(username, startDate!!, endDate!!)
-        }
-
-        // Observe the filtered expenses
-        expenseViewModel.filteredExpenses.observe(this) { expenses ->
-            Log.d(TAG, "Observed ${expenses.size} expenses in LiveData")
-            if (expenses.isEmpty()) {
-                Log.w(TAG, "Empty expense list received")
-                toast("No expenses found for selected period")
-            }
-            expenseAdapter.submitList(expenses)
+        // Check if we came from month tile click
+        intent.getIntExtra("month", -1).takeIf { it != -1 }?.let { month ->
+            setupMonthRange(month)
         }
     }
 
+    private fun setupUI() {
+        setupRecyclerView()
+
+        binding.apply {
+            btnStartDate.setOnClickListener { showDatePicker(true) }
+            btnEndDate.setOnClickListener { showDatePicker(false) }
+            btnViewExpenses.setOnClickListener { onViewExpensesClicked() }
+        }
+    }
+
+    private fun setupMonthRange(month: Int) {
+        val calendar = Calendar.getInstance().apply {
+            set(Calendar.MONTH, month - 1) // Convert to 0-based
+            set(Calendar.DAY_OF_MONTH, 1)
+        }
+
+        startDate = calendar.timeInMillis
+        binding.tvStartDate.text = dateFormat.format(Date(startDate!!))
+
+        calendar.add(Calendar.MONTH, 1)
+        endDate = calendar.timeInMillis
+        binding.tvEndDate.text = dateFormat.format(Date(endDate!!))
+
+        // Auto-load expenses for this month
+        loadExpensesIfReady()
+    }
+
     private fun setupRecyclerView() {
-        expenseAdapter = ExpenseDateAdapter(emptyList())  // Initialize with empty list
+        expenseAdapter = ExpenseDateAdapter(emptyList()) { expense ->
+            // Handle item click if needed
+        }
         binding.rvExpenses.apply {
             layoutManager = LinearLayoutManager(this@ViewMonthsExpense)
             adapter = expenseAdapter
+            setHasFixedSize(true)
+        }
+    }
+
+    private fun setupObservers() {
+        expenseViewModel.expenses.observe(this) { expenses ->
+            Log.d(TAG, "Displaying ${expenses.size} expenses")
+            if (expenses.isEmpty()) {
+                toast(getString(R.string.no_expenses_found))
+            }
+            expenseAdapter.submitList(expenses)
+        }
+
+        expenseViewModel.errorMessage.observe(this) { message ->
+            message?.let {
+                toast(it)
+                Log.e(TAG, "Error: $it")
+            }
+        }
+    }
+
+    private fun onViewExpensesClicked() {
+        Log.d(TAG, "View Expenses button clicked")
+        loadExpensesIfReady()
+    }
+
+    private fun loadExpensesIfReady() {
+        val username = getCurrentUsername()
+
+        when {
+            username == null -> {
+                Log.e(TAG, "No username found")
+                toast(getString(R.string.user_not_logged_in))
+            }
+            startDate == null || endDate == null -> {
+                Log.w(TAG, "Dates not selected")
+                toast(getString(R.string.select_both_dates))
+            }
+            startDate!! > endDate!! -> {
+                Log.w(TAG, "Invalid date range")
+                toast(getString(R.string.invalid_date_range))
+            }
+            else -> {
+                Log.d(TAG, "Loading expenses between ${Date(startDate!!)} and ${Date(endDate!!)}")
+                expenseViewModel.loadExpensesBetweenDates(username, startDate!!, endDate!!)
+            }
         }
     }
 
@@ -92,39 +134,45 @@ class ViewMonthsExpense : AppCompatActivity() {
             this,
             { _, year, month, day ->
                 val selectedDate = Calendar.getInstance().apply {
-                    set(year, month, day)
+                    set(year, month, day, 0, 0, 0)
+                    set(Calendar.MILLISECOND, 0)
                 }.timeInMillis
 
                 if (isStartDate) {
                     startDate = selectedDate
-                    binding.tvStartDate.text = SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(Date(selectedDate))
+                    binding.tvStartDate.text = dateFormat.format(Date(selectedDate))
                 } else {
                     endDate = selectedDate
-                    binding.tvEndDate.text = SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(Date(selectedDate))
+                    binding.tvEndDate.text = dateFormat.format(Date(selectedDate))
                 }
 
-                // Enable the view button only when both dates are selected
                 binding.btnViewExpenses.isEnabled = startDate != null && endDate != null
             },
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
             calendar.get(Calendar.DAY_OF_MONTH)
-        ).show()
+        ).apply {
+            // Set max date for end date picker to prevent selecting dates in the future
+            if (!isStartDate) {
+                datePicker.maxDate = System.currentTimeMillis()
+            }
+        }.show()
     }
 
     private fun getCurrentUsername(): String? {
-
-        val sharedPref = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-        val username = sharedPref.getString("username", null)
-
-        Log.d(TAG, "Retrieving username from SharedPreferences: $username")
-        Log.d(TAG, "All SharedPreferences contents: ${sharedPref.all}")
-
-        return username
+        return getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+            .getString("username", null)
+            .also { username ->
+                Log.d(TAG, "Retrieved username: $username")
+            }
     }
 
     private fun toast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
+    companion object {
+        // String resource constants would be defined in strings.xml
+        const val EXTRA_MONTH = "month"
+    }
 }

@@ -4,66 +4,54 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fake.st10262898_budgetbunny_poepart2.data.BudgetBunnyDatabase
 import com.fake.st10262898_budgetbunny_poepart2.data.Expense
+import com.fake.st10262898_budgetbunny_poepart2.data.ExpenseFirebase
 import com.fake.st10262898_budgetbunny_poepart2.data.ExpenseRepository
+import com.fake.st10262898_budgetbunny_poepart2.data.FirestoreExpenseRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-class ExpenseViewModel(application: Application) : AndroidViewModel(application) {
+class ExpenseViewModel : ViewModel() {
 
+    private val repository = FirestoreExpenseRepository()
 
-        private val expenseDao = BudgetBunnyDatabase.getDatabase(application).expenseDao()
-        private val repository = ExpenseRepository(expenseDao)
+    private val _expenses = MutableLiveData<List<ExpenseFirebase>>()
+    val expenses: LiveData<List<ExpenseFirebase>> get() = _expenses
 
-        private val _expenses = MutableLiveData<List<Expense>>()
-        val expenses: LiveData<List<Expense>> get() = _expenses
+    private val _errorMessage = MutableLiveData<String?>()
+    val errorMessage: LiveData<String?> get() = _errorMessage
 
-        fun addExpense(
-            expenseName: String,
-            expenseAmount: Double,
-            username: String,
-            expenseCategory: String?,
-            expenseDate: Long,
-            expenseImage: ByteArray?
-        ) {
-            val expense = Expense(
-                expenseName = expenseName,
-                expenseAmount = expenseAmount,
-                username = username,
-                expenseCategory = expenseCategory,
-                expenseDate = expenseDate,
-                expenseImage = expenseImage
-            )
-            viewModelScope.launch(Dispatchers.IO) {
-                repository.insertExpense(expense)
-                loadExpenses(username)
-            }
+    fun addExpense(expense: ExpenseFirebase) {
+        repository.addExpense(expense) { success ->
+            if (success) loadExpenses(expense.username)
         }
+    }
 
-        fun loadExpenses(username: String) {
-            viewModelScope.launch(Dispatchers.IO) {
-                val data = repository.getExpensesForUser(username)
-                _expenses.postValue(data)
-            }
+    fun loadExpenses(username: String) {
+        repository.getExpenses(username) { result ->
+            _expenses.postValue(result)
         }
+    }
 
-        fun deleteExpense(expenseId: Int, username: String) {
-            viewModelScope.launch(Dispatchers.IO) {
-                repository.deleteExpense(expenseId)
-                loadExpenses(username)
-            }
+    fun deleteExpense(expenseId: String, username: String) {
+        repository.deleteExpense(expenseId) { success ->
+            if (success) loadExpenses(username)
         }
+    }
 
-        private val _filteredExpenses = MutableLiveData<List<Expense>>()
-        val filteredExpenses: LiveData<List<Expense>> get() = _filteredExpenses
-
-        fun loadExpensesBetweenDates(username: String, startDate: Long, endDate: Long) {
-            viewModelScope.launch(Dispatchers.IO) {
-                val data = repository.getExpensesBetweenDates(username, startDate, endDate)
-                _filteredExpenses.postValue(data)
+    fun loadExpensesBetweenDates(username: String, startDate: Long, endDate: Long) {
+        repository.getExpensesBetweenDates(username, startDate, endDate) { expenses ->
+            if (expenses != null) {
+                _expenses.postValue(expenses)
+            } else {
+                _errorMessage.postValue("Error loading expenses")
             }
         }
     }
+
+
+}
