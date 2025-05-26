@@ -6,6 +6,9 @@ plugins {
     id("org.jetbrains.kotlin.kapt")
 
 
+    //This is needed for Firebase
+    id("com.google.gms.google-services")
+
 }
 
 android {
@@ -51,6 +54,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.firebase.database.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -66,5 +70,16 @@ dependencies {
 
 
     //This is to implement graphs and charts:
-    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    //implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    implementation(libs.mpandroidchart)
+
+
+    //This is for Firebase:
+    implementation(platform("com.google.firebase:firebase-bom:32.2.0"))
+    implementation("com.google.firebase:firebase-firestore-ktx") // This matches your TOML alias
+    implementation("com.google.firebase:firebase-auth-ktx") // optional: if using auth
+    implementation(libs.firebase.database.ktx)   // This matches your TOML alias
+
+    //implementation("com.google.firebase:firebase-database-ktx") //needed for Firebase and HomePage
+
 }

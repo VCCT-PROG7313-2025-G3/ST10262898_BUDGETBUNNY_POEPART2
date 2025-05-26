@@ -8,18 +8,21 @@ import android.widget.DatePicker
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.fake.st10262898_budgetbunny_poepart2.data.BudgetBunnyDatabase
-import com.fake.st10262898_budgetbunny_poepart2.data.CategoryTotal
-import kotlinx.coroutines.launch
+import com.fake.st10262898_budgetbunny_poepart2.data.CategoryTotalFirestore
+import com.fake.st10262898_budgetbunny_poepart2.viewmodel.BudgetViewModel
+import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
-
+import java.util.Locale
+import androidx.activity.viewModels
 
 class ViewBudgetByDate : AppCompatActivity() {
+
+    private val TAG = "ViewBudgetByDate"
+    private val budgetViewModel: BudgetViewModel by viewModels()
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: CategoryTotalAdapter
@@ -27,8 +30,6 @@ class ViewBudgetByDate : AppCompatActivity() {
     private lateinit var endDatePicker: DatePicker
     private lateinit var submitButton: Button
     private lateinit var headingTextView: TextView
-
-    private val TAG = "ViewBudgetByDate"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,79 +42,91 @@ class ViewBudgetByDate : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerView)
         headingTextView = findViewById(R.id.tvHeading)
 
+        // Set default dates (current month)
+        val calendar = Calendar.getInstance()
+        startDatePicker.init(
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            1, // First day of month
+            null
+        )
+
         // Setup RecyclerView
-        adapter = CategoryTotalAdapter(emptyList())
+        adapter = CategoryTotalAdapter(emptyList()) { categoryTotal ->
+            // Handle item clicks if needed
+            Toast.makeText(
+                this,
+                "${categoryTotal.budgetCategory}: R${"%.2f".format(categoryTotal.total)}",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
-
-
-
-        fun Int.dpToPx(): Int = (this * resources.displayMetrics.density).toInt()
-
         submitButton.setOnClickListener {
-            Log.d(TAG, "Checking SharedPreferences for username")
+            val username = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+                .getString("username", "") ?: ""
 
-            val username = getSharedPreferences("UserPrefs", MODE_PRIVATE).getString("username", null)
-
-            if (username == null) {
-                Log.d(TAG, "Username is null")
-                Toast.makeText(this, "Username not found!", Toast.LENGTH_SHORT).show()
+            if (username.isEmpty()) {
+                Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
-            } else {
-                Log.d(TAG, "Username retrieved: $username")
             }
 
+            // Get selected dates as timestamps
             val startDate = Calendar.getInstance().apply {
                 set(startDatePicker.year, startDatePicker.month, startDatePicker.dayOfMonth)
-            }
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }.timeInMillis
+
             val endDate = Calendar.getInstance().apply {
                 set(endDatePicker.year, endDatePicker.month, endDatePicker.dayOfMonth)
-            }
+                set(Calendar.HOUR_OF_DAY, 23)
+                set(Calendar.MINUTE, 59)
+                set(Calendar.SECOND, 59)
+                set(Calendar.MILLISECOND, 999)
+            }.timeInMillis
 
-            val startDateMillis = startDate.timeInMillis
-            val endDateMillis = endDate.timeInMillis
+            Log.d(TAG, "Fetching budget data from ${Date(startDate)} to ${Date(endDate)}")
 
-            // Debug: Print start and end dates
-            Log.d(TAG, "StartMillis: $startDateMillis (${SimpleDateFormat("yyyy-MM-dd").format(Date(startDateMillis))})")
-            Log.d(TAG, "EndMillis: $endDateMillis (${SimpleDateFormat("yyyy-MM-dd").format(Date(endDateMillis))})")
-
-            val db = BudgetBunnyDatabase.getDatabase(applicationContext)
-
-            Log.d(TAG, "Valid username found. Fetching category totals for date range...")
-
-            lifecycleScope.launch {
-                try {
-
-                    val categoryTotals = db.budgetDao().getCategoryTotals(username)
-
-                    Log.d(TAG, "Simple query result: ${categoryTotals.size} categories")
-                    for (categoryTotal in categoryTotals) {
-                        Log.d(TAG, "Category: ${categoryTotal.budgetCategory}, Total: ${categoryTotal.total}")
-                    }
-
-                    runOnUiThread {
-                        if (categoryTotals.isNotEmpty()) {
-                            headingTextView.text = "All Category Totals"
-                            updateRecyclerView(categoryTotals)
-                        } else {
-                            headingTextView.text = "No budget data found for user"
-                        }
+            budgetViewModel.getCategoryTotalsByDateRange(
+                username,
+                startDate,
+                endDate
+            ) { categoryTotals ->
+                runOnUiThread {
+                    if (categoryTotals.isNotEmpty()) {
+                        headingTextView.text = buildHeading(Date(startDate), Date(endDate))
+                        adapter.updateData(categoryTotals)
                         headingTextView.visibility = View.VISIBLE
-                    }
-                } catch (e: Exception) {
-                    Log.e(TAG, "Error in simple query", e)
-                    runOnUiThread {
-                        Toast.makeText(this@ViewBudgetByDate, "Error loading data", Toast.LENGTH_SHORT).show()
+                        recyclerView.visibility = View.VISIBLE
+                    } else {
+                        headingTextView.text = "No budget data found for selected period"
+                        adapter.updateData(emptyList())
+                        headingTextView.visibility = View.VISIBLE
+                        recyclerView.visibility = View.GONE
+                        Toast.makeText(
+                            this,
+                            "No budget categories found for this date range",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                 }
             }
         }
     }
 
-    private fun updateRecyclerView(categoryTotals: List<CategoryTotal>) {
-        adapter = CategoryTotalAdapter(categoryTotals)
-        recyclerView.adapter = adapter
-        adapter.notifyDataSetChanged()
+    private fun formatDate(date: Date): String {
+        return SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(date)
     }
+
+    private fun buildHeading(startDate: Date, endDate: Date): String {
+        return "Budget Totals\n${formatDate(startDate)} - ${formatDate(endDate)}"
+    }
+
+    // Extension function to convert dp to px
+    private fun Int.dpToPx(): Int = (this * resources.displayMetrics.density).toInt()
 }

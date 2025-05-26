@@ -26,16 +26,18 @@ class ExpenseList : AppCompatActivity() {
         setContentView(R.layout.activity_expense_list)
 
 
-        val username = intent.getStringExtra("username") ?: ""
-
-        // Save the username in SharedPreferences
         val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putString("username", username)
-        editor.apply()
+        val username = sharedPreferences.getString("username", null)
 
+        if (username == null) {
+            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        } else {
+            Toast.makeText(this, "Welcome, $username!", Toast.LENGTH_SHORT).show()
+        }
         // Use the username as needed in ExpenseList
-        Toast.makeText(this, "Welcome, $username!", Toast.LENGTH_SHORT).show()
+
 
             val nextButton = findViewById<Button>(R.id.btn_next)
             val billsButton = findViewById<ImageButton>(R.id.bills)
@@ -49,7 +51,7 @@ class ExpenseList : AppCompatActivity() {
 
         nextButton.setOnClickListener {
             val intent = Intent(this, bugetGoalsPage::class.java)
-            val username = sharedPreferences.getString("USERNAME", "") ?: ""
+            val username = sharedPreferences.getString("username", "") ?: ""
             intent.putExtra("username", username) // Pass the username to the next activity
             startActivity(intent)
         }

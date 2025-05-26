@@ -2,82 +2,62 @@ package com.fake.st10262898_budgetbunny_poepart2
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.ImageButton
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.room.Room
-import androidx.lifecycle.lifecycleScope
-import android.widget.Toast
 import android.widget.Button
 import android.widget.EditText
-import kotlinx.coroutines.launch
-import com.fake.st10262898_budgetbunny_poepart2.data.BudgetBunnyDatabase
+import android.widget.ImageButton
+import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
 
-class MainActivity : AppCompatActivity()
-{
+class MainActivity : AppCompatActivity() {
 
-    private lateinit var db: BudgetBunnyDatabase
+    private lateinit var auth: FirebaseAuth
 
-    override fun onCreate(savedInstanceState: Bundle?)
-    {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        //Declaring the button so we can add functionality to it:
+        auth = FirebaseAuth.getInstance()
+
         val usernameEditText = findViewById<EditText>(R.id.inputUserName)
         val passwordEditText = findViewById<EditText>(R.id.inputPassword)
         val btn_login = findViewById<Button>(R.id.Login)
         val btn_signUp = findViewById<ImageButton>(R.id.SignUp)
 
-
-        // Initialize database
-        db = Room.databaseBuilder(
-            applicationContext,
-            BudgetBunnyDatabase::class.java,
-            "user_database"
-        ).build()
-
-
-        //This allows the buttons to be clickable and there to be functionality:
-        btn_signUp.setOnClickListener{
-            //When the user clicks the button, it will take them to the sign up page:
+        btn_signUp.setOnClickListener {
             val intent = Intent(this, signUpPage::class.java)
             startActivity(intent)
         }
 
+        btn_login.setOnClickListener {
+            val username = usernameEditText.text.toString().trim()
+            val password = passwordEditText.text.toString().trim()
+            val email = "$username@fakeemail.com"  // Same fake email logic as signup
 
+            if (username.isNotEmpty() && password.isNotEmpty()) {
+                auth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Toast.makeText(applicationContext, "Login successful!", Toast.LENGTH_SHORT).show()
 
-        btn_login.setOnClickListener{
-            val username = usernameEditText.text.toString() //Saves what the user has entered to this variable
-            val password = passwordEditText.text.toString()
+                            val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+                            val editor = sharedPreferences.edit()
+                            editor.putString("username", username)
+                            editor.apply()
+                            val username = sharedPreferences.getString("username", null)
+                            Toast.makeText(this, "Logged in as: $username", Toast.LENGTH_SHORT).show()
 
-            //This allows the user to login if they have signed up
-            lifecycleScope.launch {
-                val user = db.userDao().getUser(username, password) //Fetches the user from the database
-                if(user != null)
-                {
-                    //If compiler can find the user this is what happens
-                    Toast.makeText(applicationContext, "Login successful!", Toast.LENGTH_SHORT).show()
-
-                    // Save the username when the user logs in
-                    val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-                    val editor = sharedPreferences.edit()
-                    editor.putString("username", username)  // Use the entered username
-                    editor.apply()
-
-                    //This allows the user to navigate to HomePage after a sucessful login:
-                    val intent = Intent(this@MainActivity, HomePageActivity::class.java)
-                    startActivity(intent)
-
-
-                    finish()
-                }
-                else
-                {
-                    //If compiler cannot find the users details this is what happens
-                    Toast.makeText(applicationContext, "Invalid username or password", Toast.LENGTH_SHORT).show()
-                }
+                            val intent = Intent(this@MainActivity, HomePageActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        } else {
+                            Toast.makeText(applicationContext, "Invalid username or password", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+            } else {
+                Toast.makeText(this, "Please enter username and password", Toast.LENGTH_SHORT).show()
             }
         }
     }

@@ -1,48 +1,38 @@
-package com.fake.st10262898_budgetbunny_poepart2.viewmodel
-
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import com.google.firebase.auth.FirebaseAuth
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
-import com.fake.st10262898_budgetbunny_poepart2.data.BudgetBunnyDatabase
-import com.fake.st10262898_budgetbunny_poepart2.data.User
-import com.fake.st10262898_budgetbunny_poepart2.data.UserRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
-class UserViewModel(application: Application) : AndroidViewModel(application)
-{
-    private val userDao = BudgetBunnyDatabase.getDatabase(application).userDao()
-    private val repository = UserRepository(userDao)
+class UserViewModel(application: Application) : AndroidViewModel(application) {
 
-    //This variable is going to be used to be able to check the registration result:
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+
     val registrationResult = MutableLiveData<Boolean>()
+    val loginResult = MutableLiveData<Boolean>()
 
-    fun registerUser(username: String, password: String)
-    {
-        val user = User(username = username, password = password)
+    // Helper function to convert username to fake email
+    private fun usernameToEmail(username: String) = "$username@myapp.fake"
 
-
-        viewModelScope.launch(Dispatchers.IO) {
-            try{
-                repository.insert(user)
-                registrationResult.postValue(true)
+    fun registerUser(username: String, password: String) {
+        val email = usernameToEmail(username)
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                registrationResult.postValue(task.isSuccessful)
             }
-            catch (e: Exception)
-            {
-                registrationResult.postValue(false)
-            }
-        }
     }
 
-
-
-    fun loginUser(username: String, password: String, onResult: (User?) -> Unit)
-    {
-        viewModelScope.launch(Dispatchers.IO) {
-            val user = repository.getUser(username, password)
-            onResult(user)
-        }
-
+    fun loginUser(username: String, password: String) {
+        val email = usernameToEmail(username)
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                loginResult.postValue(task.isSuccessful)
+            }
     }
+
+    fun logoutUser() {
+        auth.signOut()
+    }
+
+    fun getCurrentUser() = auth.currentUser
 }

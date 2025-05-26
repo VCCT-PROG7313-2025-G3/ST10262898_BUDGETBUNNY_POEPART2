@@ -17,13 +17,12 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.fake.st10262898_budgetbunny_poepart2.data.BudgetBunnyDatabase
-import com.fake.st10262898_budgetbunny_poepart2.data.Expense
-import kotlinx.coroutines.launch
+import com.fake.st10262898_budgetbunny_poepart2.data.ExpenseFirebase
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -33,17 +32,16 @@ class TransactionsActivity : AppCompatActivity() {
     companion object {
         private const val CAMERA_PERMISSION_CODE = 100
         private const val CAMERA_REQUEST_CODE = 101
-        private const val ADD_EXPENSE_REQUEST = 1
     }
 
     private lateinit var expenseAdapter: ExpenseAdapter
+    private val db = Firebase.firestore
 
-    // Register the launcher for the activity result
     private val addExpenseLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            Log.d("Transactions", "Expense added, refreshing list")
+            Log.d("Transactions", "Expense added/updated, refreshing list")
             loadExpenses()
         }
     }
@@ -58,65 +56,82 @@ class TransactionsActivity : AppCompatActivity() {
             insets
         }
 
-        // Set the date and time
+        // Set current date/time
         val tvDateTime: TextView = findViewById(R.id.dateText)
-        val currentDateTime = SimpleDateFormat("dd MMMM yyyy, HH:mm", Locale.getDefault()).format(
-            Date()
-        )
-        tvDateTime.text = currentDateTime
+        tvDateTime.text = SimpleDateFormat("dd MMMM yyyy, HH:mm", Locale.getDefault()).format(Date())
 
-        val btnAddExpense = findViewById<Button>(R.id.btn_add_expense)
-        btnAddExpense.setOnClickListener {
-            val intent = Intent(this, ExpenseEntry::class.java)
-            addExpenseLauncher.launch(intent)
+        // Initialize RecyclerView with enhanced click handling
+        initializeRecyclerView()
+
+        // Setup button click listeners
+        findViewById<Button>(R.id.btn_add_expense).setOnClickListener {
+            addExpenseLauncher.launch(Intent(this, ExpenseEntry::class.java))
         }
 
-        // Initialize RecyclerView
-        val recyclerView = findViewById<RecyclerView>(R.id.rv_transaction_list)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        expenseAdapter = ExpenseAdapter(emptyList()) { selectedExpense ->
-            val intent = Intent(this, EditTransactionsActivity::class.java)
-            intent.putExtra("expenseId", selectedExpense.id)
-            startActivity(intent)
-        }
-        recyclerView.adapter = expenseAdapter
-
-        // Load initial data
+        // Load data and setup UI
         loadExpenses()
-
-        // Setup bottom navigation
         setupBottomNavigation()
-
-        // Setup month tiles
         setupMonthTiles()
     }
 
-    private fun loadExpenses() {
-        val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-        val currentUserId = sharedPreferences.getString("username", "") ?: ""
-        val db = BudgetBunnyDatabase.getDatabase(this)
-        val expenseDao = db.expenseDao()
+    private fun initializeRecyclerView() {
+        val recyclerView = findViewById<RecyclerView>(R.id.rv_transaction_list)
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
-        Log.d("Transactions", "Loading expenses for user: $currentUserId")
-
-        lifecycleScope.launch {
-            try {
-                val expenses = expenseDao.getExpenseForUser(currentUserId)
-                Log.d("Transactions", "Retrieved ${expenses.size} expenses")
-                expenseAdapter.updateExpenses(expenses)
-                updateCategoryTiles(expenses)
-            } catch (e: Exception) {
-                Log.e("Transactions", "Error loading expenses", e)
+        expenseAdapter = ExpenseAdapter(emptyList()) { selectedExpense ->
+            if (selectedExpense.id.isNotBlank()) {
+                Intent(this, EditTransactionsActivity::class.java).apply {
+                    putExtra("expenseId", selectedExpense.id)
+                    startActivity(this)
+                }
+            } else {
                 Toast.makeText(
-                    this@TransactionsActivity,
-                    "Error loading expenses",
+                    this,
+                    "Cannot edit this expense - missing ID",
                     Toast.LENGTH_SHORT
                 ).show()
+                Log.e("Transactions", "Attempted to edit expense with empty ID")
             }
         }
+        recyclerView.adapter = expenseAdapter
     }
 
-    private fun updateCategoryTiles(expenses: List<Expense>) {
+    private fun loadExpenses() {
+        val currentUserId = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+            .getString("username", "") ?: ""
+
+        db.collection("expenses")
+            .whereEqualTo("username", currentUserId)
+            .get()
+            .addOnSuccessListener { documents ->
+                val expenses = documents.mapNotNull { doc ->
+                    try {
+                        // Use the correct fromDocument method
+                        ExpenseFirebase(
+                            expenseName = doc.getString("expenseName") ?: "",
+                            expenseAmount = doc.getDouble("expenseAmount") ?: 0.0,
+                            username = doc.getString("username") ?: "",
+                            expenseCategory = doc.getString("expenseCategory"),
+                            expenseDate = doc.getLong("expenseDate") ?: 0L,
+                            expenseImageBase64 = doc.getString("expenseImageBase64")
+                        ).apply {
+                            id = doc.id
+                        }
+                    } catch (e: Exception) {
+                        Log.e("LoadExpenses", "Error parsing expense ${doc.id}", e)
+                        null
+                    }
+                }
+                expenseAdapter.updateExpenses(expenses)
+                updateCategoryTiles(expenses)
+            }
+            .addOnFailureListener { e ->
+                Log.e("Transactions", "Error loading expenses", e)
+                Toast.makeText(this, "Error loading expenses", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun updateCategoryTiles(expenses: List<ExpenseFirebase>) {
         val categoryTotals = expenses.groupBy { it.expenseCategory }
             .mapValues { entry -> entry.value.sumOf { it.expenseAmount } }
             .toList()
@@ -176,20 +191,23 @@ class TransactionsActivity : AppCompatActivity() {
     }
 
     private fun setupMonthTiles() {
-        val monthTileIds = listOf(
+        listOf(
             R.id.tileJanuary, R.id.tileFebruary, R.id.tileMarch,
             R.id.tileApril, R.id.tileMay, R.id.tileJune,
             R.id.tileJuly, R.id.tileAugust, R.id.tileSeptember,
             R.id.tileOctober, R.id.tileNovember, R.id.tileDecember
-        )
-
-        monthTileIds.forEachIndexed { index, tileId ->
+        ).forEachIndexed { index, tileId ->
             findViewById<LinearLayout>(tileId).setOnClickListener {
-                val intent = Intent(this, ViewMonthsExpense::class.java)
-                intent.putExtra("month", index + 1)
-                startActivity(intent)
+                startActivity(Intent(this, ViewMonthsExpense::class.java).apply {
+                    putExtra("month", index + 1)
+                })
             }
         }
+    }
+
+    private fun navigateTo(activity: Class<*>) {
+        startActivity(Intent(this, activity))
+        overridePendingTransition(0, 0)
     }
 
     private fun checkCameraPermission(): Boolean {

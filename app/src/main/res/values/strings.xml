@@ -137,4 +137,11 @@
     <string name="please_enter_amount">Please enter amount</string>
     <string name="please_enter_income">Please enter income</string>
     <string name="date">Date</string>
+
+    <!-- This is for the View months at glance screen -->
+    <string name="no_expenses_found">No expenses found for selected period</string>
+    <string name="user_not_logged_in">User not logged in</string>
+    <string name="select_both_dates">Please select both dates</string>
+    <string name="invalid_date_range">End date must be after start date</string>
+
 </resources>

@@ -9,15 +9,17 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.fake.st10262898_budgetbunny_poepart2.data.Budget
-import com.fake.st10262898_budgetbunny_poepart2.data.BudgetBunnyDatabase
+import com.fake.st10262898_budgetbunny_poepart2.data.BudgetFirestore
+import com.fake.st10262898_budgetbunny_poepart2.viewmodel.BudgetViewModel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import androidx.activity.viewModels
 
 class GoalEntry : AppCompatActivity() {
 
+    private val budgetViewModel: BudgetViewModel by viewModels()
     private lateinit var dateEditText: EditText
     private lateinit var amountEditText: EditText
     private lateinit var incomeEditText: EditText
@@ -97,31 +99,47 @@ class GoalEntry : AppCompatActivity() {
             return
         }
 
+        if (amount <= 0 || income <= 0) {
+            Toast.makeText(this, "Amounts must be positive", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
         val username = sharedPreferences.getString("username", "") ?: ""
 
+        if (username.isEmpty()) {
+            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         lifecycleScope.launch {
-            val db = BudgetBunnyDatabase.getDatabase(this@GoalEntry)
-            val budgetDao = db.budgetDao()
-
-            val budget = Budget(
-                totalBudgetGoal = amount,
-                minTotalBudgetGoal = income,
-                budgetCategory = category,
-                budgetAmount = 0.0, // Initial amount saved is 0
-                budgetDate = calendar.timeInMillis,
-                budgetIncome = income,
-                username = username
-            )
-
             try {
-                budgetDao.insertBudget(budget)
-                Toast.makeText(this@GoalEntry, "Budget goal saved", Toast.LENGTH_SHORT).show()
+                budgetViewModel.addBudget(
+                    totalBudgetGoal = amount,
+                    budgetCategory = category,
+                    budgetAmount = 0.0, // Initial amount saved is 0
+                    username = username,
+                    minTotalBudgetGoal = income,
+                    budgetDate = calendar.timeInMillis,
+                    budgetIncome = income
+                )
 
-                // Return to BudgetGoalsOverviewActivity which will refresh the list
-                finish()
+                runOnUiThread {
+                    Toast.makeText(
+                        this@GoalEntry,
+                        "Budget goal saved successfully!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    finish()
+                }
             } catch (e: Exception) {
-                Toast.makeText(this@GoalEntry, "Failed to save budget goal", Toast.LENGTH_SHORT).show()
+                runOnUiThread {
+                    Toast.makeText(
+                        this@GoalEntry,
+                        "Failed to save budget: ${e.localizedMessage}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
         }
     }

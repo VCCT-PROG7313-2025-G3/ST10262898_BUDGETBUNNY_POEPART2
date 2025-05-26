@@ -8,10 +8,13 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.viewModels
-import com.fake.st10262898_budgetbunny_poepart2.viewmodel.BudgetViewModel
 import java.text.DecimalFormat
 import java.text.ParseException
 import java.util.Calendar
+
+//Firestore
+import com.fake.st10262898_budgetbunny_poepart2.data.BudgetFirestore
+import com.fake.st10262898_budgetbunny_poepart2.viewmodel.BudgetViewModel
 
 class CategoryBudgetGoal : AppCompatActivity() {
 
@@ -81,17 +84,15 @@ class CategoryBudgetGoal : AppCompatActivity() {
                     budgetDate = selectedDate,
                     budgetIncome = 0.0
                 )
-            } else {
+            }else {
                 Toast.makeText(this, "Please select a valid date.", Toast.LENGTH_SHORT).show()
             }
         }
 
         budgetViewModel.budgetSaved.observe(this) { saved ->
             if (saved) {
-                Toast.makeText(this, "Budget saved successfully!", Toast.LENGTH_SHORT).show()
-                finish() // Go back to bugetGoalsPage to allow selecting another category
-            } else {
-                Toast.makeText(this, "Failed to save budget. Please try again.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Budget saved to Firestore!", Toast.LENGTH_SHORT).show()
+                finish()
             }
         }
 
