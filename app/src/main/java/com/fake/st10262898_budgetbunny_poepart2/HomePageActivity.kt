@@ -56,6 +56,11 @@ class HomePageActivity : AppCompatActivity() {
             }
         }
         recyclerView.adapter = expenseAdapter
+
+        barChart.setOnClickListener {
+            val intent = Intent(this, DetailedBarChartActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun loadData() {
