@@ -145,6 +145,11 @@ class DetailedBarChartActivity : AppCompatActivity() {
             return
         }
 
+        // Get goals from SharedPreferences
+        val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val minGoal = sharedPreferences.getFloat("MIN_GOAL", 0f)
+        val maxGoal = sharedPreferences.getFloat("TOTAL_BUDGET_GOAL", 0f)
+
         // Group and sort expense data
         val expenseData = expenses.groupBy { it.expenseCategory }
             .mapValues { it.value.sumOf { expense -> expense.expenseAmount } }
@@ -158,21 +163,17 @@ class DetailedBarChartActivity : AppCompatActivity() {
 
         // Configure dataset
         val dataSet = BarDataSet(entries, "Amount Spent").apply {
-            colors = listOf(
-                Color.parseColor("#4CAF50"),  // Green
-                Color.parseColor("#2196F3"),  // Blue
-                Color.parseColor("#FFC107"),  // Amber
-                Color.parseColor("#9C27B0"),  // Purple
-                Color.parseColor("#F44336")   // Red
-            )
+            colors = expenseData.map { (_, amount) ->
+                when {
+                    amount.toFloat() > maxGoal -> Color.parseColor("#F44336") // Red if over max
+                    amount.toFloat() < minGoal -> Color.parseColor("#FFC107") // Amber if under min
+                    else -> Color.parseColor("#4CAF50") // Green if within goals
+                }
+            }
             valueTextColor = Color.BLACK
             valueTextSize = 10f
             setDrawValues(true)
         }
-
-        // Calculate goals
-        val minGoal = budgets.minOfOrNull { it.totalBudgetGoal }?.toFloat() ?: 0f
-        val maxGoal = budgets.sumOf { it.totalBudgetGoal }.toFloat()
 
         // Configure chart
         expensesChart.apply {
@@ -206,7 +207,7 @@ class DetailedBarChartActivity : AppCompatActivity() {
                 }
             }
 
-            // Left Y-axis with improved goal visualization
+            // Left Y-axis with goal lines
             axisLeft.apply {
                 removeAllLimitLines()
                 textColor = Color.BLACK
@@ -216,23 +217,32 @@ class DetailedBarChartActivity : AppCompatActivity() {
                 gridColor = Color.parseColor("#EEEEEE")
                 axisLineColor = Color.DKGRAY
 
-                // Goal range visualization
-                addLimitLine(LimitLine(minGoal, "MIN").apply {
-                    lineColor = Color.TRANSPARENT
-                    textColor = Color.RED
-                    textSize = 10f
-                    labelPosition = LimitLine.LimitLabelPosition.LEFT_TOP
-                })
+                // Only show goal lines if they're set (>0)
+                if (minGoal > 0) {
+                    addLimitLine(
+                        LimitLine(minGoal, "Min Goal: ${"%.2f".format(minGoal)}").apply {
+                            lineColor = Color.RED
+                            textColor = Color.RED
+                            lineWidth = 1.5f
+                            textSize = 10f
+                            enableDashedLine(10f, 10f, 0f)
+                        }
+                    )
+                }
 
-                addLimitLine(LimitLine(maxGoal, "MAX").apply {
-                    lineColor = Color.TRANSPARENT
-                    textColor = Color.GREEN
-                    textSize = 10f
-                    labelPosition = LimitLine.LimitLabelPosition.RIGHT_TOP
-                })
+                if (maxGoal > 0) {
+                    addLimitLine(
+                        LimitLine(maxGoal, "Max Goal: ${"%.2f".format(maxGoal)}").apply {
+                            lineColor = Color.GREEN
+                            textColor = Color.GREEN
+                            lineWidth = 1.5f
+                            textSize = 10f
+                            enableDashedLine(10f, 10f, 0f)
+                        }
+                    )
+                }
             }
 
-            // Right Y-axis
             axisRight.isEnabled = false
 
             // Legend
@@ -247,10 +257,8 @@ class DetailedBarChartActivity : AppCompatActivity() {
                 xOffset = 0f
             }
 
-            // Extra spacing
             setExtraOffsets(12f, 12f, 12f, 12f)
             setVisibleXRangeMaximum(5f)
-
             invalidate()
         }
     }
