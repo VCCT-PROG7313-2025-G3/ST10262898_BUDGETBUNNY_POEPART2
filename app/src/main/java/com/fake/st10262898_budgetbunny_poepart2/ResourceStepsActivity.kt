@@ -17,7 +17,7 @@ class ResourceStepsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_resource_steps)
 
         topic = intent.getStringExtra("topic") ?: "save_money"
-        imageView = findViewById(R.id.iv_step)
+        imageView = findViewById(R.id.iv_step_content)
 
         // Load the first step
         showStep(currentStep)

@@ -1,0 +1,27 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <!-- Background Circle -->
+    <path
+        android:fillColor="#40A9A9A9"
+        android:pathData="M100,0a100,100 0 1,1 0,200a100,100 0 1,1 0,-200z"/>
+
+    <!-- Notebook -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M60,40L140,40L140,160L60,160Z"/>
+
+    <!-- Lines -->
+    <path
+        android:strokeColor="#FF6B6B"
+        android:strokeWidth="2"
+        android:pathData="M70,70L130,70M70,90L130,90M70,110L130,110M70,130L130,130"/>
+
+    <!-- Coin (replaced circle with path) -->
+    <path
+        android:fillColor="#FFD700"
+        android:pathData="M150,50a15,15 0 1,1 0,0.1z"/>
+</vector>
