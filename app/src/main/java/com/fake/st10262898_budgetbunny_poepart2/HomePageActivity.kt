@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -50,7 +51,7 @@ class HomePageActivity : AppCompatActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.rv_transactions)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        findViewById<Button>(R.id.btn_resources).setOnClickListener {
+        findViewById<CardView>(R.id.cv_resources).setOnClickListener {
             startActivity(Intent(this, ResourcesActivity::class.java))
         }
 
@@ -66,6 +67,8 @@ class HomePageActivity : AppCompatActivity() {
             val intent = Intent(this, DetailedBarChartActivity::class.java)
             startActivity(intent)
         }
+
+
 
 
     }
