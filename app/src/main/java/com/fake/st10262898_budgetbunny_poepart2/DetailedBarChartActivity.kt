@@ -39,6 +39,7 @@ class DetailedBarChartActivity : AppCompatActivity() {
     private var startDate: Long = 0L
     private var endDate: Long = System.currentTimeMillis()
 
+    // Initialize Firebase
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detailed_bar_chart)
