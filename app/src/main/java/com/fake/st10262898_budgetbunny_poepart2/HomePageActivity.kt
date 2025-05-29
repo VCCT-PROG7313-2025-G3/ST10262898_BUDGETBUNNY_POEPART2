@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -49,6 +50,10 @@ class HomePageActivity : AppCompatActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.rv_transactions)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
+        findViewById<Button>(R.id.btn_resources).setOnClickListener {
+            startActivity(Intent(this, ResourcesActivity::class.java))
+        }
+
         expenseAdapter = ExpenseAdapter(emptyList()) { selectedExpense ->
             Intent(this, EditTransactionsActivity::class.java).apply {
                 putExtra("expenseId", selectedExpense.id)
@@ -61,6 +66,8 @@ class HomePageActivity : AppCompatActivity() {
             val intent = Intent(this, DetailedBarChartActivity::class.java)
             startActivity(intent)
         }
+
+
     }
 
     private fun loadData() {
