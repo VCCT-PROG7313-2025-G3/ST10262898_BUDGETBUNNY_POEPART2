@@ -404,4 +404,55 @@
 
 
 
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabChat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:src="@android:drawable/ic_dialog_email"
+            app:backgroundTint="@color/light_purple" />
+
+        <LinearLayout
+            android:id="@+id/chatContainer"
+            android:layout_width="300dp"
+            android:layout_height="400dp"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:background="@drawable/chat_bubble_background"
+            android:elevation="8dp"
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:visibility="gone">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/tvChat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Bot: Welcome! Choose:\nA - Add Expense\nB - Set Budget\nC - Play Game"
+                    android:textColor="@android:color/black"/>
+            </ScrollView>
+
+            <EditText
+                android:id="@+id/etChatInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Type A, B or C"
+                android:inputType="textCapCharacters"/>
+
+            <Button
+                android:id="@+id/btnChatSend"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Send"/>
+        </LinearLayout>
+
+
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

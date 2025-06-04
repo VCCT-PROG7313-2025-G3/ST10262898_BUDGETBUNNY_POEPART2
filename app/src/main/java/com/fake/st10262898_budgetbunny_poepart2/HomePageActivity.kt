@@ -4,7 +4,11 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.lifecycle.lifecycleScope
@@ -23,6 +27,7 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
@@ -34,6 +39,15 @@ class HomePageActivity : AppCompatActivity() {
     private lateinit var pieChart: PieChart
     private lateinit var barChart: BarChart
     private val db = Firebase.firestore
+
+
+    //This is for chatbot:
+    private lateinit var fabChat: FloatingActionButton
+    private lateinit var chatContainer: LinearLayout
+    private lateinit var tvChat: TextView
+    private lateinit var etChatInput: EditText
+    private lateinit var btnChatSend: Button
+    private var isChatExpanded = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,6 +81,17 @@ class HomePageActivity : AppCompatActivity() {
             val intent = Intent(this, DetailedBarChartActivity::class.java)
             startActivity(intent)
         }
+
+
+        // Chatbot setup
+        fabChat = findViewById(R.id.fabChat)
+        chatContainer = findViewById(R.id.chatContainer)
+        tvChat = findViewById(R.id.tvChat)
+        etChatInput = findViewById(R.id.etChatInput)
+        btnChatSend = findViewById(R.id.btnChatSend)
+
+        fabChat.setOnClickListener { toggleChat() }
+        btnChatSend.setOnClickListener { handleChatInput() }
 
 
 
@@ -227,5 +252,49 @@ class HomePageActivity : AppCompatActivity() {
         override fun getFormattedValue(value: Float): String {
             return labels.getOrNull(value.toInt()) ?: ""
         }
+    }
+
+    //Chat Bot methods:
+    private fun toggleChat() {
+        isChatExpanded = !isChatExpanded
+        chatContainer.visibility = if (isChatExpanded) View.VISIBLE else View.GONE
+    }
+
+    private fun handleChatInput() {
+        val input = etChatInput.text.toString().trim().uppercase()
+        etChatInput.text.clear()
+
+        when (input) {
+            "A" -> {
+                appendChatMessage("\nYou: A")
+                appendChatMessage("\nBot: Opening expenses...")
+                startActivity(Intent(this, ExpenseEntry::class.java))
+                collapseChat()
+            }
+            "B" -> {
+                appendChatMessage("\nYou: B")
+                appendChatMessage("\nBot: Opening budgets...")
+                startActivity(Intent(this, GoalEntry::class.java))
+                collapseChat()
+            }
+            "C" -> {
+                appendChatMessage("\nYou: C")
+                appendChatMessage("\nBot: Game coming soon! 🎮")
+                // startActivity(Intent(this, GameActivity::class.java))
+            }
+            else -> {
+                appendChatMessage("\nBot: Please enter A, B, or C")
+            }
+        }
+    }
+
+    private fun appendChatMessage(message: String) {
+        tvChat.append(message)
+        tvChat.post { tvChat.scrollTo(0, tvChat.bottom) }
+    }
+
+    private fun collapseChat() {
+        isChatExpanded = false
+        chatContainer.visibility = View.GONE
     }
 }
