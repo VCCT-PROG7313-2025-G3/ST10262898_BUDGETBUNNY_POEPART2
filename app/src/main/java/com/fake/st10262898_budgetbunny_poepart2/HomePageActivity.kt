@@ -11,6 +11,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -48,6 +49,8 @@ class HomePageActivity : AppCompatActivity() {
     private lateinit var etChatInput: EditText
     private lateinit var btnChatSend: Button
     private var isChatExpanded = false
+    private val BOT_EMOJIS = listOf("🤖", "💡", "💰", "📊", "🔄")
+    private val USER_EMOJIS = listOf("👤", "💬", "✏️", "💳", "🎮")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +60,20 @@ class HomePageActivity : AppCompatActivity() {
         initializeViews()
         loadData()
         setupBottomNavigation()
+
+        findViewById<View>(R.id.bottomNavigationView).post {
+            val navBar = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+            val fab = findViewById<FloatingActionButton>(R.id.fabChat)
+            val chatContainer = findViewById<LinearLayout>(R.id.chatContainer)
+
+            // Calculate proper margin (nav height + 16dp padding)
+            val marginBottom = navBar.height +
+                    (16 * resources.displayMetrics.density).toInt()
+
+            // Apply to both elements
+            (fab.layoutParams as CoordinatorLayout.LayoutParams).bottomMargin = marginBottom
+            (chatContainer.layoutParams as CoordinatorLayout.LayoutParams).bottomMargin = marginBottom
+        }
     }
 
     private fun initializeViews() {
@@ -288,9 +305,29 @@ class HomePageActivity : AppCompatActivity() {
         }
     }
 
-    private fun appendChatMessage(message: String) {
-        tvChat.append(message)
-        tvChat.post { tvChat.scrollTo(0, tvChat.bottom) }
+    private fun appendChatMessage(message: String, isBot: Boolean = true) {
+        val emoji = if (isBot) BOT_EMOJIS.random() else USER_EMOJIS.random()
+        val formattedMessage = "$emoji $message"
+
+        tvChat.append("\n\n$formattedMessage")
+        tvChat.post {
+            tvChat.scrollTo(0, tvChat.bottom)
+            animateMessageAppearance()
+        }
+    }
+
+    private fun animateMessageAppearance() {
+        chatContainer.animate()
+            .scaleX(1.02f)
+            .scaleY(1.02f)
+            .setDuration(100)
+            .withEndAction {
+                chatContainer.animate()
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .setDuration(100)
+                    .start()
+            }.start()
     }
 
     private fun collapseChat() {

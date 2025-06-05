@@ -407,19 +407,27 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabChat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_gravity="bottom|start"
             android:layout_margin="16dp"
-            android:src="@android:drawable/ic_dialog_email"
-            app:backgroundTint="@color/light_purple" />
+            android:layout_marginBottom="80dp"
+            android:src="@drawable/ic_robot"
+            app:backgroundTint="@color/light_purple"
+            app:tint="@null"
+            android:padding="8dp"
+            app:borderWidth="0dp"
+            app:maxImageSize="48dp"
+            app:fabCustomSize="64dp"
+            app:useCompatPadding="true"/>
 
         <LinearLayout
             android:id="@+id/chatContainer"
             android:layout_width="300dp"
             android:layout_height="400dp"
-            android:layout_gravity="bottom|end"
+            android:layout_gravity="bottom|start"
             android:layout_margin="16dp"
+            android:layout_marginBottom="80dp"
             android:background="@drawable/chat_bubble_background"
             android:elevation="8dp"
             android:orientation="vertical"
