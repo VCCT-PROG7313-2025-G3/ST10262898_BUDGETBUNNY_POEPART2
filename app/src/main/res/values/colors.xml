@@ -25,4 +25,8 @@
     <color name="chat_bot_bubble">#7B1FA2</color>
     <color name="chat_user_bubble">#9C27B0</color>
     <color name="chat_time_text">#BDBDBD</color>
+    <color name="light_purple_bg">#F5F0FF</color>
+    <color name="slate_blue">#6A5ACD</color>
+
+
 </resources>

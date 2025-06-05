@@ -8,155 +8,248 @@
     android:background="@drawable/bg_date"
     tools:context=".ResourcesActivity">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/regalia"
+        android:elevation="8dp">
+
+
+    </com.google.android.material.appbar.AppBarLayout>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <!-- Top Navigation Bar -->
-        <View
-            android:id="@+id/v_navBar"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:background="@color/dark_pastel_purple"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <!-- Title -->
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Resources"
-            android:textColor="#FFFFFF"
-            android:textSize="40sp"
+            android:text="Financial Guides"
+            android:textColor="@color/light_purple"
+            android:textSize="28sp"
             android:fontFamily="@font/pacifico"
-            app:layout_constraintTop_toBottomOf="@id/v_navBar"
+            android:letterSpacing="0.02"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Scrollable Content -->
+        <TextView
+            android:id="@+id/tv_subtitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Expert advice for your financial journey"
+            android:textColor="@color/mutated_white"
+            android:textSize="16sp"
+            android:fontFamily="@font/jost_medium"
+            android:layout_marginTop="8dp"
+            android:layout_marginHorizontal="24dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:padding="16dp"
-            app:layout_constraintTop_toBottomOf="@id/tv_title"
+            android:paddingTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_subtitle"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:paddingBottom="32dp">
 
-                <!-- Topic 1: Save Money -->
+
                 <androidx.cardview.widget.CardView
                     android:id="@+id/card_save_money"
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    app:cardCornerRadius="30dp"
-                    app:cardElevation="6dp"
-                    app:cardBackgroundColor="#40A9A9A9"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_width="0dp"
+                    android:layout_height="200dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginBottom="16dp">
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginHorizontal="16dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="4dp"
+                    app:cardBackgroundColor="@color/slate_blue"
+                    android:foreground="?attr/selectableItemBackground">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="match_parent"
+                        android:padding="20dp">
 
-                        <TextView
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="How to Save Money"
-                            android:textColor="#FFFFFF"
-                            android:textSize="24sp"
-                            android:fontFamily="@font/jost_medium"
-                            android:layout_margin="16dp"/>
+                            android:layout_centerVertical="true"
+                            android:orientation="vertical"
+                            android:layout_marginEnd="88dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Save Money"
+                                android:textColor="@color/white"
+                                android:textSize="22sp"
+                                android:fontFamily="@font/jost_medium"
+                                android:letterSpacing="0.02"/>
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Practical strategies to grow your savings"
+                                android:textColor="@color/mutated_white"
+                                android:textSize="14sp"
+                                android:fontFamily="@font/jost_medium"
+                                android:layout_marginTop="8dp"
+                                android:lineSpacingExtra="2sp"/>
+                        </LinearLayout>
 
                         <ImageView
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
                             android:src="@drawable/app_icon"
-                        android:layout_alignParentEnd="true"
-                        android:layout_margin="16dp"/>
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            app:tint="@color/white"/>
                     </RelativeLayout>
                 </androidx.cardview.widget.CardView>
 
-                <!-- Topic 2: Invest Well -->
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/card_invest"
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    app:cardCornerRadius="30dp"
-                    app:cardElevation="6dp"
-                    app:cardBackgroundColor="#40A9A9A9"
+
+                <View
+                    android:id="@+id/space1"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
                     app:layout_constraintTop_toBottomOf="@id/card_save_money"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginBottom="16dp">
+                    app:layout_constraintEnd_toEndOf="parent"/>
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="How to Invest Well"
-                            android:textColor="#FFFFFF"
-                            android:textSize="24sp"
-                            android:fontFamily="@font/jost_medium"
-                            android:layout_margin="16dp"/>
-
-                        <ImageView
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"
-                            android:src="@drawable/app_icon"
-                        android:layout_alignParentEnd="true"
-                        android:layout_margin="16dp"/>
-                    </RelativeLayout>
-                </androidx.cardview.widget.CardView>
-
-                <!-- Topic 3: Earn More -->
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/card_earn"
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    app:cardCornerRadius="30dp"
-                    app:cardElevation="6dp"
-                    app:cardBackgroundColor="#40A9A9A9"
-                    app:layout_constraintTop_toBottomOf="@id/card_invest"
+                    android:id="@+id/card_invest"
+                    android:layout_width="0dp"
+                    android:layout_height="200dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginBottom="16dp">
+                    app:layout_constraintTop_toBottomOf="@id/space1"
+                    android:layout_marginHorizontal="16dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="4dp"
+                    app:cardBackgroundColor="@color/slate_blue"
+                    android:foreground="?attr/selectableItemBackground">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="match_parent"
+                        android:padding="20dp">
 
-                        <TextView
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="How to Earn More"
-                            android:textColor="#FFFFFF"
-                            android:textSize="24sp"
-                            android:fontFamily="@font/jost_medium"
-                            android:layout_margin="16dp"/>
+                            android:layout_centerVertical="true"
+                            android:orientation="vertical"
+                            android:layout_marginEnd="88dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Invest Wisely"
+                                android:textColor="@color/white"
+                                android:textSize="22sp"
+                                android:fontFamily="@font/jost_medium"
+                                android:letterSpacing="0.02"/>
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Smart ways to grow your wealth"
+                                android:textColor="@color/mutated_white"
+                                android:textSize="14sp"
+                                android:fontFamily="@font/jost_medium"
+                                android:layout_marginTop="8dp"
+                                android:lineSpacingExtra="2sp"/>
+                        </LinearLayout>
 
                         <ImageView
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
                             android:src="@drawable/app_icon"
-                        android:layout_alignParentEnd="true"
-                        android:layout_margin="16dp"/>
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            app:tint="@color/white"/>
                     </RelativeLayout>
                 </androidx.cardview.widget.CardView>
 
+
+                <View
+                    android:id="@+id/space2"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    app:layout_constraintTop_toBottomOf="@id/card_invest"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card_earn"
+                    android:layout_width="0dp"
+                    android:layout_height="200dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/space2"
+                    android:layout_marginHorizontal="16dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="4dp"
+                    app:cardBackgroundColor="@color/slate_blue"
+                    android:foreground="?attr/selectableItemBackground">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="20dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:orientation="vertical"
+                            android:layout_marginEnd="88dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Earn More"
+                                android:textColor="@color/white"
+                                android:textSize="22sp"
+                                android:fontFamily="@font/jost_medium"
+                                android:letterSpacing="0.02"/>
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Boost your income potential"
+                                android:textColor="@color/mutated_white"
+                                android:textSize="14sp"
+                                android:fontFamily="@font/jost_medium"
+                                android:layout_marginTop="8dp"
+                                android:lineSpacingExtra="2sp"/>
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:src="@drawable/app_icon"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            app:tint="@color/white"/>
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

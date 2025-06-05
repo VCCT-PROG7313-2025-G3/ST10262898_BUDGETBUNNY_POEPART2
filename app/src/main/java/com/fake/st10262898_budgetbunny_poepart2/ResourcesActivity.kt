@@ -5,9 +5,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-
+import androidx.cardview.widget.CardView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class ResourcesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,23 +14,36 @@ class ResourcesActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_resources)
 
-        // Corrected with proper parenthesis
-        findViewById<View>(R.id.card_save_money).setOnClickListener {
-            startActivity(Intent(this, ResourceStepsActivity::class.java).apply {
-                putExtra("topic", "save_money")
-            })
-        }
+        setupCardAnimations()
 
-        findViewById<View>(R.id.card_invest).setOnClickListener {
-            startActivity(Intent(this, ResourceStepsActivity::class.java).apply {
-                putExtra("topic", "invest")
-            })
-        }
 
-        findViewById<View>(R.id.card_earn).setOnClickListener {
-            startActivity(Intent(this, ResourceStepsActivity::class.java).apply {
-                putExtra("topic", "earn")
-            })
+    }
+
+    private fun setupCardAnimations() {
+        val cards = listOf<View>(
+            findViewById<CardView>(R.id.card_save_money),
+            findViewById<CardView>(R.id.card_invest),
+            findViewById<CardView>(R.id.card_earn)
+        )
+
+        cards.forEach { card ->
+            card.setOnClickListener { view ->
+                view.animate().scaleX(0.95f).scaleY(0.95f).setDuration(100).withEndAction {
+                    view.animate().scaleX(1f).scaleY(1f).setDuration(100).start()
+                    when (view.id) {
+                        R.id.card_save_money -> openTopic("save_money")
+                        R.id.card_invest -> openTopic("invest")
+                        R.id.card_earn -> openTopic("earn")
+                    }
+                }.start()
+            }
         }
+    }
+
+    private fun openTopic(topic: String) {
+        startActivity(Intent(this, ResourceStepsActivity::class.java).apply {
+            putExtra("topic", topic)
+        })
+        overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left)
     }
 }
