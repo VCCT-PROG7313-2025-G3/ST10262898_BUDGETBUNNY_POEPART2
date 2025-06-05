@@ -421,45 +421,71 @@
             app:fabCustomSize="64dp"
             app:useCompatPadding="true"/>
 
-        <LinearLayout
-            android:id="@+id/chatContainer"
-            android:layout_width="300dp"
-            android:layout_height="400dp"
-            android:layout_gravity="bottom|start"
-            android:layout_margin="16dp"
-            android:layout_marginBottom="80dp"
-            android:background="@drawable/chat_bubble_background"
-            android:elevation="8dp"
-            android:orientation="vertical"
-            android:padding="8dp"
-            android:visibility="gone">
+    <LinearLayout
+        android:id="@+id/chatContainer"
+        android:layout_width="300dp"
+        android:layout_height="400dp"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="16dp"
+        android:layout_marginBottom="80dp"
+        android:background="@drawable/chat_bubble_background"
+        android:elevation="8dp"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:visibility="gone">
 
-            <ScrollView
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingBottom="8dp">
+
+            <TextView
+                android:id="@+id/tvChat"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1">
+                android:layout_height="wrap_content"
+                android:text="Bot: Welcome! Choose:\nA - Add Expense\nB - Set Budget\nC - Play Game"
+                android:textColor="@android:color/black"/>
+        </ScrollView>
 
-                <TextView
-                    android:id="@+id/tvChat"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Bot: Welcome! Choose:\nA - Add Expense\nB - Set Budget\nC - Play Game"
-                    android:textColor="@android:color/black"/>
-            </ScrollView>
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="Type message..."
+            app:hintTextColor="@color/purple_200"
+            app:boxBackgroundMode="outline"
+            app:boxBackgroundColor="@color/purple_700"
+            app:boxStrokeColor="@color/purple_300"
+            app:boxCornerRadiusBottomEnd="24dp"
+            app:boxCornerRadiusBottomStart="24dp"
+            app:boxCornerRadiusTopEnd="24dp"
+            app:boxCornerRadiusTopStart="24dp">
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etChatInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Type A, B or C"
-                android:inputType="textCapCharacters"/>
+                android:inputType="textCapCharacters"
+                android:textColor="@color/white"
+                android:textColorHint="@color/purple_200"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-            <Button
-                android:id="@+id/btnChatSend"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Send"/>
-        </LinearLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnChatSend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="8dp"
+            android:text="Send"
+            android:textColor="@color/white"
+            app:icon="@drawable/ic_send"
+            app:iconTint="@color/white"
+            app:backgroundTint="@color/purple_500"
+            app:cornerRadius="24dp"
+            app:strokeColor="@color/purple_300"
+            app:strokeWidth="1dp"/>
+    </LinearLayout>
 
 
 

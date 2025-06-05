@@ -2,7 +2,13 @@ package com.fake.st10262898_budgetbunny_poepart2
 
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
+import android.text.style.StyleSpan
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -33,6 +39,9 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class HomePageActivity : AppCompatActivity() {
 
@@ -307,12 +316,44 @@ class HomePageActivity : AppCompatActivity() {
 
     private fun appendChatMessage(message: String, isBot: Boolean = true) {
         val emoji = if (isBot) BOT_EMOJIS.random() else USER_EMOJIS.random()
-        val formattedMessage = "$emoji $message"
+        val timestamp = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
 
-        tvChat.append("\n\n$formattedMessage")
+        val formattedMessage = SpannableStringBuilder().apply {
+            append("$emoji ")
+            setSpan(
+                StyleSpan(Typeface.BOLD),
+                0,
+                emoji.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+
+            append("$message\n")
+            append(" $timestamp")
+            setSpan(
+                RelativeSizeSpan(0.7f),
+                length - timestamp.length - 1,
+                length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            setSpan(
+                ForegroundColorSpan(Color.parseColor("#BBFFFFFF")),
+                length - timestamp.length - 1,
+                length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+
+        tvChat.append("\n")
+        tvChat.append(formattedMessage)
+
+        animateMessageAppearance()
+        scrollToBottom()
+    }
+
+    private fun scrollToBottom() {
         tvChat.post {
-            tvChat.scrollTo(0, tvChat.bottom)
-            animateMessageAppearance()
+            val scrollAmount = tvChat.layout.getLineTop(tvChat.lineCount) - tvChat.height
+            tvChat.scrollTo(0, if (scrollAmount > 0) scrollAmount else 0)
         }
     }
 
