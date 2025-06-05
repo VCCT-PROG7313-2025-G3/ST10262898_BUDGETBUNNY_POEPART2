@@ -30,23 +30,23 @@ class ChatAdapter(private val messages: MutableList<ChatMessage>) :
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
         val message = messages[position]
 
-        // Set message content
+
         holder.tvSender.text = if (message.isBot) "Budget Bunny" else "You"
         holder.tvMessage.text = message.message
         holder.tvTime.text = message.time
 
-        // Set appropriate background and layout gravity
+
         if (message.isBot) {
             holder.messageContainer.setBackgroundResource(R.drawable.chat_bubble_bot)
             (holder.messageContainer.layoutParams as ViewGroup.MarginLayoutParams).let { params ->
                 params.marginStart = 0
-                params.marginEnd = dpToPx(holder.itemView.context, 64f) // Adjust as needed
+                params.marginEnd = dpToPx(holder.itemView.context, 64f)
                 holder.messageContainer.layoutParams = params
             }
         } else {
             holder.messageContainer.setBackgroundResource(R.drawable.chat_bubble_user)
             (holder.messageContainer.layoutParams as ViewGroup.MarginLayoutParams).let { params ->
-                params.marginStart = dpToPx(holder.itemView.context, 64f) // Adjust as needed
+                params.marginStart = dpToPx(holder.itemView.context, 64f)
                 params.marginEnd = 0
                 holder.messageContainer.layoutParams = params
             }

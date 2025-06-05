@@ -315,7 +315,7 @@ class HomePageActivity : AppCompatActivity() {
         val input = etChatInput.text.toString().trim().uppercase()
         etChatInput.text.clear()
 
-        // Add user message
+
         addChatMessage(input, false)
 
         when (input) {

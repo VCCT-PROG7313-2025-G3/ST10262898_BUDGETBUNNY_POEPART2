@@ -60,7 +60,7 @@ class DetailedBarChartActivity : AppCompatActivity() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         periodSpinner.adapter = adapter
 
-        // Set up the listener first
+
         var isInitialSetup = true
         var lastSelectionTime = 0L
 
@@ -81,9 +81,9 @@ class DetailedBarChartActivity : AppCompatActivity() {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
-        // Now set selection and manually trigger initial load
+
         periodSpinner.setSelection(periods.indexOf("All Time"))
-        loadData("All Time")  // Explicit initial load
+        loadData("All Time")
     }
 
     private fun setupDateRangePicker() {
@@ -112,14 +112,15 @@ class DetailedBarChartActivity : AppCompatActivity() {
     private var isLoading = false
 
     private fun loadData(period: String) {
-        // Prevent multiple concurrent loads
+
+
         if (isLoading) {
             Log.d("ChartDebug", "Load already in progress, skipping")
             return
         }
         isLoading = true
 
-        // Show loading state on charts
+
         runOnUiThread {
             expensesChart.setNoDataText("Loading expenses...")
             expensesChart.setNoDataTextColor(Color.BLACK)
@@ -138,7 +139,7 @@ class DetailedBarChartActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                // Get expenses for selected period
+
                 val expensesQuery = if (period == "All Time") {
                     Log.d("ChartDebug", "Querying ALL expenses")
                     db.collection("expenses")
@@ -158,23 +159,23 @@ class DetailedBarChartActivity : AppCompatActivity() {
                         .whereLessThanOrEqualTo("expenseDate", Date(System.currentTimeMillis()))
                 }
 
-                // Execute both queries in parallel
+
                 val expensesDeferred = expensesQuery.get()
                 val budgetsDeferred = db.collection("budgets")
                     .whereEqualTo("username", currentUserId)
                     .get()
 
-                // Await both queries
+
                 val expensesSnapshot = expensesDeferred.await()
                 val budgetsSnapshot = budgetsDeferred.await()
 
-                // Convert results
+
                 val expenses = expensesSnapshot.toObjects(ExpenseFirebase::class.java)
                 val budgets = budgetsSnapshot.toObjects(BudgetFirestore::class.java)
 
                 Log.d("ChartDebug", "Loaded ${expenses.size} expenses and ${budgets.size} budgets")
 
-                // Update UI
+
                 runOnUiThread {
                     if (expenses.isEmpty()) {
                         Log.d("ChartDebug", "No expenses found for period: $period")
@@ -245,29 +246,29 @@ class DetailedBarChartActivity : AppCompatActivity() {
             return
         }
 
-        // Get goals from SharedPreferences
+
         val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
         val minGoal = sharedPreferences.getFloat("MIN_GOAL", 0f)
         val maxGoal = sharedPreferences.getFloat("TOTAL_BUDGET_GOAL", 0f)
 
-        // Group and sort expense data
+
         val expenseData = expenses.groupBy { it.expenseCategory }
             .mapValues { it.value.sumOf { expense -> expense.expenseAmount } }
             .toList()
             .sortedByDescending { it.second }
 
-        // Create entries
+
         val entries = expenseData.mapIndexed { index, (_, amount) ->
             BarEntry(index.toFloat(), amount.toFloat())
         }
 
-        // Configure dataset
+
         val dataSet = BarDataSet(entries, "Amount Spent").apply {
             colors = expenseData.map { (_, amount) ->
                 when {
-                    amount.toFloat() > maxGoal -> Color.parseColor("#F44336") // Red if over max
-                    amount.toFloat() < minGoal -> Color.parseColor("#FFC107") // Amber if under min
-                    else -> Color.parseColor("#4CAF50") // Green if within goals
+                    amount.toFloat() > maxGoal -> Color.parseColor("#F44336")
+                    amount.toFloat() < minGoal -> Color.parseColor("#FFC107")
+                    else -> Color.parseColor("#4CAF50")
                 }
             }
             valueTextColor = Color.BLACK
@@ -275,9 +276,9 @@ class DetailedBarChartActivity : AppCompatActivity() {
             setDrawValues(true)
         }
 
-        // Configure chart
+
         expensesChart.apply {
-            // Basic setup
+
             setDrawBarShadow(false)
             setDrawValueAboveBar(true)
             description.isEnabled = false
@@ -286,13 +287,13 @@ class DetailedBarChartActivity : AppCompatActivity() {
             setBackgroundColor(Color.WHITE)
             animateY(800)
 
-            // Configure data
+
             data = BarData(dataSet).apply {
                 barWidth = 0.5f
                 setValueTextSize(10f)
             }
 
-            // X-axis
+
             xAxis.apply {
                 position = XAxis.XAxisPosition.BOTTOM
                 granularity = 1f
@@ -307,7 +308,7 @@ class DetailedBarChartActivity : AppCompatActivity() {
                 }
             }
 
-            // Left Y-axis with goal lines
+
             axisLeft.apply {
                 removeAllLimitLines()
                 textColor = Color.BLACK
@@ -317,7 +318,7 @@ class DetailedBarChartActivity : AppCompatActivity() {
                 gridColor = Color.parseColor("#EEEEEE")
                 axisLineColor = Color.DKGRAY
 
-                // Only show goal lines if they're set (>0)
+
                 if (minGoal > 0) {
                     addLimitLine(
                         LimitLine(minGoal, "Min Goal: ${"%.2f".format(minGoal)}").apply {
@@ -345,7 +346,7 @@ class DetailedBarChartActivity : AppCompatActivity() {
 
             axisRight.isEnabled = false
 
-            // Legend
+
             legend.apply {
                 textColor = Color.DKGRAY
                 textSize = 11f
@@ -370,13 +371,13 @@ class DetailedBarChartActivity : AppCompatActivity() {
             return
         }
 
-        // Group and sort budget data
+
         val budgetData = budgets.groupBy { it.budgetCategory }
             .mapValues { it.value.sumOf { budget -> budget.budgetAmount } }
             .toList()
             .sortedByDescending { it.second }
 
-        // Create entries
+
         val entries = budgetData.mapIndexed { index, (_, amount) ->
             BarEntry(index.toFloat(), amount.toFloat())
         }
@@ -406,13 +407,13 @@ class DetailedBarChartActivity : AppCompatActivity() {
             setBackgroundColor(Color.WHITE)
             animateY(800)
 
-            // Configure data
+
             data = BarData(dataSet).apply {
                 barWidth = 0.5f
                 setValueTextSize(10f)
             }
 
-            // X-axis
+
             xAxis.apply {
                 position = XAxis.XAxisPosition.BOTTOM
                 granularity = 1f
@@ -427,7 +428,7 @@ class DetailedBarChartActivity : AppCompatActivity() {
                 }
             }
 
-            // Left Y-axis
+
             axisLeft.apply {
                 textColor = Color.BLACK
                 textSize = 10f
@@ -437,10 +438,10 @@ class DetailedBarChartActivity : AppCompatActivity() {
                 axisLineColor = Color.DKGRAY
             }
 
-            // Right Y-axis
+
             axisRight.isEnabled = false
 
-            // Legend
+
             legend.apply {
                 textColor = Color.DKGRAY
                 textSize = 11f
@@ -452,7 +453,7 @@ class DetailedBarChartActivity : AppCompatActivity() {
                 xOffset = 0f
             }
 
-            // Extra spacing
+
             setExtraOffsets(12f, 12f, 12f, 12f)
             setVisibleXRangeMaximum(5f)
 
