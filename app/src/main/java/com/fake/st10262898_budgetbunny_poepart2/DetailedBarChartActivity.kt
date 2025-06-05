@@ -51,7 +51,7 @@ class DetailedBarChartActivity : AppCompatActivity() {
 
         setupPeriodSpinner()
         setupDateRangePicker()
-        loadData("All Time")
+
     }
 
     private fun setupPeriodSpinner() {
@@ -60,13 +60,30 @@ class DetailedBarChartActivity : AppCompatActivity() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         periodSpinner.adapter = adapter
 
+        // Set up the listener first
+        var isInitialSetup = true
+        var lastSelectionTime = 0L
+
         periodSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                loadData(periods[position])
+                val now = System.currentTimeMillis()
+                if (now - lastSelectionTime < 300) return
+                lastSelectionTime = now
+
+                if (isInitialSetup) {
+                    isInitialSetup = false
+
+                } else {
+                    loadData(periods[position])
+                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
+
+        // Now set selection and manually trigger initial load
+        periodSpinner.setSelection(periods.indexOf("All Time"))
+        loadData("All Time")  // Explicit initial load
     }
 
     private fun setupDateRangePicker() {
@@ -92,37 +109,108 @@ class DetailedBarChartActivity : AppCompatActivity() {
         return "${format.format(Date(start))} - ${format.format(Date(end))}"
     }
 
+    private var isLoading = false
+
     private fun loadData(period: String) {
+        // Prevent multiple concurrent loads
+        if (isLoading) {
+            Log.d("ChartDebug", "Load already in progress, skipping")
+            return
+        }
+        isLoading = true
+
+        // Show loading state on charts
+        runOnUiThread {
+            expensesChart.setNoDataText("Loading expenses...")
+            expensesChart.setNoDataTextColor(Color.BLACK)
+            budgetsChart.setNoDataText("Loading budgets...")
+            budgetsChart.setNoDataTextColor(Color.BLACK)
+            expensesChart.invalidate()
+            budgetsChart.invalidate()
+        }
+
         val currentUserId = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-            .getString("username", "") ?: ""
+            .getString("username", "") ?: "".also {
+            Log.e("ChartDebug", "No username found in SharedPreferences")
+        }
+
+        Log.d("ChartDebug", "Starting data load for user: $currentUserId, period: $period")
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 // Get expenses for selected period
-                val expensesQuery = db.collection("expenses")
-                    .whereEqualTo("username", currentUserId)
-                    .whereGreaterThanOrEqualTo("expenseDate", when (period) {
-                        "Custom Range" -> startDate
-                        else -> getStartDateForPeriod(period)
-                    })
-                    .whereLessThanOrEqualTo("expenseDate", when (period) {
-                        "Custom Range" -> endDate
-                        else -> System.currentTimeMillis()
-                    })
-
-                val expenses = expensesQuery.get().await().toObjects(ExpenseFirebase::class.java)
-
-                // Get budgets (not time-filtered)
-                val budgets = db.collection("budgets")
-                    .whereEqualTo("username", currentUserId)
-                    .get().await().toObjects(BudgetFirestore::class.java)
-
-                runOnUiThread {
-                    setupExpensesChart(expenses, budgets)
-                    setupBudgetsChart(budgets)
+                val expensesQuery = if (period == "All Time") {
+                    Log.d("ChartDebug", "Querying ALL expenses")
+                    db.collection("expenses")
+                        .whereEqualTo("username", currentUserId)
+                } else if (period == "Custom Range") {
+                    Log.d("ChartDebug", "Querying CUSTOM RANGE expenses from ${Date(startDate)} to ${Date(endDate)}")
+                    db.collection("expenses")
+                        .whereEqualTo("username", currentUserId)
+                        .whereGreaterThanOrEqualTo("expenseDate", Date(startDate))
+                        .whereLessThanOrEqualTo("expenseDate", Date(endDate))
+                } else {
+                    val startMillis = getStartDateForPeriod(period)
+                    Log.d("ChartDebug", "Querying $period expenses from ${Date(startMillis)}")
+                    db.collection("expenses")
+                        .whereEqualTo("username", currentUserId)
+                        .whereGreaterThanOrEqualTo("expenseDate", Date(startMillis))
+                        .whereLessThanOrEqualTo("expenseDate", Date(System.currentTimeMillis()))
                 }
+
+                // Execute both queries in parallel
+                val expensesDeferred = expensesQuery.get()
+                val budgetsDeferred = db.collection("budgets")
+                    .whereEqualTo("username", currentUserId)
+                    .get()
+
+                // Await both queries
+                val expensesSnapshot = expensesDeferred.await()
+                val budgetsSnapshot = budgetsDeferred.await()
+
+                // Convert results
+                val expenses = expensesSnapshot.toObjects(ExpenseFirebase::class.java)
+                val budgets = budgetsSnapshot.toObjects(BudgetFirestore::class.java)
+
+                Log.d("ChartDebug", "Loaded ${expenses.size} expenses and ${budgets.size} budgets")
+
+                // Update UI
+                runOnUiThread {
+                    if (expenses.isEmpty()) {
+                        Log.d("ChartDebug", "No expenses found for period: $period")
+                        expensesChart.clear()
+                        expensesChart.setNoDataText("No expenses in $period period")
+                        expensesChart.setNoDataTextColor(Color.BLACK)
+                    } else {
+                        Log.d("ChartDebug", "Setting up chart with ${expenses.size} expenses")
+                        setupExpensesChart(expenses, budgets)
+                    }
+
+                    if (budgets.isEmpty()) {
+                        Log.d("ChartDebug", "No budgets found")
+                        budgetsChart.clear()
+                        budgetsChart.setNoDataText("No budgets configured")
+                        budgetsChart.setNoDataTextColor(Color.BLACK)
+                    } else {
+                        Log.d("ChartDebug", "Setting up chart with ${budgets.size} budgets")
+                        setupBudgetsChart(budgets)
+                    }
+                }
+
             } catch (e: Exception) {
                 Log.e("DetailedBarChart", "Error loading data", e)
+                runOnUiThread {
+                    expensesChart.clear()
+                    budgetsChart.clear()
+                    val errorMsg = e.message?.take(50) ?: "Unknown error"
+                    expensesChart.setNoDataText("Error: $errorMsg")
+                    budgetsChart.setNoDataText("Error: $errorMsg")
+                    expensesChart.setNoDataTextColor(Color.RED)
+                    budgetsChart.setNoDataTextColor(Color.RED)
+                }
+            } finally {
+                isLoading = false
+                Log.d("ChartDebug", "Completed data load for period: $period")
             }
         }
     }
@@ -140,8 +228,19 @@ class DetailedBarChartActivity : AppCompatActivity() {
     }
 
     private fun setupExpensesChart(expenses: List<ExpenseFirebase>, budgets: List<BudgetFirestore>) {
+        Log.d("ChartDebug", "Expenses count: ${expenses.size}")
+        Log.d("ChartDebug", "Budgets count: ${budgets.size}")
+
+        expenses.forEach { expense ->
+            Log.d("ChartDebug", "Expense: ${expense.expenseCategory} - ${expense.expenseAmount}")
+        }
+
+        Log.d("ChartDebug", "Setting up chart with ${expenses.size} expenses")
+
         if (expenses.isEmpty()) {
             expensesChart.clear()
+            expensesChart.setNoDataText("No expenses in selected period")
+            expensesChart.setNoDataTextColor(Color.BLACK)
             expensesChart.invalidate()
             return
         }

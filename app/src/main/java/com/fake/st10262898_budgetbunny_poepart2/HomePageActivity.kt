@@ -22,6 +22,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fake.st10262898_budgetbunny_poepart2.data.BudgetFirestore
+import com.fake.st10262898_budgetbunny_poepart2.data.ChatMessage
 import com.fake.st10262898_budgetbunny_poepart2.data.ExpenseFirebase
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.Legend
@@ -54,12 +55,12 @@ class HomePageActivity : AppCompatActivity() {
     //This is for chatbot:
     private lateinit var fabChat: FloatingActionButton
     private lateinit var chatContainer: LinearLayout
-    private lateinit var tvChat: TextView
     private lateinit var etChatInput: EditText
     private lateinit var btnChatSend: Button
     private var isChatExpanded = false
-    private val BOT_EMOJIS = listOf("🤖", "💡", "💰", "📊", "🔄")
-    private val USER_EMOJIS = listOf("👤", "💬", "✏️", "💳", "🎮")
+    private lateinit var chatAdapter: ChatAdapter
+    private val chatMessages = mutableListOf<ChatMessage>()
+    private lateinit var btnCloseChat: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -112,7 +113,6 @@ class HomePageActivity : AppCompatActivity() {
         // Chatbot setup
         fabChat = findViewById(R.id.fabChat)
         chatContainer = findViewById(R.id.chatContainer)
-        tvChat = findViewById(R.id.tvChat)
         etChatInput = findViewById(R.id.etChatInput)
         btnChatSend = findViewById(R.id.btnChatSend)
 
@@ -121,7 +121,21 @@ class HomePageActivity : AppCompatActivity() {
 
 
 
+        // Initialize chat RecyclerView
+        chatAdapter = ChatAdapter(chatMessages)
+        findViewById<RecyclerView>(R.id.rvChatMessages).apply {
+            layoutManager = LinearLayoutManager(this@HomePageActivity)
+            adapter = chatAdapter
+        }
+        // Welcome message
+        addChatMessage("Welcome! Choose:\nA - Add Expense\nB - Set Budget\nC - Play Game", true)
 
+
+        btnCloseChat = findViewById(R.id.btnCloseChat)
+        btnCloseChat.setOnClickListener {
+            chatContainer.visibility = View.GONE
+            fabChat.visibility = View.VISIBLE // Show the FAB again
+        }
     }
 
     private fun loadData() {
@@ -286,93 +300,47 @@ class HomePageActivity : AppCompatActivity() {
         chatContainer.visibility = if (isChatExpanded) View.VISIBLE else View.GONE
     }
 
+
+
+    private fun addChatMessage(message: String, isBot: Boolean = true) {
+        val chatMessage = ChatMessage(message, isBot)
+        chatMessages.add(chatMessage)
+        chatAdapter.notifyItemInserted(chatMessages.size - 1)
+
+
+        findViewById<RecyclerView>(R.id.rvChatMessages).smoothScrollToPosition(chatMessages.size - 1)
+    }
+
     private fun handleChatInput() {
         val input = etChatInput.text.toString().trim().uppercase()
         etChatInput.text.clear()
 
+        // Add user message
+        addChatMessage(input, false)
+
         when (input) {
             "A" -> {
-                appendChatMessage("\nYou: A")
-                appendChatMessage("\nBot: Opening expenses...")
+                addChatMessage("Opening expenses...", true)
                 startActivity(Intent(this, ExpenseEntry::class.java))
                 collapseChat()
             }
             "B" -> {
-                appendChatMessage("\nYou: B")
-                appendChatMessage("\nBot: Opening budgets...")
+                addChatMessage("Opening budgets...", true)
                 startActivity(Intent(this, GoalEntry::class.java))
                 collapseChat()
             }
             "C" -> {
-                appendChatMessage("\nYou: C")
-                appendChatMessage("\nBot: Game coming soon! 🎮")
-                // startActivity(Intent(this, GameActivity::class.java))
+                addChatMessage("Game coming soon! 🎮", true)
             }
             else -> {
-                appendChatMessage("\nBot: Please enter A, B, or C")
+                addChatMessage("Please enter A, B, or C", true)
             }
         }
-    }
-
-    private fun appendChatMessage(message: String, isBot: Boolean = true) {
-        val emoji = if (isBot) BOT_EMOJIS.random() else USER_EMOJIS.random()
-        val timestamp = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
-
-        val formattedMessage = SpannableStringBuilder().apply {
-            append("$emoji ")
-            setSpan(
-                StyleSpan(Typeface.BOLD),
-                0,
-                emoji.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-
-            append("$message\n")
-            append(" $timestamp")
-            setSpan(
-                RelativeSizeSpan(0.7f),
-                length - timestamp.length - 1,
-                length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-            setSpan(
-                ForegroundColorSpan(Color.parseColor("#BBFFFFFF")),
-                length - timestamp.length - 1,
-                length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-        }
-
-        tvChat.append("\n")
-        tvChat.append(formattedMessage)
-
-        animateMessageAppearance()
-        scrollToBottom()
-    }
-
-    private fun scrollToBottom() {
-        tvChat.post {
-            val scrollAmount = tvChat.layout.getLineTop(tvChat.lineCount) - tvChat.height
-            tvChat.scrollTo(0, if (scrollAmount > 0) scrollAmount else 0)
-        }
-    }
-
-    private fun animateMessageAppearance() {
-        chatContainer.animate()
-            .scaleX(1.02f)
-            .scaleY(1.02f)
-            .setDuration(100)
-            .withEndAction {
-                chatContainer.animate()
-                    .scaleX(1f)
-                    .scaleY(1f)
-                    .setDuration(100)
-                    .start()
-            }.start()
     }
 
     private fun collapseChat() {
         isChatExpanded = false
         chatContainer.visibility = View.GONE
     }
+
 }

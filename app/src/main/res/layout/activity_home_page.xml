@@ -434,57 +434,69 @@
         android:padding="16dp"
         android:visibility="gone">
 
-        <ScrollView
+        <Button
+            android:id="@+id/btnCloseChat"
+            android:layout_width="32dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="X"
+            android:textColor="@color/white"
+            android:background="@null"
+            android:padding="4dp"/>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvChatMessages"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:paddingBottom="8dp">
+            android:clipToPadding="false"
+            android:padding="8dp"
+            android:scrollbars="vertical"/>
 
-            <TextView
-                android:id="@+id/tvChat"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Bot: Welcome! Choose:\nA - Add Expense\nB - Set Budget\nC - Play Game"
-                android:textColor="@android:color/black"/>
-        </ScrollView>
-
-        <com.google.android.material.textfield.TextInputLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="Type message..."
-            app:hintTextColor="@color/purple_200"
-            app:boxBackgroundMode="outline"
-            app:boxBackgroundColor="@color/purple_700"
-            app:boxStrokeColor="@color/purple_300"
-            app:boxCornerRadiusBottomEnd="24dp"
-            app:boxCornerRadiusBottomStart="24dp"
-            app:boxCornerRadiusTopEnd="24dp"
-            app:boxCornerRadiusTopStart="24dp">
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etChatInput"
-                android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="textCapCharacters"
-                android:textColor="@color/white"
-                android:textColorHint="@color/purple_200"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:hint="Type message..."
+                app:hintTextColor="@color/purple_200"
+                app:boxBackgroundMode="outline"
+                app:boxBackgroundColor="@color/purple_700"
+                app:boxStrokeColor="@color/purple_300"
+                app:boxCornerRadiusBottomEnd="24dp"
+                app:boxCornerRadiusBottomStart="24dp"
+                app:boxCornerRadiusTopEnd="24dp"
+                app:boxCornerRadiusTopStart="24dp">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnChatSend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginTop="8dp"
-            android:text="Send"
-            android:textColor="@color/white"
-            app:icon="@drawable/ic_send"
-            app:iconTint="@color/white"
-            app:backgroundTint="@color/purple_500"
-            app:cornerRadius="24dp"
-            app:strokeColor="@color/purple_300"
-            app:strokeWidth="1dp"/>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etChatInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapSentences"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/purple_200"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnChatSend"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:icon="@drawable/ic_send"
+                app:iconTint="@color/white"
+                app:backgroundTint="@color/purple_500"
+                app:cornerRadius="24dp"
+                app:strokeColor="@color/purple_300"
+                app:strokeWidth="1dp"/>
+        </LinearLayout>
     </LinearLayout>
 
 
