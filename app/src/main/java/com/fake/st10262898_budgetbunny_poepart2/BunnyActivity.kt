@@ -1,5 +1,6 @@
 package com.fake.st10262898_budgetbunny_poepart2
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.DragEvent
@@ -43,12 +44,12 @@ class BunnyActivity : AppCompatActivity() {
         val btnHowToPlay = findViewById<Button>(R.id.btnHowToPlay)
 
         btnShop.setOnClickListener {
-            // TODO: open Shop UI or fragment/dialog
+
             Toast.makeText(this, "Shop clicked", Toast.LENGTH_SHORT).show()
         }
 
         btnHowToPlay.setOnClickListener {
-            // TODO: open How To Play instructions UI or dialog
+
             Toast.makeText(this, "How to play clicked", Toast.LENGTH_SHORT).show()
         }
 
@@ -82,6 +83,10 @@ class BunnyActivity : AppCompatActivity() {
         }*/
 
 
+        btnShop.setOnClickListener {
+            val intent = Intent(this, ShopActivity::class.java)
+            startActivity(intent)
+        }
 
     }
 
