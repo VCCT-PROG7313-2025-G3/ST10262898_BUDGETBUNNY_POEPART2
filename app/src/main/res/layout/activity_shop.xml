@@ -24,4 +24,14 @@
         android:clipToPadding="false"
         android:paddingBottom="20dp" />
 
+
+    <Button
+        android:id="@+id/btnReturnToBunny"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Return to Bunny"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp" />
+
 </RelativeLayout>

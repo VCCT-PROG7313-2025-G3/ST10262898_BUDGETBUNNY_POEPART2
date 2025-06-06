@@ -1,7 +1,9 @@
 package com.fake.st10262898_budgetbunny_poepart2
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -49,6 +51,15 @@ class ShopActivity : AppCompatActivity() {
         Log.d("ShopActivity", "Loaded coin count: $coinCount")
         Log.d("ShopActivity", "Bought items: $boughtSet")
         Log.d("ShopActivity", "Available items count: ${availableItems.size}")
+
+
+        val btnReturnToBunny = findViewById<Button>(R.id.btnReturnToBunny)
+        btnReturnToBunny.setOnClickListener {
+            val intent = Intent(this, BunnyActivity::class.java)
+            startActivity(intent)
+            finish()  // optional, closes ShopActivity so user can't go back with back button
+        }
+
     }
 
     private fun attemptBuy(item: ShopItem) {

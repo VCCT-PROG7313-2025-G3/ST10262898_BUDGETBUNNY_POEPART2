@@ -17,6 +17,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.fake.st10262898_budgetbunny_poepart2.data.ShopItem
 
 class BunnyActivity : AppCompatActivity() {
 
@@ -75,17 +76,16 @@ class BunnyActivity : AppCompatActivity() {
         updateCoinDisplay()
 
 
-        //Some coin logic:
-        /*val income = intent.getIntExtra("user_income", 0)
-        if (coinCount == 0 && income > 0) { // Only give coins once
-            coinCount = income / 10 // e.g. R5000 = 500 coins
-            updateCoinDisplay()
-        }*/
 
 
         btnShop.setOnClickListener {
             val intent = Intent(this, ShopActivity::class.java)
             startActivity(intent)
+        }
+
+        val btnReset = findViewById<Button>(R.id.btnReset)
+        btnReset.setOnClickListener {
+            resetClosetAndRefund()
         }
 
     }
@@ -179,6 +179,41 @@ class BunnyActivity : AppCompatActivity() {
         val loadedCoins = prefs.getInt("userCoins", 0)
         return loadedCoins
     }
+
+    private fun resetClosetAndRefund() {
+        val prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val boughtSetKey = "bought_items_set"
+
+        // Load bought items (the clothes currently owned)
+        val boughtSet = prefs.getStringSet(boughtSetKey, emptySet()) ?: emptySet()
+
+        if (boughtSet.isEmpty()) {
+            Toast.makeText(this, "No items to reset.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Calculate total refund coins by summing prices of bought items
+        val allShopItems = listOf(
+            ShopItem("item1", R.drawable.jumpsuit_1, 20),
+            ShopItem("item2", R.drawable.jumpsuit_2, 50)
+        )
+        val refundAmount = allShopItems.filter { it.id in boughtSet }.sumOf { it.price }
+
+        // Refund coins
+        coinCount += refundAmount
+        updateCoinDisplay()
+
+        // Clear bought items set (remove all items from closet/shop bought list)
+        prefs.edit().putStringSet(boughtSetKey, emptySet()).apply()
+
+        // Remove all clothing views from closetContainer or dressing area
+        closetContainer.removeAllViews()
+
+        // Optionally add back default closet items if needed (e.g. addClothingItems())
+
+        Toast.makeText(this, "Closet reset! Refunded $refundAmount coins.", Toast.LENGTH_SHORT).show()
+    }
+
 
 
 
