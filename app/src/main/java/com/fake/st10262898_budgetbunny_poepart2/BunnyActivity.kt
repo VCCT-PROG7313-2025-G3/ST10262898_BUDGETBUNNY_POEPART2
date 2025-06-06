@@ -1,6 +1,7 @@
 package com.fake.st10262898_budgetbunny_poepart2
 
 import android.os.Bundle
+import android.util.Log
 import android.view.DragEvent
 import android.view.MotionEvent
 import android.view.View
@@ -9,6 +10,7 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -19,6 +21,8 @@ class BunnyActivity : AppCompatActivity() {
 
     private lateinit var closetContainer: LinearLayout
     private lateinit var bunnyImage: ImageView
+    private lateinit var coinCountText: TextView
+    private var coinCount: Int = 0
 
 
 
@@ -26,6 +30,7 @@ class BunnyActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bunny)
 
+        coinCountText = findViewById(R.id.coinCountText)
         bunnyImage = findViewById(R.id.bunnyImage)
         closetContainer = findViewById(R.id.closetContainer)
         val toggleBar = findViewById<LinearLayout>(R.id.toggleBar)
@@ -63,6 +68,20 @@ class BunnyActivity : AppCompatActivity() {
             }
             isOpen = !isOpen
         }
+
+        // Load saved coins first
+        coinCount = loadCoinsFromPrefs()
+        updateCoinDisplay()
+
+
+        //Some coin logic:
+        /*val income = intent.getIntExtra("user_income", 0)
+        if (coinCount == 0 && income > 0) { // Only give coins once
+            coinCount = income / 10 // e.g. R5000 = 500 coins
+            updateCoinDisplay()
+        }*/
+
+
 
     }
 
@@ -138,6 +157,22 @@ class BunnyActivity : AppCompatActivity() {
                 else -> true
             }
         }
+    }
+
+    private fun updateCoinDisplay() {
+        coinCountText.text = "Coins: $coinCount"
+        saveCoinsToPrefs(coinCount)
+    }
+
+    private fun saveCoinsToPrefs(coins: Int) {
+        val prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        prefs.edit().putInt("userCoins", coins).apply()
+    }
+
+    private fun loadCoinsFromPrefs(): Int {
+        val prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val loadedCoins = prefs.getInt("userCoins", 0)
+        return loadedCoins
     }
 
 

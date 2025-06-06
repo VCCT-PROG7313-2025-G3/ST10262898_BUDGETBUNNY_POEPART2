@@ -177,6 +177,12 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
         }
 
         updateMarkerPositions(userMinGoal)
+
+        //This is for the coins system in the gamifaction area:
+        val coins = (totalIncome / 10).toInt()  // 1 coin per R10
+
+        val sharedPrefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        sharedPrefs.edit().putInt("userCoins", coins).apply()
     }
 
     private fun updateMarkerPositions(minGoal: Double) {
