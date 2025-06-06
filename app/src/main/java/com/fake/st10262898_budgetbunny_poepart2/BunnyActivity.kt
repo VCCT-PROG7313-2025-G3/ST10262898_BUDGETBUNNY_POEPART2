@@ -30,20 +30,22 @@ class BunnyActivity : AppCompatActivity() {
     private fun addClothingItems() {
         val clothingImages = listOf(
             R.drawable.c_jumpsuit1,
-            R.drawable.c_jumpsuit2,
+            R.drawable.c_jumpsuit2
         )
 
         clothingImages.forEach { imageRes ->
-            val item = ImageView(this).apply {
+            val closetItem = ImageView(this).apply {
                 layoutParams = LinearLayout.LayoutParams(300, 300).apply {
                     marginEnd = 16
                 }
-                setImageResource(imageRes)
+                setImageResource(imageRes) // 👈 this was missing
                 setOnTouchListener(DragTouchListener())
             }
-            closetContainer.addView(item)
+            closetContainer.addView(closetItem)
         }
     }
+
+
 
     // 👇 Listener for dragging clothes
     inner class DragTouchListener : View.OnTouchListener {
@@ -57,24 +59,48 @@ class BunnyActivity : AppCompatActivity() {
         }
     }
 
+
     override fun onResume() {
         super.onResume()
-        // Allow dropping on the bunny
-        bunnyImage.setOnDragListener { view, event ->
+
+        // Enable dropping on the whole screen
+        val rootLayout = findViewById<ViewGroup>(R.id.dressUpLayout)
+
+        rootLayout.setOnDragListener { view, event ->
             when (event.action) {
                 DragEvent.ACTION_DROP -> {
                     val draggedView = event.localState as View
-                    val imageView = ImageView(this).apply {
-                        layoutParams = ViewGroup.LayoutParams(300, 300)
-                        (draggedView as ImageView).drawable?.let { setImageDrawable(it) }
-                        x = event.x - 75
-                        y = event.y - 75
+
+                    val dropX = event.x
+                    val dropY = event.y
+
+                    if (draggedView.parent != rootLayout) {
+                        // Remove from old parent and add to root layout
+                        (draggedView.parent as? ViewGroup)?.removeView(draggedView)
+                        rootLayout.addView(draggedView)
+
+                        // Delay positioning to avoid "sticking" on first drop
+                        draggedView.post {
+                            draggedView.x = dropX - draggedView.width / 2
+                            draggedView.y = dropY - draggedView.height / 2
+                        }
+
+                        // Allow it to be dragged again
+                        draggedView.setOnTouchListener(DragTouchListener())
+                    } else {
+                        // Already in layout, just move it
+                        draggedView.x = dropX - draggedView.width / 2
+                        draggedView.y = dropY - draggedView.height / 2
                     }
-                    (view.parent as ViewGroup).addView(imageView)
+
                     true
                 }
+
                 else -> true
             }
         }
     }
+
+
+
 }
