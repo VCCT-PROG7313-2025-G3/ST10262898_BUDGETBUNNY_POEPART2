@@ -136,6 +136,12 @@ class HomePageActivity : AppCompatActivity() {
             chatContainer.visibility = View.GONE
             fabChat.visibility = View.VISIBLE // Show the FAB again
         }
+
+        findViewById<CardView>(R.id.cv_WamstaPage).setOnClickListener {
+            val intent = Intent(this, BunnyActivity::class.java)
+            startActivity(intent)
+            overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left)
+        }
     }
 
     private fun loadData() {
