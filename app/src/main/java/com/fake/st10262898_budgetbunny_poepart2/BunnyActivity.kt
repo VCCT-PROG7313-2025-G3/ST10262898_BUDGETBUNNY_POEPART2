@@ -5,8 +5,11 @@ import android.view.DragEvent
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -17,14 +20,50 @@ class BunnyActivity : AppCompatActivity() {
     private lateinit var closetContainer: LinearLayout
     private lateinit var bunnyImage: ImageView
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bunny)
 
         bunnyImage = findViewById(R.id.bunnyImage)
         closetContainer = findViewById(R.id.closetContainer)
+        val toggleBar = findViewById<LinearLayout>(R.id.toggleBar)
+        val toggleHandle = findViewById<Button>(R.id.toggleHandleButton)
+        val mainContent = findViewById<FrameLayout>(R.id.mainContentContainer)
 
         addClothingItems()
+
+        val btnShop = findViewById<Button>(R.id.btnShop)
+        val btnHowToPlay = findViewById<Button>(R.id.btnHowToPlay)
+
+        btnShop.setOnClickListener {
+            // TODO: open Shop UI or fragment/dialog
+            Toast.makeText(this, "Shop clicked", Toast.LENGTH_SHORT).show()
+        }
+
+        btnHowToPlay.setOnClickListener {
+            // TODO: open How To Play instructions UI or dialog
+            Toast.makeText(this, "How to play clicked", Toast.LENGTH_SHORT).show()
+        }
+
+        var isOpen = false
+
+        toggleHandle.setOnClickListener {
+            if (isOpen) {
+                // Close toggle bar - slide right out
+                toggleBar.animate().translationX(toggleBar.width.toFloat()).setDuration(300).start()
+                // Expand main content to full width
+                mainContent.animate().translationX(0f).setDuration(300).start()
+            } else {
+                // Open toggle bar - slide in from right
+                toggleBar.animate().translationX(0f).setDuration(300).start()
+                // Push main content left by toggleBar width
+                mainContent.animate().translationX(-toggleBar.width.toFloat()).setDuration(300).start()
+            }
+            isOpen = !isOpen
+        }
+
     }
 
     private fun addClothingItems() {
@@ -38,7 +77,7 @@ class BunnyActivity : AppCompatActivity() {
                 layoutParams = LinearLayout.LayoutParams(380, 380).apply {
                 marginEnd = 16
                 }
-                setImageResource(imageRes) // 👈 this was missing
+                setImageResource(imageRes)
                 setOnTouchListener(DragTouchListener())
             }
             closetContainer.addView(closetItem)
@@ -47,7 +86,7 @@ class BunnyActivity : AppCompatActivity() {
 
 
 
-    // 👇 Listener for dragging clothes
+
     inner class DragTouchListener : View.OnTouchListener {
         override fun onTouch(view: View, event: MotionEvent): Boolean {
             if (event.action == MotionEvent.ACTION_DOWN) {
@@ -63,7 +102,7 @@ class BunnyActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        // Enable dropping on the whole screen
+
         val rootLayout = findViewById<ViewGroup>(R.id.dressUpLayout)
 
         rootLayout.setOnDragListener { view, event ->
@@ -75,7 +114,7 @@ class BunnyActivity : AppCompatActivity() {
                     val dropY = event.y
 
                     if (draggedView.parent != rootLayout) {
-                        // Remove from old parent and add to root layout
+
                         (draggedView.parent as? ViewGroup)?.removeView(draggedView)
                         rootLayout.addView(draggedView)
 
