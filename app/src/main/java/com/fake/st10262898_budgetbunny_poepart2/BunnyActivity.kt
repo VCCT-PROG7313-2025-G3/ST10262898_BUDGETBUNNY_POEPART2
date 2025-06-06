@@ -29,14 +29,14 @@ class BunnyActivity : AppCompatActivity() {
 
     private fun addClothingItems() {
         val clothingImages = listOf(
-            R.drawable.c_jumpsuit1,
-            R.drawable.c_jumpsuit2
+            R.drawable.jumpsuit_1,
+            R.drawable.jumpsuit_2
         )
 
         clothingImages.forEach { imageRes ->
             val closetItem = ImageView(this).apply {
-                layoutParams = LinearLayout.LayoutParams(300, 300).apply {
-                    marginEnd = 16
+                layoutParams = LinearLayout.LayoutParams(380, 380).apply {
+                marginEnd = 16
                 }
                 setImageResource(imageRes) // 👈 this was missing
                 setOnTouchListener(DragTouchListener())
