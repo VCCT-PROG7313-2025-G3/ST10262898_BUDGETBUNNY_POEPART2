@@ -39,7 +39,7 @@ class BunnyActivity : AppCompatActivity() {
         val toggleHandle = findViewById<Button>(R.id.toggleHandleButton)
         val mainContent = findViewById<FrameLayout>(R.id.mainContentContainer)
 
-        addClothingItems()
+        loadBoughtClothingItems()
 
         val btnShop = findViewById<Button>(R.id.btnShop)
         val btnHowToPlay = findViewById<Button>(R.id.btnHowToPlay)
@@ -88,7 +88,30 @@ class BunnyActivity : AppCompatActivity() {
             resetClosetAndRefund()
         }
 
+        /*
+        val sharedPrefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        coinCount = sharedPrefs.getInt("userCoins", 0)
+
+        coinCountText = findViewById(R.id.coinCountText)
+        coinCountText.text = "Coins: $coinCount"
+
+
+         */
+
     }
+
+    fun spendCoins(amount: Int) {
+        if (coinCount >= amount) {
+            coinCount -= amount
+            coinCountText.text = "Coins: $coinCount"
+
+            val sharedPrefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+            sharedPrefs.edit().putInt("userCoins", coinCount).apply()
+        } else {
+            Toast.makeText(this, "Not enough coins!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
 
     private fun addClothingItems() {
         val clothingImages = listOf(
@@ -170,14 +193,21 @@ class BunnyActivity : AppCompatActivity() {
     }
 
     private fun saveCoinsToPrefs(coins: Int) {
-        val prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-        prefs.edit().putInt("userCoins", coins).apply()
+        val sharedPrefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val username = sharedPrefs.getString("username", null)
+        if (username != null) {
+            sharedPrefs.edit().putInt("${username}_userCoins", coins).apply()
+        }
     }
 
     private fun loadCoinsFromPrefs(): Int {
-        val prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-        val loadedCoins = prefs.getInt("userCoins", 0)
-        return loadedCoins
+        val sharedPrefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val username = sharedPrefs.getString("username", null)
+        return if (username != null) {
+            sharedPrefs.getInt("${username}_userCoins", 0)
+        } else {
+            0
+        }
     }
 
     private fun resetClosetAndRefund() {
@@ -213,6 +243,30 @@ class BunnyActivity : AppCompatActivity() {
 
         Toast.makeText(this, "Closet reset! Refunded $refundAmount coins.", Toast.LENGTH_SHORT).show()
     }
+
+    private fun loadBoughtClothingItems() {
+        val prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val boughtSet = prefs.getStringSet("bought_items_set", emptySet()) ?: emptySet()
+
+
+        val allShopItems = listOf(
+            ShopItem("item1", R.drawable.jumpsuit_1, 20),
+            ShopItem("item2", R.drawable.jumpsuit_2, 50)
+        )
+
+        // Filter only bought items and show them
+        allShopItems.filter { it.id in boughtSet }.forEach { item ->
+            val closetItem = ImageView(this).apply {
+                layoutParams = LinearLayout.LayoutParams(380, 380).apply {
+                    marginEnd = 16
+                }
+                setImageResource(item.imageRes)
+                setOnTouchListener(DragTouchListener())
+            }
+            closetContainer.addView(closetItem)
+        }
+    }
+
 
 
 

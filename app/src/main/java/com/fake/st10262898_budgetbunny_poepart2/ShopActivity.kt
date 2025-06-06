@@ -57,7 +57,7 @@ class ShopActivity : AppCompatActivity() {
         btnReturnToBunny.setOnClickListener {
             val intent = Intent(this, BunnyActivity::class.java)
             startActivity(intent)
-            finish()  // optional, closes ShopActivity so user can't go back with back button
+            finish()
         }
 
     }
