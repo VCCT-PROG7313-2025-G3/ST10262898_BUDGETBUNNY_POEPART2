@@ -5,10 +5,14 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
+import java.util.Date
 
 class BudgetFirestoreDao {
     private val db: FirebaseFirestore = Firebase.firestore
     private val budgetsCollection = db.collection("budgets")
+    private val userCoinsCollection = db.collection("UserCoins")
+
+
 
     suspend fun insertBudget(budget: BudgetFirestore): String {
         val document = budgetsCollection.add(budget).await()
@@ -84,5 +88,38 @@ class BudgetFirestoreDao {
                     total = budgets.sumOf { it.budgetAmount }
                 )
             }
+    }
+
+    suspend fun calculateAndUpdateCoins(username: String) {
+        try {
+            // Get all budgets for user and sum income
+            val budgets = budgetsCollection
+                .whereEqualTo("username", username)
+                .get()
+                .await()
+
+            val totalIncome = budgets.sumOf { it.getDouble("budgetIncome") ?: 0.0 }
+            val coins = (totalIncome / 10).toInt()
+
+            // Update coins in Firestore
+            userCoinsCollection.document(username).set(
+                mapOf(
+                    "userId" to username,
+                    "coins" to coins,
+                    "lastUpdated" to Date()
+                )
+            ).await()
+        } catch (e: Exception) {
+            throw Exception("Failed to calculate and update coins", e)
+        }
+    }
+
+    suspend fun getUserCoins(username: String): Int {
+        return try {
+            val document = userCoinsCollection.document(username).get().await()
+            document.getLong("coins")?.toInt() ?: 0
+        } catch (e: Exception) {
+            throw Exception("Failed to get user coins", e)
+        }
     }
 }

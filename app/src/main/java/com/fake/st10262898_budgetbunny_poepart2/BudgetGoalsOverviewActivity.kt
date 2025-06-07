@@ -25,7 +25,10 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import com.fake.st10262898_budgetbunny_poepart2.data.BudgetFirestore
 import com.fake.st10262898_budgetbunny_poepart2.viewmodel.BudgetViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class BudgetGoalsOverviewActivity : AppCompatActivity() {
 
@@ -178,14 +181,9 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
 
         updateMarkerPositions(userMinGoal)
 
-        //This is for the coins system in the gamifaction area:
-        val coins = (totalIncome / 10).toInt()  // 1 coin per R10
 
-        val sharedPrefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-        val username = sharedPrefs.getString("username", null)
-        if (username != null) {
-            sharedPrefs.edit().putInt("${username}_userCoins", coins).apply()
-        }
+
+
     }
 
     private fun updateMarkerPositions(minGoal: Double) {
@@ -225,4 +223,6 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
             }
         }
     }
+
+
 }

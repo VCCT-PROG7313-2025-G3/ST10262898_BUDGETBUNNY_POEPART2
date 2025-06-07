@@ -1,102 +1,212 @@
 package com.fake.st10262898_budgetbunny_poepart2
 
+import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fake.st10262898_budgetbunny_poepart2.data.ShopItem
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.tasks.await
 
 class ShopActivity : AppCompatActivity() {
-
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ShopItemAdapter
-    private var coinCount = 0
-
-    private val sharedPrefs by lazy { getSharedPreferences("UserPrefs", MODE_PRIVATE) }
-    private val boughtItemsSetKey = "bought_items_set"
-
-    private val shopItems = mutableListOf(
-        ShopItem("item1", R.drawable.jumpsuit_1, 20),
-        ShopItem("item2", R.drawable.jumpsuit_2, 50)
-    )
+    private var userCoins = 0
+    private lateinit var userId: String
+    private val firestore = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shop)
 
-        coinCount = sharedPrefs.getInt("userCoins", 0)
+        userId = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+            .getString("username", "") ?: return
 
+        setupViews()
+        loadUserData()
+    }
+
+    private fun setupViews() {
         recyclerView = findViewById(R.id.recyclerViewShop)
         recyclerView.layoutManager = GridLayoutManager(this, 2)
 
-        // Load bought items from SharedPreferences and filter them out
-        val boughtSet = sharedPrefs.getStringSet(boughtItemsSetKey, emptySet()) ?: emptySet()
-        val availableItems = shopItems.filter { it.id !in boughtSet }.toMutableList()
-
-        adapter = ShopItemAdapter(availableItems) { item -> attemptBuy(item) }
-        recyclerView.adapter = adapter
-
-        // Optionally show coin count in toolbar or here
-        findViewById<TextView>(R.id.coinCountTextShop).text = "Coins: $coinCount"
-
-        Log.d("ShopActivity", "Loaded coin count: $coinCount")
-        Log.d("ShopActivity", "Bought items: $boughtSet")
-        Log.d("ShopActivity", "Available items count: ${availableItems.size}")
-
-
-        val btnReturnToBunny = findViewById<Button>(R.id.btnReturnToBunny)
-        btnReturnToBunny.setOnClickListener {
-            val intent = Intent(this, BunnyActivity::class.java)
-            startActivity(intent)
+        findViewById<Button>(R.id.btnReturnToBunny).setOnClickListener {
             finish()
         }
+    }
 
+    private fun loadUserData() {
+        // Load coins and purchased items
+        firestore.collection("UserCoins").document(userId).get()
+            .addOnSuccessListener { coinDoc ->
+                userCoins = coinDoc.getLong("coins")?.toInt() ?: 0
+                updateCoinDisplay()
+
+                firestore.collection("UserPurchases").document(userId).get()
+                    .addOnSuccessListener { purchasesDoc ->
+                        val purchasedItems = purchasesDoc.get("items") as? List<String> ?: emptyList()
+                        loadShopItems(purchasedItems)
+                    }
+            }
+    }
+
+    private fun loadShopItems(purchasedItems: List<String>) {
+        firestore.collection("ShopItems").get()
+            .addOnSuccessListener { querySnapshot ->
+                val availableItems = querySnapshot.documents.mapNotNull { doc ->
+                    ShopItem(
+                        id = doc.getString("id") ?: "",
+                        imageName = doc.getString("imageName") ?: "",
+                        price = doc.getLong("price")?.toInt() ?: 0,
+                        category = doc.getString("category") ?: ""
+                    )
+                }.filter { it.id !in purchasedItems }
+
+                adapter = ShopItemAdapter(availableItems) { item -> attemptBuy(item) }
+                recyclerView.adapter = adapter
+            }
     }
 
     private fun attemptBuy(item: ShopItem) {
-        if (coinCount < item.price) {
-            Toast.makeText(this, "Not enough coins", Toast.LENGTH_SHORT).show()
+        if (userCoins < item.price) {
+            Toast.makeText(this, "Not enough coins!", Toast.LENGTH_LONG).show()
             return
         }
 
         AlertDialog.Builder(this)
             .setTitle("Confirm Purchase")
-            .setMessage("Buy this item for ${item.price} coins?")
+            .setMessage("Buy ${item.id} for ${item.price} coins?")
             .setPositiveButton("Buy") { _, _ ->
-                buyItem(item)
+                // Show loading dialog
+                val progressDialog = ProgressDialog(this).apply {
+                    setMessage("Processing...")
+                    setCancelable(false)
+                    show()
+                }
+
+                purchaseItem(item)
+                progressDialog.dismiss()
             }
             .setNegativeButton("Cancel", null)
             .show()
-
-        Log.d("ShopActivity", "Attempting to buy: ${item.id} for ${item.price} coins")
     }
 
-    private fun buyItem(item: ShopItem) {
-        coinCount -= item.price
-        sharedPrefs.edit().putInt("userCoins", coinCount).apply()
+    private fun purchaseItem(item: ShopItem) {
+        val userId = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+            .getString("username", "") ?: return
 
-        // Add to bought set
-        val boughtSet = sharedPrefs.getStringSet(boughtItemsSetKey, mutableSetOf())?.toMutableSet()
-            ?: mutableSetOf()
-        boughtSet.add(item.id)
-        sharedPrefs.edit().putStringSet(boughtItemsSetKey, boughtSet).apply()
+        val userPurchasesRef = firestore.collection("UserPurchases").document(userId)
+        val userCoinsRef = firestore.collection("UserCoins").document(userId)
 
-        adapter.removeItem(item)
-        findViewById<TextView>(R.id.coinCountTextShop).text = "Coins: $coinCount"
-
-        Toast.makeText(this, "Item purchased!", Toast.LENGTH_SHORT).show()
-
-        Log.d("ShopActivity", "Item purchased: ${item.id}")
-        Log.d("ShopActivity", "Remaining coins: $coinCount")
-
+        // First ensure the purchases document exists
+        userPurchasesRef.get().addOnSuccessListener { document ->
+            if (!document.exists()) {
+                // Create the document if it doesn't exist
+                userPurchasesRef.set(mapOf("items" to emptyList<String>()))
+                    .addOnSuccessListener {
+                        // Now proceed with the purchase
+                        executePurchase(item, userPurchasesRef, userCoinsRef)
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(this, "Failed to initialize purchases", Toast.LENGTH_SHORT).show()
+                        Log.e("ShopActivity", "Error creating purchases doc", e)
+                    }
+            } else {
+                // Document exists, proceed with purchase
+                executePurchase(item, userPurchasesRef, userCoinsRef)
+            }
+        }.addOnFailureListener { e ->
+            Toast.makeText(this, "Failed to check purchases", Toast.LENGTH_SHORT).show()
+            Log.e("ShopActivity", "Error checking purchases doc", e)
+        }
     }
+
+    private fun executePurchase(item: ShopItem,
+                                userPurchasesRef: DocumentReference,
+                                userCoinsRef: DocumentReference) {
+        val progressDialog = ProgressDialog(this).apply {
+            setMessage("Processing purchase...")
+            setCancelable(false)
+            show()
+        }
+
+        // Declare the nested function first
+        fun checkCoinsAndPurchase() {
+            userCoinsRef.get().addOnSuccessListener { coinsDoc ->
+                val currentCoins = (coinsDoc.getLong("coins") ?: 0).toInt()
+
+                if (currentCoins < item.price) {
+                    progressDialog.dismiss()
+                    Toast.makeText(this@ShopActivity, "Not enough coins", Toast.LENGTH_LONG).show()
+                    return@addOnSuccessListener
+                }
+
+                // Both documents exist, proceed with purchase
+                firestore.runTransaction { transaction ->
+                    // Get fresh copies of documents
+                    val freshPurchases = transaction.get(userPurchasesRef)
+                    val freshCoins = transaction.get(userCoinsRef)
+
+                    val freshCoinBalance = (freshCoins.getLong("coins") ?: 0).toInt()
+
+                    // Update both documents
+                    transaction.update(userPurchasesRef, "items",
+                        FieldValue.arrayUnion(item.id))
+                    transaction.update(userCoinsRef, "coins",
+                        freshCoinBalance - item.price)
+
+                    // Return new balance
+                    freshCoinBalance - item.price
+                }.addOnSuccessListener { newBalance ->
+                    userCoins = newBalance
+                    updateCoinDisplay()
+                    adapter.removeItem(item)
+
+                    setResult(RESULT_OK, Intent().apply {
+                        putExtra("NEW_COINS", newBalance)
+                    })
+                    progressDialog.dismiss()
+                    finish()
+                }.addOnFailureListener { e ->
+                    progressDialog.dismiss()
+                    Toast.makeText(this@ShopActivity, "Purchase failed: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            }.addOnFailureListener { e ->
+                progressDialog.dismiss()
+                Toast.makeText(this@ShopActivity, "Failed to check coins: ${e.message}", Toast.LENGTH_LONG).show()
+            }
+        }
+
+        // First ensure both documents exist
+        userPurchasesRef.get().addOnSuccessListener { purchasesDoc ->
+            if (!purchasesDoc.exists()) {
+                userPurchasesRef.set(mapOf("items" to emptyList<String>()))
+                    .addOnSuccessListener {
+                        checkCoinsAndPurchase()
+                    }
+            } else {
+                checkCoinsAndPurchase()
+            }
+        }.addOnFailureListener { e ->
+            progressDialog.dismiss()
+            Toast.makeText(this, "Failed to check purchases: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun updateCoinDisplay() {
+        findViewById<TextView>(R.id.coinCountTextShop).text = "Coins: $userCoins"
+    }
+
+
+
+
 }

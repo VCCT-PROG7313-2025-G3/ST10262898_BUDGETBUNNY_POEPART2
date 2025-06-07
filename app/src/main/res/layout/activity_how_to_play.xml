@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_note"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/howToPlayText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="How to play instructions go here..."
+        android:textSize="18sp"
+        android:textColor="#000000"
+        android:lineSpacingExtra="8dp"
+        android:translationY="50dp"/>
+</ScrollView>

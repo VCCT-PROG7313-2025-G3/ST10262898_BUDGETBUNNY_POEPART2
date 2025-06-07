@@ -1,6 +1,7 @@
 package com.fake.st10262898_budgetbunny_poepart2.data
 
 import android.util.Log
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
@@ -9,6 +10,7 @@ import java.util.Date
 class BudgetFirestoreRepository(private val budgetFirestoreDao: BudgetFirestoreDao) {
     private val db = Firebase.firestore
     private val TAG = "BudgetFirestoreRepo"
+
 
     suspend fun insertBudget(budget: BudgetFirestore): String {
         return try {
@@ -120,5 +122,45 @@ class BudgetFirestoreRepository(private val budgetFirestoreDao: BudgetFirestoreD
             false
         }
     }
+
+    suspend fun calculateAndUpdateCoins(username: String) {
+        try {
+            // Get all budgets for user and sum income
+            val budgets = db.collection("budgets")
+                .whereEqualTo("username", username)
+                .get()
+                .await()
+
+            val totalIncome = budgets.sumOf { it.getDouble("budgetIncome") ?: 0.0 }
+            val coins = (totalIncome / 10).toInt()
+
+            // Update coins in Firestore
+            val userCoinsRef = db.collection("UserCoins").document(username)
+            userCoinsRef.set(
+                mapOf(
+                    "userId" to username,
+                    "coins" to coins,
+                    "lastUpdated" to Date()
+                )
+            ).await()
+        } catch (e: Exception) {
+            Log.e("CoinCalc", "Error calculating coins", e)
+            throw e // Re-throw to handle in ViewModel
+        }
+    }
+
+    suspend fun getUserCoins(username: String): Int {
+        return try {
+            Log.d("CoinDebug", "Getting coins for $username")
+            val doc = db.collection("UserCoins").document(username).get().await()
+            val coins = doc.getLong("coins")?.toInt() ?: 0
+            Log.d("CoinDebug", "Firestore coins: $coins")
+            coins
+        } catch (e: Exception) {
+            Log.e("CoinCalc", "Error getting coins", e)
+            0
+        }
+    }
+
 
 }

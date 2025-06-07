@@ -1,5 +1,8 @@
 package com.fake.st10262898_budgetbunny_poepart2
 
+import android.app.ProgressDialog
+import android.content.ContentValues.TAG
+import com.google.firebase.firestore.FieldValue
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -11,129 +14,151 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.fake.st10262898_budgetbunny_poepart2.data.ShopItem
+import androidx.lifecycle.lifecycleScope
+import com.fake.st10262898_budgetbunny_poepart2.viewmodel.BudgetViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class BunnyActivity : AppCompatActivity() {
 
+    // UI Components
     private lateinit var closetContainer: LinearLayout
     private lateinit var bunnyImage: ImageView
     private lateinit var coinCountText: TextView
-    private var coinCount: Int = 0
+    private lateinit var bunnyNameText: TextView
 
+    private val budgetViewModel: BudgetViewModel by viewModels()
+
+
+
+    private val imageResourceMap = mapOf(
+        "jumpsuit_1" to R.drawable.jumpsuit_1,
+        "jumpsuit_2" to R.drawable.jumpsuit_2
+        //add more shopping items here cails.
+    )
+
+    // Firebase
+    private val auth = FirebaseAuth.getInstance()
+    private val firestore = FirebaseFirestore.getInstance()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bunny)
 
+        val username = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+            .getString("username", "") ?: return
+
+
+        // Initialize views
         coinCountText = findViewById(R.id.coinCountText)
         bunnyImage = findViewById(R.id.bunnyImage)
         closetContainer = findViewById(R.id.closetContainer)
+        bunnyNameText = findViewById(R.id.bunnyNameText)
+
+        val dressUpLayout = findViewById<View>(R.id.dressUpLayout)
+        dressUpLayout.setOnDragListener(dragListener)
+
+
+        // Observe coins
+        budgetViewModel.userCoins.observe(this) { coins ->
+            coinCountText.text = "Coins: $coins"
+        }
+
+        // Load and calculate coins
+        budgetViewModel.loadUserCoins(username)
+        budgetViewModel.calculateAndUpdateCoins(username)
+        loadPurchasedItems(username)
+
+
+        // Setup toggle bar
+        setupToggleBar()
+
+
+        // Setup buttons
+        setupButtons()
+
+        budgetViewModel.userCoins.observe(this) { coins ->
+            coinCountText.text = "Coins: $coins"
+            Log.d("CoinDebug", "Coins updated to: $coins")
+        }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val username = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+            .getString("username", "") ?: return
+
+        budgetViewModel.userCoins.observe(this) { coins ->
+            coinCountText.text = "Coins: $coins"
+        }
+
+        budgetViewModel.calculateAndUpdateCoins(username)
+        loadPurchasedItems(username)
+    }
+
+    private fun setupToggleBar() {
         val toggleBar = findViewById<LinearLayout>(R.id.toggleBar)
         val toggleHandle = findViewById<Button>(R.id.toggleHandleButton)
         val mainContent = findViewById<FrameLayout>(R.id.mainContentContainer)
-
-        loadBoughtClothingItems()
-
-        val btnShop = findViewById<Button>(R.id.btnShop)
-        val btnHowToPlay = findViewById<Button>(R.id.btnHowToPlay)
-
-        btnShop.setOnClickListener {
-
-            Toast.makeText(this, "Shop clicked", Toast.LENGTH_SHORT).show()
-        }
-
-        btnHowToPlay.setOnClickListener {
-
-            Toast.makeText(this, "How to play clicked", Toast.LENGTH_SHORT).show()
-        }
+        val btnCloseToggle = findViewById<Button>(R.id.btnCloseToggle)
 
         var isOpen = false
 
         toggleHandle.setOnClickListener {
-            if (isOpen) {
-                // Close toggle bar - slide right out
+            isOpen = if (isOpen) {
                 toggleBar.animate().translationX(toggleBar.width.toFloat()).setDuration(300).start()
-                // Expand main content to full width
                 mainContent.animate().translationX(0f).setDuration(300).start()
+                false
             } else {
-                // Open toggle bar - slide in from right
                 toggleBar.animate().translationX(0f).setDuration(300).start()
-                // Push main content left by toggleBar width
                 mainContent.animate().translationX(-toggleBar.width.toFloat()).setDuration(300).start()
+                true
             }
-            isOpen = !isOpen
         }
 
-        // Load saved coins first
-        coinCount = loadCoinsFromPrefs()
-        updateCoinDisplay()
+        btnCloseToggle.setOnClickListener {
+            toggleBar.animate().translationX(toggleBar.width.toFloat()).setDuration(300).start()
+            mainContent.animate().translationX(0f).setDuration(300).start()
+            isOpen = false
+        }
+    }
 
 
 
+    private fun setupButtons() {
 
-        btnShop.setOnClickListener {
-            val intent = Intent(this, ShopActivity::class.java)
-            startActivity(intent)
+        findViewById<Button>(R.id.btnShop).setOnClickListener {
+            startActivityForResult(Intent(this, ShopActivity::class.java), SHOP_REQUEST_CODE)
         }
 
-        val btnReset = findViewById<Button>(R.id.btnReset)
-        btnReset.setOnClickListener {
+        findViewById<Button>(R.id.btnHowToPlay).setOnClickListener {
+            startActivity(Intent(this, HowToPlayActivity::class.java))
+        }
+
+
+        findViewById<Button>(R.id.btnReset).setOnClickListener {
             resetClosetAndRefund()
         }
 
-        /*
-        val sharedPrefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-        coinCount = sharedPrefs.getInt("userCoins", 0)
-
-        coinCountText = findViewById(R.id.coinCountText)
-        coinCountText.text = "Coins: $coinCount"
 
 
-         */
-
-    }
-
-    fun spendCoins(amount: Int) {
-        if (coinCount >= amount) {
-            coinCount -= amount
-            coinCountText.text = "Coins: $coinCount"
-
-            val sharedPrefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-            sharedPrefs.edit().putInt("userCoins", coinCount).apply()
-        } else {
-            Toast.makeText(this, "Not enough coins!", Toast.LENGTH_SHORT).show()
+        findViewById<Button>(R.id.btnExit).setOnClickListener {
+            finish()
         }
     }
 
 
-    private fun addClothingItems() {
-        val clothingImages = listOf(
-            R.drawable.jumpsuit_1,
-            R.drawable.jumpsuit_2
-        )
-
-        clothingImages.forEach { imageRes ->
-            val closetItem = ImageView(this).apply {
-                layoutParams = LinearLayout.LayoutParams(380, 380).apply {
-                marginEnd = 16
-                }
-                setImageResource(imageRes)
-                setOnTouchListener(DragTouchListener())
-            }
-            closetContainer.addView(closetItem)
-        }
-    }
-
-
-
-
+    // Drag and drop functionality
     inner class DragTouchListener : View.OnTouchListener {
         override fun onTouch(view: View, event: MotionEvent): Boolean {
             if (event.action == MotionEvent.ACTION_DOWN) {
@@ -145,129 +170,237 @@ class BunnyActivity : AppCompatActivity() {
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == SHOP_REQUEST_CODE && resultCode == RESULT_OK) {
+            val username = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+                .getString("username", "") ?: return
 
-    override fun onResume() {
-        super.onResume()
+            // Force refresh everything
+            budgetViewModel.refreshCoins(username)
+            loadPurchasedItems(username)
 
-
-        val rootLayout = findViewById<ViewGroup>(R.id.dressUpLayout)
-
-        rootLayout.setOnDragListener { view, event ->
-            when (event.action) {
-                DragEvent.ACTION_DROP -> {
-                    val draggedView = event.localState as View
-
-                    val dropX = event.x
-                    val dropY = event.y
-
-                    if (draggedView.parent != rootLayout) {
-
-                        (draggedView.parent as? ViewGroup)?.removeView(draggedView)
-                        rootLayout.addView(draggedView)
-
-                        // Delay positioning to avoid "sticking" on first drop
-                        draggedView.post {
-                            draggedView.x = dropX - draggedView.width / 2
-                            draggedView.y = dropY - draggedView.height / 2
-                        }
-
-                        // Allow it to be dragged again
-                        draggedView.setOnTouchListener(DragTouchListener())
-                    } else {
-                        // Already in layout, just move it
-                        draggedView.x = dropX - draggedView.width / 2
-                        draggedView.y = dropY - draggedView.height / 2
-                    }
-
-                    true
-                }
-
-                else -> true
+            // Update coins immediately if provided
+            data?.getIntExtra("NEW_COINS", -1)?.takeIf { it >= 0 }?.let { coins ->
+                coinCountText.text = "Coins: $coins"
             }
         }
     }
 
-    private fun updateCoinDisplay() {
-        coinCountText.text = "Coins: $coinCount"
-        saveCoinsToPrefs(coinCount)
+    companion object {
+        const val SHOP_REQUEST_CODE = 1001
+
     }
 
-    private fun saveCoinsToPrefs(coins: Int) {
-        val sharedPrefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-        val username = sharedPrefs.getString("username", null)
-        if (username != null) {
-            sharedPrefs.edit().putInt("${username}_userCoins", coins).apply()
+    private val dragListener = View.OnDragListener { v, event ->
+        when (event.action) {
+            DragEvent.ACTION_DROP -> {
+                val draggedView = event.localState as ImageView
+                val dropX = event.x - draggedView.width / 2
+                val dropY = event.y - draggedView.height / 2
+
+
+                val dressUpLayout = findViewById<RelativeLayout>(R.id.dressUpLayout)
+
+                // Remove from parent if needed
+                if (draggedView.parent != null) {
+                    (draggedView.parent as ViewGroup).removeView(draggedView)
+                }
+
+                // Set new position parameters
+                draggedView.x = dropX
+                draggedView.y = dropY
+
+                // Add to dress up area
+                dressUpLayout.addView(draggedView)
+                true
+            }
+            else -> true
         }
     }
 
-    private fun loadCoinsFromPrefs(): Int {
-        val sharedPrefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-        val username = sharedPrefs.getString("username", null)
-        return if (username != null) {
-            sharedPrefs.getInt("${username}_userCoins", 0)
-        } else {
-            0
-        }
-    }
 
-    private fun resetClosetAndRefund() {
-        val prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-        val boughtSetKey = "bought_items_set"
-
-        // Load bought items (the clothes currently owned)
-        val boughtSet = prefs.getStringSet(boughtSetKey, emptySet()) ?: emptySet()
-
-        if (boughtSet.isEmpty()) {
-            Toast.makeText(this, "No items to reset.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        // Calculate total refund coins by summing prices of bought items
-        val allShopItems = listOf(
-            ShopItem("item1", R.drawable.jumpsuit_1, 20),
-            ShopItem("item2", R.drawable.jumpsuit_2, 50)
-        )
-        val refundAmount = allShopItems.filter { it.id in boughtSet }.sumOf { it.price }
-
-        // Refund coins
-        coinCount += refundAmount
-        updateCoinDisplay()
-
-        // Clear bought items set (remove all items from closet/shop bought list)
-        prefs.edit().putStringSet(boughtSetKey, emptySet()).apply()
-
-        // Remove all clothing views from closetContainer or dressing area
+    //Functions for shop and clothes and closet start now:
+    private fun loadPurchasedItems(username: String) {
+        // Clear existing items first
         closetContainer.removeAllViews()
 
-        // Optionally add back default closet items if needed (e.g. addClothingItems())
+        firestore.collection("UserPurchases").document(username).get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    // Use distinct() to ensure no duplicates
+                    val purchasedItems = (document.get("items") as? List<String>)?.distinct() ?: emptyList()
 
-        Toast.makeText(this, "Closet reset! Refunded $refundAmount coins.", Toast.LENGTH_SHORT).show()
-    }
+                    if (purchasedItems.isNotEmpty()) {
+                        // Load item details in batch
+                        firestore.collection("ShopItems")
+                            .whereIn("id", purchasedItems)
+                            .get()
+                            .addOnSuccessListener { querySnapshot ->
+                                // Create a map to track added items
+                                val addedItems = mutableSetOf<String>()
 
-    private fun loadBoughtClothingItems() {
-        val prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-        val boughtSet = prefs.getStringSet("bought_items_set", emptySet()) ?: emptySet()
-
-
-        val allShopItems = listOf(
-            ShopItem("item1", R.drawable.jumpsuit_1, 20),
-            ShopItem("item2", R.drawable.jumpsuit_2, 50)
-        )
-
-        // Filter only bought items and show them
-        allShopItems.filter { it.id in boughtSet }.forEach { item ->
-            val closetItem = ImageView(this).apply {
-                layoutParams = LinearLayout.LayoutParams(380, 380).apply {
-                    marginEnd = 16
+                                querySnapshot.documents.forEach { doc ->
+                                    val itemId = doc.getString("id") ?: return@forEach
+                                    if (!addedItems.contains(itemId)) {
+                                        addItemToCloset(itemId)
+                                        addedItems.add(itemId)
+                                    }
+                                }
+                            }
+                    }
                 }
-                setImageResource(item.imageRes)
-                setOnTouchListener(DragTouchListener())
             }
-            closetContainer.addView(closetItem)
-        }
     }
 
 
+    private fun displayPurchasedItems(itemIds: List<String>) {
+        if (itemIds.isEmpty()) return
+
+        firestore.collection("ShopItems")
+            .whereIn("id", itemIds)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                // Create a map to ensure unique items
+                val uniqueItems = mutableMapOf<String, String>()
+                querySnapshot.documents.forEach { doc ->
+                    val itemName = doc.getString("id") ?: return@forEach
+                    uniqueItems[itemName] = itemName
+                }
+
+                // Add only unique items to closet
+                uniqueItems.values.forEach { itemName ->
+                    addItemToCloset(itemName)
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Error loading shop items", e)
+            }
+    }
+
+    private fun addItemToCloset(itemName: String) {
+        val resourceId = imageResourceMap[itemName] ?: return
+
+        // Check if item already exists in closet
+        for (i in 0 until closetContainer.childCount) {
+            val view = closetContainer.getChildAt(i)
+            if (view is ImageView && view.tag == itemName) {
+                return // Item already exists, don't add again
+            }
+        }
+
+        val imageView = ImageView(this).apply {
+            setImageResource(resourceId)
+            layoutParams = LinearLayout.LayoutParams(380, 380).apply {
+                marginEnd = 16
+            }
+            tag = itemName // Use tag to track items
+            setOnTouchListener(DragTouchListener())
+        }
+
+        closetContainer.addView(imageView)
+    }
+
+
+    private fun resetClosetAndRefund() {
+        val username = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+            .getString("username", "") ?: return
+
+        val progressDialog = ProgressDialog(this).apply {
+            setMessage("Processing reset...")
+            setCancelable(false)
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Reset Closet")
+            .setMessage("Return all items to shop and refund coins?")
+            .setPositiveButton("Reset") { _, _ ->
+                progressDialog.show()
+
+                lifecycleScope.launch {
+                    try {
+                        // 1. Check if purchases document exists
+                        val purchasesRef = firestore.collection("UserPurchases").document(username)
+                        val purchasesDoc = purchasesRef.get().await()
+
+                        if (!purchasesDoc.exists()) {
+                            progressDialog.dismiss()
+                            Toast.makeText(
+                                this@BunnyActivity,
+                                "No items to reset",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            return@launch
+                        }
+
+                        // 2. Get items (empty list if field doesn't exist)
+                        val items = purchasesDoc.get("items") as? List<String> ?: emptyList()
+
+                        if (items.isEmpty()) {
+                            progressDialog.dismiss()
+                            Toast.makeText(
+                                this@BunnyActivity,
+                                "No items to reset",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            return@launch
+                        }
+
+                        // 3. Calculate refund
+                        val shopItems = firestore.collection("ShopItems")
+                            .whereIn("id", items).get().await()
+
+                        val totalRefund = shopItems.sumOf { it.getLong("price")?.toInt() ?: 0 }
+
+                        // 4. Execute transaction
+                        firestore.runTransaction { transaction ->
+                            // Clear purchases
+                            transaction.update(purchasesRef, "items", emptyList<String>())
+
+                            // Update coins (create if doesn't exist)
+                            val coinsRef = firestore.collection("UserCoins").document(username)
+                            if (!transaction.get(coinsRef).exists()) {
+                                transaction.set(coinsRef, mapOf(
+                                    "userId" to username,
+                                    "coins" to totalRefund
+                                ))
+                            } else {
+                                transaction.update(coinsRef, "coins", FieldValue.increment(totalRefund.toLong()))
+                            }
+                        }.addOnCompleteListener {
+                            progressDialog.dismiss()
+
+                            if (it.isSuccessful) {
+                                closetContainer.removeAllViews()
+                                budgetViewModel.refreshCoins(username)
+                                Toast.makeText(
+                                    this@BunnyActivity,
+                                    "Reset complete! Refunded $totalRefund coins",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            } else {
+                                Toast.makeText(
+                                    this@BunnyActivity,
+                                    "Reset failed: ${it.exception?.message}",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
+                    } catch (e: Exception) {
+                        progressDialog.dismiss()
+                        Toast.makeText(
+                            this@BunnyActivity,
+                            "Error: ${e.message}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        Log.e("BunnyActivity", "Reset error", e)
+                    }
+                }
+            }
+            .setNegativeButton("Cancel") { _, _ -> progressDialog.dismiss() }
+            .setOnDismissListener { progressDialog.dismiss() }
+            .show()
+    }
 
 
 

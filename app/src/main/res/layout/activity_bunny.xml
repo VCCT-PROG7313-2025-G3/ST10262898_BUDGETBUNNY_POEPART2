@@ -77,12 +77,6 @@
         android:textColor="#FFF"
         android:elevation="9dp" />
 
-    <Button
-        android:id="@+id/btnReset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Reset"
-        android:layout_marginTop="16dp"/>
 
     <LinearLayout
         android:id="@+id/toggleBar"
@@ -97,6 +91,16 @@
         android:gravity="center">
 
         <Button
+            android:id="@+id/btnCloseToggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="X"
+            android:layout_gravity="end"
+            android:background="@android:color/transparent"
+            android:textSize="20sp"
+            android:padding="8dp" />
+
+        <Button
             android:id="@+id/btnShop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -108,6 +112,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="How to play" />
+
+        <Button
+            android:id="@+id/btnReset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reset"
+            android:layout_marginTop="16dp"/>
+
+        <Button
+            android:id="@+id/btnExit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Exit" />
+
     </LinearLayout>
 
     <TextView
