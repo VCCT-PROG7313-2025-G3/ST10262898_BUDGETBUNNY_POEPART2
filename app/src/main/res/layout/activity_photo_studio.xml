@@ -1,7 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
 
     <ImageView
         android:id="@+id/backgroundImage"
@@ -9,7 +9,6 @@
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
         android:src="@drawable/bg_lightning" />
-
 
     <RelativeLayout
         android:id="@+id/bunnyContainer"
@@ -22,30 +21,38 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:adjustViewBounds="true"
             android:scaleType="centerInside"/>
     </RelativeLayout>
 
-
     <LinearLayout
-        android:id="@+id/backgroundSelector"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
-        android:padding="16dp"
+        android:orientation="vertical"
         android:background="#88000000">
 
+        <Button
+            android:id="@+id/btnCapture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:text="Take Photo" />
 
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:padding="8dp">
+
+            <LinearLayout
+                android:id="@+id/backgroundSelector"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
     </LinearLayout>
-
-    <Button
-        android:id="@+id/btnCapture"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_above="@id/backgroundSelector"
-        android:layout_marginBottom="16dp"
-        android:text="Take Photo" />
 
     <Button
         android:id="@+id/btnBack"

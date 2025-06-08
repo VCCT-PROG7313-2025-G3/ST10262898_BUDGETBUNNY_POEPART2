@@ -9,6 +9,7 @@ import android.graphics.Canvas
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
 import android.widget.Button
@@ -18,8 +19,9 @@ import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import java.io.ByteArrayOutputStream
+import androidx.core.content.FileProvider
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -32,9 +34,11 @@ class PhotoStudioActivity : AppCompatActivity() {
     private lateinit var bunnyContainer: RelativeLayout
     private lateinit var backgroundImage: ImageView
     private lateinit var backgroundSelector: LinearLayout
+    private var currentBackgroundRes: Int = R.drawable.bg_lightning
 
     companion object {
         private const val PERMISSION_REQUEST_CODE = 100
+        private const val FILENAME_PREFIX = "BudgetBunny_"
     }
 
     // Background resources
@@ -55,6 +59,9 @@ class PhotoStudioActivity : AppCompatActivity() {
         backgroundImage = findViewById(R.id.backgroundImage)
         backgroundSelector = findViewById(R.id.backgroundSelector)
 
+        // Set initial background
+        backgroundImage.setImageResource(currentBackgroundRes)
+
         // Load the dressed bunny from intent
         val byteArray = intent.getByteArrayExtra("bunny_bitmap") ?: run {
             Toast.makeText(this, "Failed to load bunny", Toast.LENGTH_SHORT).show()
@@ -65,6 +72,7 @@ class PhotoStudioActivity : AppCompatActivity() {
         val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
         findViewById<ImageView>(R.id.bunnyImage).apply {
             setImageBitmap(bitmap)
+            adjustViewBounds = true
         }
 
         // Set up background selection
@@ -72,9 +80,7 @@ class PhotoStudioActivity : AppCompatActivity() {
 
         // Set up capture button
         findViewById<Button>(R.id.btnCapture).setOnClickListener {
-            if (checkPermissions()) {
-                captureAndSaveBunny()
-            }
+            checkPermissionsAndCapture()
         }
 
         // Set up back button
@@ -84,6 +90,7 @@ class PhotoStudioActivity : AppCompatActivity() {
     }
 
     private fun setupBackgroundSelector() {
+        backgroundSelector.removeAllViews()
         backgrounds.forEach { bgRes ->
             val thumb = ImageView(this).apply {
                 setImageResource(bgRes)
@@ -91,10 +98,29 @@ class PhotoStudioActivity : AppCompatActivity() {
                     marginEnd = 16
                 }
                 setOnClickListener {
+                    currentBackgroundRes = bgRes
                     backgroundImage.setImageResource(bgRes)
                 }
             }
             backgroundSelector.addView(thumb)
+        }
+    }
+
+    private fun checkPermissionsAndCapture() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q ||
+            ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            // Permission already granted or not needed (Android 10+ uses scoped storage)
+            captureAndSaveBunny()
+        } else {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                showPermissionRationale()
+            } else {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    PERMISSION_REQUEST_CODE
+                )
+            }
         }
     }
 
@@ -112,18 +138,19 @@ class PhotoStudioActivity : AppCompatActivity() {
             // Save to gallery
             saveImageToGallery(bitmap)
         } catch (e: Exception) {
-            Toast.makeText(this, "Failed to capture photo", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Failed to capture photo: ${e.message}", Toast.LENGTH_SHORT).show()
             e.printStackTrace()
         }
     }
 
     private fun saveImageToGallery(bitmap: Bitmap) {
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val fileName = "Bunny_$timeStamp.jpg"
+        val fileName = "${FILENAME_PREFIX}$timeStamp.jpg"
 
         try {
             // Save to external storage
-            val storageDir = getExternalFilesDir(null)
+            val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            storageDir?.mkdirs()
             val imageFile = File(storageDir, fileName)
 
             FileOutputStream(imageFile).use { fos ->
@@ -144,40 +171,16 @@ class PhotoStudioActivity : AppCompatActivity() {
                     )
 
                     Toast.makeText(this, "Photo saved to gallery!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Failed to compress image", Toast.LENGTH_SHORT).show()
                 }
             }
         } catch (e: IOException) {
-            Toast.makeText(this, "Failed to save photo", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Failed to save photo: ${e.message}", Toast.LENGTH_SHORT).show()
             e.printStackTrace()
         } catch (e: Exception) {
-            Toast.makeText(this, "Error saving photo", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Error saving photo: ${e.message}", Toast.LENGTH_SHORT).show()
             e.printStackTrace()
-        }
-    }
-
-    private fun checkPermissions(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            when {
-                ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ) == PackageManager.PERMISSION_GRANTED -> {
-                    true
-                }
-                shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE) -> {
-                    showPermissionRationale()
-                    false
-                }
-                else -> {
-                    requestPermissions(
-                        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                        PERMISSION_REQUEST_CODE
-                    )
-                    false
-                }
-            }
-        } else {
-            true
         }
     }
 
@@ -191,23 +194,23 @@ class PhotoStudioActivity : AppCompatActivity() {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 captureAndSaveBunny()
             } else {
-                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Permission denied - cannot save photos", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     private fun showPermissionRationale() {
         AlertDialog.Builder(this)
-            .setTitle("Permission Needed")
-            .setMessage("This permission is needed to save your bunny photos")
-            .setPositiveButton("OK") { _, _ ->
-                requestPermissions(
+            .setTitle("Storage Permission Needed")
+            .setMessage("This app needs storage permission to save your bunny photos to your gallery.")
+            .setPositiveButton("Grant") { _, _ ->
+                ActivityCompat.requestPermissions(
+                    this,
                     arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                     PERMISSION_REQUEST_CODE
                 )
             }
             .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
-            .create()
             .show()
     }
 }
