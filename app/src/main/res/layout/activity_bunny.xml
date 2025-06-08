@@ -96,9 +96,10 @@
             android:layout_height="wrap_content"
             android:text="X"
             android:layout_gravity="end"
-            android:background="@android:color/transparent"
+            android:background="#F48FB1"
             android:textSize="20sp"
-            android:padding="8dp" />
+            android:padding="8dp"
+            android:layout_marginBottom="16dp" />
 
         <Button
             android:id="@+id/btnShop"
@@ -119,6 +120,15 @@
             android:layout_height="wrap_content"
             android:text="Reset"
             android:layout_marginTop="16dp"/>
+
+        <Button
+            android:id="@+id/btnPhotoStudio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Photo Studio"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="16dp"/>
 
         <Button
             android:id="@+id/btnExit"

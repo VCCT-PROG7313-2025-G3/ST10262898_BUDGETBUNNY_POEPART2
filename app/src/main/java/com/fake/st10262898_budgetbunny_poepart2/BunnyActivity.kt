@@ -4,6 +4,8 @@ import android.app.ProgressDialog
 import android.content.ContentValues.TAG
 import com.google.firebase.firestore.FieldValue
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
 import android.util.Log
 import android.view.DragEvent
@@ -27,6 +29,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.io.ByteArrayOutputStream
 
 class BunnyActivity : AppCompatActivity() {
 
@@ -91,41 +94,6 @@ class BunnyActivity : AppCompatActivity() {
             coinCountText.text = "Coins: $coins"
             Log.d("CoinDebug", "Coins updated to: $coins")
         }
-
-/*
-        fun migrateUserCoins() {
-            val db = FirebaseFirestore.getInstance()
-
-            db.collection("UserCoins").get()
-                .addOnSuccessListener { documents ->
-                    for (document in documents) {
-                        val userId = document.id
-                        val currentCoins = document.getLong("coins") ?: 0
-
-                        // Create new structure
-                        val newCoinData = hashMapOf(
-                            "userId" to userId,
-                            "totalEarned" to currentCoins,
-                            "currentBalance" to currentCoins,
-                            "lastUpdated" to FieldValue.serverTimestamp()
-                        )
-
-                        // Update document with new structure
-                        db.collection("UserCoins").document(userId)
-                            .set(newCoinData, SetOptions.merge())
-                            .addOnSuccessListener {
-                                Log.d("Migration", "Successfully migrated $userId")
-                            }
-                            .addOnFailureListener { e ->
-                                Log.e("Migration", "Error migrating $userId", e)
-                            }
-                    }
-                }
-                .addOnFailureListener { e ->
-                    Log.e("Migration", "Error getting documents", e)
-                }
-        }
-        */
 
 
     }
@@ -194,6 +162,46 @@ class BunnyActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnExit).setOnClickListener {
             finish()
         }
+
+        findViewById<Button>(R.id.btnPhotoStudio).setOnClickListener {
+            val dressUpLayout = findViewById<RelativeLayout>(R.id.dressUpLayout)
+            val toggleBar = findViewById<LinearLayout>(R.id.toggleBar)
+
+            dressUpLayout.post {
+                try {
+                    // Hide toggle bar temporarily
+                    toggleBar.visibility = View.GONE
+
+                    // Create bitmap
+                    val bitmap = Bitmap.createBitmap(
+                        dressUpLayout.width,
+                        dressUpLayout.height,
+                        Bitmap.Config.RGB_565
+                    )
+                    val canvas = Canvas(bitmap)
+                    dressUpLayout.draw(canvas)
+
+                    // Show toggle bar again
+                    toggleBar.visibility = View.VISIBLE
+
+                    // Compress and pass bitmap
+                    val stream = ByteArrayOutputStream()
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream)
+
+                    val intent = Intent(this, PhotoStudioActivity::class.java).apply {
+                        putExtra("bunny_bitmap", stream.toByteArray())
+                    }
+                    startActivity(intent)
+
+                } catch (e: Exception) {
+                    toggleBar.visibility = View.VISIBLE // Ensure it's visible if error occurs
+                    Toast.makeText(this, "Failed to prepare photo", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+
+
     }
 
 

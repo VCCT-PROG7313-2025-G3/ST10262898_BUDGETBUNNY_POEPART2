@@ -36,6 +36,7 @@ import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
@@ -43,6 +44,7 @@ import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import com.google.firebase.firestore.ktx.toObject
 
 class HomePageActivity : AppCompatActivity() {
 
@@ -128,7 +130,7 @@ class HomePageActivity : AppCompatActivity() {
             adapter = chatAdapter
         }
         // Welcome message
-        addChatMessage("Welcome! Choose:\nA - Add Expense\nB - Set Budget\nC - Play Game", true)
+        addChatMessage("Welcome! Choose:\nA - Add Expense\nB - Set Budget\nC - Play Game \nD - View Graphs \nE - Your fitness health", true)
 
 
         btnCloseChat = findViewById(R.id.btnCloseChat)
@@ -321,7 +323,6 @@ class HomePageActivity : AppCompatActivity() {
         val input = etChatInput.text.toString().trim().uppercase()
         etChatInput.text.clear()
 
-
         addChatMessage(input, false)
 
         when (input) {
@@ -336,17 +337,69 @@ class HomePageActivity : AppCompatActivity() {
                 collapseChat()
             }
             "C" -> {
-                addChatMessage("Game coming soon! 🎮", true)
+                addChatMessage("Launching Bunny Game...", true)
+                startActivity(Intent(this, BunnyActivity::class.java))
+                overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left)
+                collapseChat()
+            }
+            "D" -> {
+                addChatMessage("Opening detailed chart...", true)
+                startActivity(Intent(this, DetailedBarChartActivity::class.java))
+                collapseChat()
+            }
+            "E" -> {
+                val currentUserId = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+                    .getString("username", "") ?: ""
+                lifecycleScope.launch {
+                    val result = evaluateFinancialHealth(currentUserId)
+                    addChatMessage(result, true)
+                }
             }
             else -> {
-                addChatMessage("Please enter A, B, or C", true)
+                addChatMessage("Please enter A, B, C, D or E", true)
             }
         }
     }
+
 
     private fun collapseChat() {
         isChatExpanded = false
         chatContainer.visibility = View.GONE
     }
+
+
+
+    private suspend fun evaluateFinancialHealth(username: String): String {
+        val budgetsSnapshot = db.collection("budgets")
+            .whereEqualTo("username", username)
+            .get()
+            .await()
+
+        val budgets = budgetsSnapshot.documents.mapNotNull {
+            it.toObject(BudgetFirestore::class.java)
+        }
+
+        val totalIncome = budgets.sumOf { it.budgetIncome.toDouble() }
+
+        val sharedPrefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val minGoal = sharedPrefs.getFloat("MIN_GOAL", 0f).toDouble()
+        val maxGoal = sharedPrefs.getFloat("TOTAL_BUDGET_GOAL", 0f).toDouble()
+
+        return when {
+            totalIncome < minGoal -> {
+                val shortfall = (minGoal - totalIncome).toInt()
+                "📉 Financial Health: LOW\nYou need R$shortfall more to reach your minimum goal."
+            }
+            totalIncome >= minGoal && totalIncome <= maxGoal -> {
+                val tillMax = (maxGoal - totalIncome).toInt()
+                "✅ Financial Health: GOOD\nYou're on track! Just R$tillMax more to hit your max goal."
+            }
+            else -> {
+                val surplus = (totalIncome - maxGoal).toInt()
+                "🎉 Financial Health: EXCELLENT\nYou've surpassed your max goal by R$surplus!"
+            }
+        }
+    }
+
 
 }

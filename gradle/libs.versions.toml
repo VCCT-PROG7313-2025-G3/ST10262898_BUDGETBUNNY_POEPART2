@@ -12,6 +12,7 @@ constraintlayout = "2.2.1"
 room = "2.6.1"
 mpandroidchart = "3.1.0"
 firebaseDatabase = "20.3.0"
+foundationAndroid = "1.8.2"
 
 
 
@@ -33,7 +34,8 @@ lifecycle-viewmodel-ktx = "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
 
 #The MPAndroidChart dependency
 mpandroidchart = { group = "com.github.PhilJay", name = "MPAndroidChart", version.ref = "mpandroidchart" }
-firebase-database-ktx = { group = "com.google.firebase", name = "firebase-database-ktx", version.ref = "firebaseDatabase" } #Updated for charts
+firebase-database-ktx = { group = "com.google.firebase", name = "firebase-database-ktx", version.ref = "firebaseDatabase" }
+androidx-foundation-android = { group = "androidx.compose.foundation", name = "foundation-android", version.ref = "foundationAndroid" } #Updated for charts
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
