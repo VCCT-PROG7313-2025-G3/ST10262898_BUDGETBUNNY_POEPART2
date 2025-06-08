@@ -358,9 +358,11 @@ class BunnyActivity : AppCompatActivity() {
 
                 lifecycleScope.launch {
                     try {
-                        // 1. Check if purchases document exists
+                        // 1. First get all data we need before transaction
                         val purchasesRef = firestore.collection("UserPurchases").document(username)
-                        val coinsRef = firestore.collection("UserCoins").document(username) // Add this line
+                        val coinsRef = firestore.collection("UserCoins").document(username)
+
+                        // Get purchases document first
                         val purchasesDoc = purchasesRef.get().await()
 
                         if (!purchasesDoc.exists()) {
@@ -373,8 +375,6 @@ class BunnyActivity : AppCompatActivity() {
                             return@launch
                         }
 
-
-                        // 2. Get items (empty list if field doesn't exist)
                         val items = purchasesDoc.get("items") as? List<String> ?: emptyList()
 
                         if (items.isEmpty()) {
@@ -387,32 +387,33 @@ class BunnyActivity : AppCompatActivity() {
                             return@launch
                         }
 
-                        // 3. Calculate refund
+                        // Get shop items to calculate refund
                         val shopItems = firestore.collection("ShopItems")
                             .whereIn("id", items).get().await()
 
                         val totalRefund = shopItems.sumOf { it.getLong("price")?.toInt() ?: 0 }
 
-                        // 4. Execute transaction
+                        // 2. Now run the transaction with proper read-before-write order
                         firestore.runTransaction { transaction ->
+                            // First read all documents we need to update
+                            val coinDoc = transaction.get(coinsRef)
+
+                            // Then perform writes
                             // Clear purchases
                             transaction.update(purchasesRef, "items", emptyList<String>())
 
-                            // Get current document
-                            val coinDoc = transaction.get(coinsRef)
-
-                            // Calculate new values
+                            // Update coins
                             val currentTotalEarned = coinDoc.getLong("totalEarned") ?: 0
                             val currentBalance = coinDoc.getLong("currentBalance") ?:
                             coinDoc.getLong("coins") ?: 0
 
-                            // Update with full structure
-                            transaction.set(coinsRef, mapOf(
-                                "userId" to username,
-                                "totalEarned" to currentTotalEarned + totalRefund,
-                                "currentBalance" to currentBalance + totalRefund,
+                            val updates = hashMapOf<String, Any>(
+                                "currentBalance" to (currentBalance + totalRefund),
+                                "totalEarned" to (currentTotalEarned + totalRefund),
                                 "lastUpdated" to FieldValue.serverTimestamp()
-                            ), SetOptions.merge())
+                            )
+
+                            transaction.update(coinsRef, updates)
                         }.addOnCompleteListener {
                             progressDialog.dismiss()
 
@@ -430,6 +431,7 @@ class BunnyActivity : AppCompatActivity() {
                                     "Reset failed: ${it.exception?.message}",
                                     Toast.LENGTH_LONG
                                 ).show()
+                                Log.e("BunnyActivity", "Transaction failed", it.exception)
                             }
                         }
                     } catch (e: Exception) {
