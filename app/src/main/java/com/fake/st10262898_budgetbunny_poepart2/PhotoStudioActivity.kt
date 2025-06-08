@@ -1,10 +1,10 @@
 package com.fake.st10262898_budgetbunny_poepart2
 
 import android.Manifest
+import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.Build
@@ -22,6 +22,7 @@ import androidx.core.content.ContextCompat
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -32,25 +33,18 @@ class PhotoStudioActivity : AppCompatActivity() {
     private lateinit var bunnyImage: ImageView
     private lateinit var backgroundSelector: LinearLayout
     private var currentBackgroundRes = R.drawable.bg_lightning
-
-    companion object {
-        private const val PERMISSION_REQUEST_CODE = 100
-    }
-
-    // Background resources
-    private val backgrounds = listOf(
-        R.drawable.bg_wood,
-        R.drawable.bg_nodate,
-        R.drawable.bg_lightning,
-        R.drawable.bg_sunset,
-        R.drawable.bg_study
-    )
-
     private val imageResourceMap = mapOf(
         "jumpsuit_1" to R.drawable.jumpsuit_1,
         "jumpsuit_2" to R.drawable.jumpsuit_2
-        // Add all your clothing items here
     )
+
+
+    companion object {
+        private const val PERMISSION_REQUEST_CODE = 100
+        private const val FILENAME_FORMAT = "yyyyMMdd_HHmmss"
+    }
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,37 +59,135 @@ class PhotoStudioActivity : AppCompatActivity() {
         // Set initial background
         backgroundImage.setImageResource(currentBackgroundRes)
 
-        // Load the dressed bunny from intent
-        /*val byteArray = intent.getByteArrayExtra("bunny_bitmap") ?: run {
-            Toast.makeText(this, "Failed to load bunny", Toast.LENGTH_SHORT).show()
-            finish()
-            return
-
-        }
-
-
-        val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
-        bunnyImage.setImageBitmap(bitmap)*/
-
-        // Load the dressed items from intent
+        // Load dressed items
         val dressedItemsArray = intent.getStringArrayExtra("dressed_items") ?: emptyArray()
         createDressedBunny(dressedItemsArray)
-
-        // Set up background selection
         setupBackgroundSelector()
 
-        // Set up capture button
+        // Set up buttons
         findViewById<Button>(R.id.btnCapture).setOnClickListener {
             if (checkPermissions()) {
                 captureAndSaveBunny()
             }
         }
+        findViewById<Button>(R.id.btnBack).setOnClickListener { finish() }
+    }
 
-        // Set up back button
-        findViewById<Button>(R.id.btnBack).setOnClickListener {
-            finish()
+    private fun captureAndSaveBunny() {
+        try {
+            val bitmap = Bitmap.createBitmap(
+                bunnyContainer.width,
+                bunnyContainer.height,
+                Bitmap.Config.ARGB_8888
+            ).apply {
+                val canvas = Canvas(this)
+                bunnyContainer.draw(canvas)
+            }
+            saveImageToGallery(bitmap)
+        } catch (e: Exception) {
+            Toast.makeText(this, "Failed to capture photo", Toast.LENGTH_SHORT).show()
+            e.printStackTrace()
         }
     }
+
+    private fun saveImageToGallery(bitmap: Bitmap) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // Android 10+ - Use MediaStore
+            saveImageUsingMediaStore(bitmap)
+        } else {
+            // Android 9 and below - Legacy method
+            saveImageLegacy(bitmap)
+        }
+    }
+
+    private fun saveImageUsingMediaStore(bitmap: Bitmap) {
+        val dateFormatter = SimpleDateFormat(FILENAME_FORMAT, Locale.getDefault())
+        val fileName = "Bunny_${dateFormatter.format(Date())}.jpg"
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/BudgetBunny")
+                put(MediaStore.MediaColumns.IS_PENDING, 1)
+            }
+        }
+
+        val contentResolver = contentResolver
+        var outputStream: OutputStream? = null
+        var uri: Uri? = null
+
+        try {
+            uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+            uri?.let {
+                outputStream = contentResolver.openOutputStream(it)
+                outputStream?.use { stream ->
+                    if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)) {
+                        Toast.makeText(this, "Photo saved to gallery!", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    contentValues.put(MediaStore.MediaColumns.IS_PENDING, 0)
+                    contentResolver.update(uri, contentValues, null, null)
+                }
+            }
+        } catch (e: IOException) {
+            uri?.let { contentResolver.delete(it, null, null) }
+            Toast.makeText(this, "Failed to save photo", Toast.LENGTH_SHORT).show()
+            e.printStackTrace()
+        }
+    }
+
+    private fun saveImageLegacy(bitmap: Bitmap) {
+        val dateFormatter = SimpleDateFormat(FILENAME_FORMAT, Locale.getDefault())
+        val fileName = "Bunny_${dateFormatter.format(Date())}.jpg"
+        val storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+        val imageFile = File(storageDir, "BudgetBunny/$fileName")
+
+        try {
+            imageFile.parentFile?.mkdirs()
+            FileOutputStream(imageFile).use { fos ->
+                if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)) {
+                    // Notify gallery
+                    sendBroadcast(
+                        Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).apply {
+                            data = Uri.fromFile(imageFile)
+                        }
+                    )
+                    Toast.makeText(this, "Photo saved to gallery!", Toast.LENGTH_SHORT).show()
+                }
+            }
+        } catch (e: IOException) {
+            Toast.makeText(this, "Failed to save photo", Toast.LENGTH_SHORT).show()
+            e.printStackTrace()
+        }
+    }
+
+    private fun checkPermissions(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // Android 10+ doesn't need WRITE_EXTERNAL_STORAGE for MediaStore
+            true
+        } else {
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED || requestStoragePermission()
+        }
+    }
+
+    private fun requestStoragePermission(): Boolean {
+        return if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            showPermissionRationale()
+            false
+        } else {
+            requestPermissions(
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                PERMISSION_REQUEST_CODE
+            )
+            false
+        }
+    }
+
+
 
 
     private fun createDressedBunny(dressedItems: Array<String>) {
@@ -160,86 +252,7 @@ class PhotoStudioActivity : AppCompatActivity() {
         }
     }
 
-    private fun captureAndSaveBunny() {
-        try {
-            // Create bitmap from the view
-            val bitmap = Bitmap.createBitmap(
-                bunnyContainer.width,
-                bunnyContainer.height,
-                Bitmap.Config.ARGB_8888
-            )
-            val canvas = Canvas(bitmap)
-            bunnyContainer.draw(canvas)
 
-            // Save to gallery
-            saveImageToGallery(bitmap)
-        } catch (e: Exception) {
-            Toast.makeText(this, "Failed to capture photo", Toast.LENGTH_SHORT).show()
-            e.printStackTrace()
-        }
-    }
-
-    private fun saveImageToGallery(bitmap: Bitmap) {
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val fileName = "Bunny_$timeStamp.jpg"
-
-        try {
-            // Save to external storage
-            val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-            storageDir?.mkdirs()
-            val imageFile = File(storageDir, fileName)
-
-            FileOutputStream(imageFile).use { fos ->
-                if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)) {
-                    // Add to media store
-                    MediaStore.Images.Media.insertImage(
-                        contentResolver,
-                        imageFile.absolutePath,
-                        fileName,
-                        "Budget Bunny Photo"
-                    )
-
-                    // Notify gallery
-                    sendBroadcast(
-                        Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).apply {
-                            data = Uri.fromFile(imageFile)
-                        }
-                    )
-
-                    Toast.makeText(this, "Photo saved to gallery!", Toast.LENGTH_SHORT).show()
-                }
-            }
-        } catch (e: IOException) {
-            Toast.makeText(this, "Failed to save photo", Toast.LENGTH_SHORT).show()
-            e.printStackTrace()
-        }
-    }
-
-    private fun checkPermissions(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            when {
-                ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ) == PackageManager.PERMISSION_GRANTED -> {
-                    true
-                }
-                shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE) -> {
-                    showPermissionRationale()
-                    false
-                }
-                else -> {
-                    requestPermissions(
-                        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                        PERMISSION_REQUEST_CODE
-                    )
-                    false
-                }
-            }
-        } else {
-            true
-        }
-    }
 
     private fun showPermissionRationale() {
         AlertDialog.Builder(this)
