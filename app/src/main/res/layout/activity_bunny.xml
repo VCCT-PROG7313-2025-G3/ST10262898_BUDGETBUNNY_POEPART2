@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:background="#fce4ec">
 
-
     <FrameLayout
         android:id="@+id/mainContentContainer"
         android:layout_width="match_parent"
@@ -59,9 +58,7 @@
                     android:layout_height="match_parent"
                     android:orientation="horizontal" />
 
-
             </HorizontalScrollView>
-
         </RelativeLayout>
     </FrameLayout>
 
@@ -78,63 +75,83 @@
         android:elevation="9dp" />
 
 
+
     <LinearLayout
         android:id="@+id/toggleBar"
-        android:layout_width="150dp"
+        android:layout_width="180dp"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:background="#DDFFFFFF"
-        android:padding="8dp"
+        android:padding="16dp"
         android:layout_alignParentEnd="true"
         android:elevation="8dp"
-        android:translationX="150dp"
-        android:gravity="center">
+        android:translationX="180dp"
+        android:layout_marginTop="50dp">>
 
-        <Button
+        <ImageButton
             android:id="@+id/btnCloseToggle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="X"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_gravity="end"
             android:background="#F48FB1"
-            android:textSize="20sp"
-            android:padding="8dp"
-            android:layout_marginBottom="16dp" />
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:scaleType="centerInside"
+            android:layout_marginBottom="24dp"
+            android:padding="8dp"/>
 
         <Button
             android:id="@+id/btnShop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
             android:text="Shop"
-            android:layout_marginBottom="16dp" />
+            android:textSize="16sp"
+            android:background="#F48FB1"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="12dp"
+            android:gravity="center"/>
 
         <Button
             android:id="@+id/btnHowToPlay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="How to play" />
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="How to play"
+            android:textSize="16sp"
+            android:background="#F48FB1"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="12dp"
+            android:gravity="center"/>
 
         <Button
             android:id="@+id/btnReset"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
             android:text="Reset"
-            android:layout_marginTop="16dp"/>
+            android:textSize="16sp"
+            android:background="#F48FB1"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="12dp"
+            android:gravity="center"/>
 
         <Button
             android:id="@+id/btnPhotoStudio"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
             android:text="Photo Studio"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="16dp"/>
+            android:textSize="16sp"
+            android:background="#F48FB1"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="12dp"
+            android:gravity="center"/>
 
         <Button
             android:id="@+id/btnExit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Exit" />
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Exit"
+            android:textSize="16sp"
+            android:background="#F48FB1"
+            android:textColor="#FFFFFF"
+            android:gravity="center"/>
 
     </LinearLayout>
 
@@ -152,6 +169,4 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:translationY="50dp"/>
-
-
 </RelativeLayout>

@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
@@ -117,7 +118,7 @@ class BunnyActivity : AppCompatActivity() {
         val toggleBar = findViewById<LinearLayout>(R.id.toggleBar)
         val toggleHandle = findViewById<Button>(R.id.toggleHandleButton)
         val mainContent = findViewById<FrameLayout>(R.id.mainContentContainer)
-        val btnCloseToggle = findViewById<Button>(R.id.btnCloseToggle)
+        val btnCloseToggle = findViewById<ImageButton>(R.id.btnCloseToggle)
 
         var isOpen = false
 

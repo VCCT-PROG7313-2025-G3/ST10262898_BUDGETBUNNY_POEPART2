@@ -79,7 +79,6 @@ class PhotoStudioActivity : AppCompatActivity() {
 
         // Load the dressed items from intent
         val dressedItemsArray = intent.getStringArrayExtra("dressed_items") ?: emptyArray()
-
         createDressedBunny(dressedItemsArray)
 
         // Set up background selection
@@ -101,9 +100,17 @@ class PhotoStudioActivity : AppCompatActivity() {
 
     private fun createDressedBunny(dressedItems: Array<String>) {
         // Add base bunny image
-        bunnyImage.setImageResource(R.drawable.budgetbunny_wamsta_two) // Make sure you have this drawable
+        bunnyImage.setImageResource(R.drawable.budgetbunny_wamsta_two)
 
+        // Clear any existing clothing items (except the base bunny)
+        for (i in bunnyContainer.childCount - 1 downTo 0) {
+            val view = bunnyContainer.getChildAt(i)
+            if (view != bunnyImage) {
+                bunnyContainer.removeView(view)
+            }
+        }
 
+        // Add each clothing item
         dressedItems.forEach { itemData ->
             val parts = itemData.split(",")
             if (parts.size == 3) {
@@ -114,7 +121,13 @@ class PhotoStudioActivity : AppCompatActivity() {
                 imageResourceMap[itemName]?.let { resId ->
                     ImageView(this).apply {
                         setImageResource(resId)
-                        layoutParams = RelativeLayout.LayoutParams(380, 380)
+                        layoutParams = RelativeLayout.LayoutParams(
+                            RelativeLayout.LayoutParams.WRAP_CONTENT,
+                            RelativeLayout.LayoutParams.WRAP_CONTENT
+                        ).apply {
+                            width = 380
+                            height = 380
+                        }
                         x = xPos
                         y = yPos
                         bunnyContainer.addView(this)
@@ -256,4 +269,6 @@ class PhotoStudioActivity : AppCompatActivity() {
             }
         }
     }
+
+
 }
