@@ -49,10 +49,8 @@ class ShopActivity : AppCompatActivity() {
         // Load coins and purchased items
         firestore.collection("UserCoins").document(userId).get()
             .addOnSuccessListener { coinDoc ->
-                // Prefer currentBalance, fall back to coins for legacy
-                userCoins = coinDoc.getLong("currentBalance")?.toInt()
-                    ?: coinDoc.getLong("coins")?.toInt()
-                            ?: 0
+                // Only use currentBalance - no fallback to coins
+                userCoins = coinDoc.getLong("currentBalance")?.toInt() ?: 0
                 updateCoinDisplay()
 
                 firestore.collection("UserPurchases").document(userId).get()

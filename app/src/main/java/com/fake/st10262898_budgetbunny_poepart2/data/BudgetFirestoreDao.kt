@@ -124,8 +124,8 @@ class BudgetFirestoreDao {
     suspend fun getUserCoins(username: String): Int {
         return try {
             val doc = userCoinsCollection.document(username).get().await()
-            // Prefer currentBalance, fall back to coins for legacy
-            doc.getLong("currentBalance")?.toInt() ?: doc.getLong("coins")?.toInt() ?: 0
+            // Only use currentBalance - remove coins fallback
+            doc.getLong("currentBalance")?.toInt() ?: 0
         } catch (e: Exception) {
             throw Exception("Failed to get user coins", e)
         }

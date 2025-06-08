@@ -163,7 +163,8 @@ class BudgetFirestoreRepository(private val budgetFirestoreDao: BudgetFirestoreD
         return try {
             Log.d("CoinDebug", "Getting coins for $username")
             val doc = db.collection("UserCoins").document(username).get().await()
-            val coins = doc.getLong("coins")?.toInt() ?: 0
+            // Always use currentBalance now - remove coins fallback
+            val coins = doc.getLong("currentBalance")?.toInt() ?: 0
             Log.d("CoinDebug", "Firestore coins: $coins")
             coins
         } catch (e: Exception) {
