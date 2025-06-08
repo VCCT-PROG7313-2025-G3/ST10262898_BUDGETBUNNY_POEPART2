@@ -16,26 +16,33 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import androidx.activity.viewModels
+import java.util.Date
 
 class GoalEntry : AppCompatActivity() {
 
     private val budgetViewModel: BudgetViewModel by viewModels()
-    private lateinit var dateEditText: EditText
+    private lateinit var dateButton: Button
     private lateinit var amountEditText: EditText
     private lateinit var incomeEditText: EditText
     private lateinit var categorySpinner: Spinner
     private val calendar = Calendar.getInstance()
+    private var selectedDateInMillis: Long = System.currentTimeMillis()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_goal_entry)
 
         // Initialize views
-        dateEditText = findViewById(R.id.editTextDate)
+        dateButton = findViewById(R.id.dateButton)
         amountEditText = findViewById(R.id.editTextNumber)
         incomeEditText = findViewById(R.id.editTextNumber2)
         categorySpinner = findViewById(R.id.mySpinner)
         val nextButton = findViewById<Button>(R.id.button2)
+
+
+        //Set initial date:
+        updateDateButtonText()
+
 
         // Setup category spinner
         val categories = arrayOf(
@@ -55,10 +62,10 @@ class GoalEntry : AppCompatActivity() {
             calendar.set(Calendar.YEAR, year)
             calendar.set(Calendar.MONTH, month)
             calendar.set(Calendar.DAY_OF_MONTH, day)
-            updateDateInView()
+            updateDateButtonText()
         }
 
-        dateEditText.setOnClickListener {
+        dateButton.setOnClickListener {
             DatePickerDialog(
                 this,
                 datePickerListener,
@@ -74,19 +81,25 @@ class GoalEntry : AppCompatActivity() {
         }
     }
 
-    private fun updateDateInView() {
+    /*private fun updateDateInView() {
         val dateFormat = "dd/MM/yyyy"
         val sdf = SimpleDateFormat(dateFormat, Locale.getDefault())
         dateEditText.setText(sdf.format(calendar.time))
+    }*/
+
+    private fun updateDateButtonText() {
+        val dateFormat = "dd/MM/yyyy"
+        val sdf = SimpleDateFormat(dateFormat, Locale.getDefault())
+        dateButton.text = "Selected Date: ${sdf.format(Date(selectedDateInMillis))}"
     }
 
     private fun saveBudgetGoal() {
         val category = categorySpinner.selectedItem.toString()
         val amountText = amountEditText.text.toString()
         val incomeText = incomeEditText.text.toString()
-        val dateText = dateEditText.text.toString()
 
-        if (category.isEmpty() || amountText.isEmpty() || incomeText.isEmpty() || dateText.isEmpty()) {
+        // Removed dateText validation since we're using the calendar picker
+        if (category.isEmpty() || amountText.isEmpty() || incomeText.isEmpty()) {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
             return
         }
@@ -120,7 +133,7 @@ class GoalEntry : AppCompatActivity() {
                     budgetAmount = 0.0, // Initial amount saved is 0
                     username = username,
                     minTotalBudgetGoal = income,
-                    budgetDate = calendar.timeInMillis,
+                    budgetDate = selectedDateInMillis, // Using the stored date
                     budgetIncome = income
                 )
 

@@ -130,7 +130,7 @@ class HomePageActivity : AppCompatActivity() {
             adapter = chatAdapter
         }
         // Welcome message
-        addChatMessage("Welcome! Choose:\nA - Add Expense\nB - Set Budget\nC - Play Game \nD - View Graphs \nE - Your fitness health", true)
+        addChatMessage("Welcome! Choose:\nA - Add Expense\nB - Set Budget\nC - Play Game \nD - View Graphs \nE - Your financial health", true)
 
 
         btnCloseChat = findViewById(R.id.btnCloseChat)
