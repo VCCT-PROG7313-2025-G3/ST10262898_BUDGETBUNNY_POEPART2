@@ -15,7 +15,14 @@ class ShopItemAdapter(
 
     private val imageResourceMap = mapOf(
         "jumpsuit_1" to R.drawable.jumpsuit_1,
-        "jumpsuit_2" to R.drawable.jumpsuit_2
+        "jumpsuit_2" to R.drawable.jumpsuit_2,
+        "blue_shirt" to R.drawable.clothes_blue_shirt,
+        "brat_shirt" to R.drawable.clothes_brat,
+        "cap" to R.drawable.clothes_cap,
+        "KCP_shirt" to R.drawable.clothes_kcp,
+        "coffee_shirt" to R.drawable.clothes_shirt_coffee,
+        "sideman_hoodie" to R.drawable.clothes_sideman,
+        "skirt" to R.drawable.clothes_skirt
     )
 
     private val filteredItems = items.toMutableList()
@@ -34,7 +41,14 @@ class ShopItemAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = filteredItems[position]
         val resourceId = imageResourceMap[item.imageName] ?: 0
-        holder.image.setImageResource(resourceId)
+
+        // This ensures uniform scaling
+        holder.image.apply {
+            setImageResource(resourceId)
+            scaleType = ImageView.ScaleType.FIT_CENTER
+            adjustViewBounds = true
+        }
+
         holder.price.text = "${item.price} coins"
         holder.itemView.setOnClickListener { onItemClick(item) }
     }
