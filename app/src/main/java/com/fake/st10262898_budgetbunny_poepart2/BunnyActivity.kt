@@ -458,8 +458,4 @@ class BunnyActivity : AppCompatActivity() {
             .show()
     }
 
-
-
-
-
 }

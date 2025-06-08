@@ -36,15 +36,20 @@ class ResourceStepsActivity : AppCompatActivity() {
     private fun showStep(step: Int) {
         val resourceId = when (topic) {
             "save_money" -> when (step) {
-                0 -> R.drawable.save_money_step1
-                1 -> R.drawable.save_money_step2
-                else -> R.drawable.save_money_step3
-            }/*
+                0 -> R.drawable.save_money_1
+                1 -> R.drawable.save_money_2
+                2 -> R.drawable.save_money_3
+                3 -> R.drawable.save_money_4
+                else -> R.drawable.save_money_4
+            }
             "invest_wisely" -> when (step) {
-                0 -> R.drawable.invest_step1
-                1 -> R.drawable.invest_step2
-                else -> R.drawable.invest_step3
-            }*/
+                0 -> R.drawable.invest_1
+                1 -> R.drawable.invest_2
+                2 -> R.drawable.invest_3
+                3 -> R.drawable.invest_4
+                4 -> R.drawable.invest_5
+                else -> R.drawable.invest_5
+            }
             "budgeting_tips" -> when (step) {
                 0 -> R.drawable.rb_01
                 1 -> R.drawable.rb_02
@@ -60,8 +65,8 @@ class ResourceStepsActivity : AppCompatActivity() {
 
     private fun getTotalSteps(topic: String): Int {
         return when (topic) {
-            "save_money" -> 3
-            "invest_wisely" -> 3
+            "save_money" -> 5
+            "invest_wisely" -> 6
             "budgeting_tips" -> 5
             else -> 0
         }

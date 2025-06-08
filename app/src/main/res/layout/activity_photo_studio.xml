@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Background Image (will be changed by user) -->
     <ImageView
         android:id="@+id/backgroundImage"
         android:layout_width="match_parent"
@@ -10,12 +11,14 @@
         android:scaleType="centerCrop"
         android:src="@drawable/bg_lightning" />
 
+    <!-- Container for the bunny and clothes -->
     <RelativeLayout
         android:id="@+id/bunnyContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/transparent">
 
+        <!-- The bunny with clothes -->
         <ImageView
             android:id="@+id/bunnyImage"
             android:layout_width="wrap_content"
@@ -25,35 +28,27 @@
             android:scaleType="centerInside"/>
     </RelativeLayout>
 
+    <!-- Background selector at bottom -->
     <LinearLayout
+        android:id="@+id/backgroundSelector"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical"
-        android:background="#88000000">
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:background="#88000000"/>
 
-        <Button
-            android:id="@+id/btnCapture"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="16dp"
-            android:text="Take Photo" />
+    <!-- Capture button -->
+    <Button
+        android:id="@+id/btnCapture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/backgroundSelector"
+        android:layout_marginBottom="16dp"
+        android:text="Take Photo" />
 
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:padding="8dp">
-
-            <LinearLayout
-                android:id="@+id/backgroundSelector"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" />
-        </HorizontalScrollView>
-    </LinearLayout>
-
+    <!-- Back button -->
     <Button
         android:id="@+id/btnBack"
         android:layout_width="wrap_content"
