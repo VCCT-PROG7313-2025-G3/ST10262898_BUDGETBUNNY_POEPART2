@@ -1,7 +1,9 @@
 package com.fake.st10262898_budgetbunny_poepart2.data
 
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
@@ -92,22 +94,27 @@ class BudgetFirestoreDao {
 
     suspend fun calculateAndUpdateCoins(username: String) {
         try {
-            // Get all budgets for user and sum income
             val budgets = budgetsCollection
                 .whereEqualTo("username", username)
                 .get()
                 .await()
 
             val totalIncome = budgets.sumOf { it.getDouble("budgetIncome") ?: 0.0 }
-            val coins = (totalIncome / 10).toInt()
+            val earnedCoins = (totalIncome / 10).toInt()
 
-            // Update coins in Firestore
+            // Get current document to preserve existing balance
+            val currentDoc = userCoinsCollection.document(username).get().await()
+            val currentBalance = currentDoc.getLong("currentBalance") ?: earnedCoins
+
+            // Update with full structure
             userCoinsCollection.document(username).set(
                 mapOf(
                     "userId" to username,
-                    "coins" to coins,
-                    "lastUpdated" to Date()
-                )
+                    "totalEarned" to earnedCoins,
+                    "currentBalance" to currentBalance,
+                    "lastUpdated" to FieldValue.serverTimestamp()
+                ),
+                SetOptions.merge()
             ).await()
         } catch (e: Exception) {
             throw Exception("Failed to calculate and update coins", e)
@@ -116,10 +123,13 @@ class BudgetFirestoreDao {
 
     suspend fun getUserCoins(username: String): Int {
         return try {
-            val document = userCoinsCollection.document(username).get().await()
-            document.getLong("coins")?.toInt() ?: 0
+            val doc = userCoinsCollection.document(username).get().await()
+            // Prefer currentBalance, fall back to coins for legacy
+            doc.getLong("currentBalance")?.toInt() ?: doc.getLong("coins")?.toInt() ?: 0
         } catch (e: Exception) {
             throw Exception("Failed to get user coins", e)
         }
     }
+
+
 }

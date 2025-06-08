@@ -25,6 +25,12 @@ class Settings : AppCompatActivity() {
             insets
         }
 
+        // Set click listener for migration button
+        findViewById<TextView>(R.id.tv_migration).setOnClickListener {
+            val intent = Intent(this, MigrationActivity::class.java)
+            startActivity(intent)
+        }
+
         // Set the date and time
         val tvDateTime: TextView = findViewById(R.id.tv_dateTime)
         val currentDateTime = SimpleDateFormat("dd MMMM yyyy, HH:mm", Locale.getDefault()).format(Date())

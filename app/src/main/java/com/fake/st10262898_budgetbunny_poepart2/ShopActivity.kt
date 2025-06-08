@@ -15,6 +15,7 @@ import com.fake.st10262898_budgetbunny_poepart2.data.ShopItem
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
 
 class ShopActivity : AppCompatActivity() {
@@ -48,7 +49,10 @@ class ShopActivity : AppCompatActivity() {
         // Load coins and purchased items
         firestore.collection("UserCoins").document(userId).get()
             .addOnSuccessListener { coinDoc ->
-                userCoins = coinDoc.getLong("coins")?.toInt() ?: 0
+                // Prefer currentBalance, fall back to coins for legacy
+                userCoins = coinDoc.getLong("currentBalance")?.toInt()
+                    ?: coinDoc.getLong("coins")?.toInt()
+                            ?: 0
                 updateCoinDisplay()
 
                 firestore.collection("UserPurchases").document(userId).get()
@@ -130,6 +134,7 @@ class ShopActivity : AppCompatActivity() {
         }
     }
 
+
     private fun executePurchase(item: ShopItem,
                                 userPurchasesRef: DocumentReference,
                                 userCoinsRef: DocumentReference) {
@@ -139,68 +144,45 @@ class ShopActivity : AppCompatActivity() {
             show()
         }
 
-        // Declare the nested function first
-        fun checkCoinsAndPurchase() {
-            userCoinsRef.get().addOnSuccessListener { coinsDoc ->
-                val currentCoins = (coinsDoc.getLong("coins") ?: 0).toInt()
+        firestore.runTransaction { transaction ->
+            val coinDoc = transaction.get(userCoinsRef)
 
-                if (currentCoins < item.price) {
-                    progressDialog.dismiss()
-                    Toast.makeText(this@ShopActivity, "Not enough coins", Toast.LENGTH_LONG).show()
-                    return@addOnSuccessListener
-                }
+            // Get current balance (prefer currentBalance, fall back to coins for legacy)
+            val currentBalance = coinDoc.getLong("currentBalance")
+                ?: coinDoc.getLong("coins")
+                ?: 0
 
-                // Both documents exist, proceed with purchase
-                firestore.runTransaction { transaction ->
-                    // Get fresh copies of documents
-                    val freshPurchases = transaction.get(userPurchasesRef)
-                    val freshCoins = transaction.get(userCoinsRef)
-
-                    val freshCoinBalance = (freshCoins.getLong("coins") ?: 0).toInt()
-
-                    // Update both documents
-                    transaction.update(userPurchasesRef, "items",
-                        FieldValue.arrayUnion(item.id))
-                    transaction.update(userCoinsRef, "coins",
-                        freshCoinBalance - item.price)
-
-                    // Return new balance
-                    freshCoinBalance - item.price
-                }.addOnSuccessListener { newBalance ->
-                    userCoins = newBalance
-                    updateCoinDisplay()
-                    adapter.removeItem(item)
-
-                    setResult(RESULT_OK, Intent().apply {
-                        putExtra("NEW_COINS", newBalance)
-                    })
-                    progressDialog.dismiss()
-                    finish()
-                }.addOnFailureListener { e ->
-                    progressDialog.dismiss()
-                    Toast.makeText(this@ShopActivity, "Purchase failed: ${e.message}", Toast.LENGTH_LONG).show()
-                }
-            }.addOnFailureListener { e ->
-                progressDialog.dismiss()
-                Toast.makeText(this@ShopActivity, "Failed to check coins: ${e.message}", Toast.LENGTH_LONG).show()
+            if (currentBalance < item.price) {
+                throw Exception("Not enough coins")
             }
-        }
 
-        // First ensure both documents exist
-        userPurchasesRef.get().addOnSuccessListener { purchasesDoc ->
-            if (!purchasesDoc.exists()) {
-                userPurchasesRef.set(mapOf("items" to emptyList<String>()))
-                    .addOnSuccessListener {
-                        checkCoinsAndPurchase()
-                    }
-            } else {
-                checkCoinsAndPurchase()
-            }
+            // Update both documents - maintain full structure
+            transaction.update(userPurchasesRef, "items", FieldValue.arrayUnion(item.id))
+
+            // Create complete update with all required fields
+            transaction.set(userCoinsRef,
+                mapOf(
+                    "userId" to userId,
+                    "currentBalance" to (currentBalance - item.price),
+                    "totalEarned" to (coinDoc.getLong("totalEarned") ?: currentBalance),
+                    "lastUpdated" to FieldValue.serverTimestamp()
+                ),
+                SetOptions.merge()
+            )
+
+            currentBalance - item.price
+        }.addOnSuccessListener { newBalance ->
+            userCoins = newBalance.toInt()
+            updateCoinDisplay()
+            adapter.removeItem(item)
+            progressDialog.dismiss()
+            setResult(RESULT_OK, Intent().putExtra("NEW_COINS", newBalance.toInt()))
         }.addOnFailureListener { e ->
             progressDialog.dismiss()
-            Toast.makeText(this, "Failed to check purchases: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Purchase failed: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }
+
 
     private fun updateCoinDisplay() {
         findViewById<TextView>(R.id.coinCountTextShop).text = "Coins: $userCoins"

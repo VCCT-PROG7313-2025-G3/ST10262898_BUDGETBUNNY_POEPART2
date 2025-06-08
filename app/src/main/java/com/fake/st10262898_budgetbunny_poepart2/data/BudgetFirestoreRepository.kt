@@ -1,7 +1,9 @@
 package com.fake.st10262898_budgetbunny_poepart2.data
 
 import android.util.Log
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
@@ -132,22 +134,30 @@ class BudgetFirestoreRepository(private val budgetFirestoreDao: BudgetFirestoreD
                 .await()
 
             val totalIncome = budgets.sumOf { it.getDouble("budgetIncome") ?: 0.0 }
-            val coins = (totalIncome / 10).toInt()
+            val earnedCoins = (totalIncome / 10).toInt()
 
-            // Update coins in Firestore
+            // Update coins in Firestore with NEW structure
             val userCoinsRef = db.collection("UserCoins").document(username)
+
+            // Get existing document to preserve currentBalance if it exists
+            val existingDoc = userCoinsRef.get().await()
+            val currentBalance = existingDoc.getLong("currentBalance") ?: earnedCoins
+
             userCoinsRef.set(
                 mapOf(
                     "userId" to username,
-                    "coins" to coins,
-                    "lastUpdated" to Date()
-                )
+                    "totalEarned" to earnedCoins,
+                    "currentBalance" to currentBalance, // Preserve existing balance
+                    "lastUpdated" to FieldValue.serverTimestamp()
+                ),
+                SetOptions.merge() // Only update specified fields
             ).await()
         } catch (e: Exception) {
             Log.e("CoinCalc", "Error calculating coins", e)
-            throw e // Re-throw to handle in ViewModel
+            throw e
         }
     }
+
 
     suspend fun getUserCoins(username: String): Int {
         return try {

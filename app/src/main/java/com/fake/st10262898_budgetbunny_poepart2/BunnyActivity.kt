@@ -24,6 +24,7 @@ import androidx.lifecycle.lifecycleScope
 import com.fake.st10262898_budgetbunny_poepart2.viewmodel.BudgetViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -91,7 +92,45 @@ class BunnyActivity : AppCompatActivity() {
             Log.d("CoinDebug", "Coins updated to: $coins")
         }
 
+/*
+        fun migrateUserCoins() {
+            val db = FirebaseFirestore.getInstance()
+
+            db.collection("UserCoins").get()
+                .addOnSuccessListener { documents ->
+                    for (document in documents) {
+                        val userId = document.id
+                        val currentCoins = document.getLong("coins") ?: 0
+
+                        // Create new structure
+                        val newCoinData = hashMapOf(
+                            "userId" to userId,
+                            "totalEarned" to currentCoins,
+                            "currentBalance" to currentCoins,
+                            "lastUpdated" to FieldValue.serverTimestamp()
+                        )
+
+                        // Update document with new structure
+                        db.collection("UserCoins").document(userId)
+                            .set(newCoinData, SetOptions.merge())
+                            .addOnSuccessListener {
+                                Log.d("Migration", "Successfully migrated $userId")
+                            }
+                            .addOnFailureListener { e ->
+                                Log.e("Migration", "Error migrating $userId", e)
+                            }
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.e("Migration", "Error getting documents", e)
+                }
+        }
+        */
+
+
     }
+
+
 
     override fun onResume() {
         super.onResume()
@@ -321,6 +360,7 @@ class BunnyActivity : AppCompatActivity() {
                     try {
                         // 1. Check if purchases document exists
                         val purchasesRef = firestore.collection("UserPurchases").document(username)
+                        val coinsRef = firestore.collection("UserCoins").document(username) // Add this line
                         val purchasesDoc = purchasesRef.get().await()
 
                         if (!purchasesDoc.exists()) {
@@ -332,6 +372,7 @@ class BunnyActivity : AppCompatActivity() {
                             ).show()
                             return@launch
                         }
+
 
                         // 2. Get items (empty list if field doesn't exist)
                         val items = purchasesDoc.get("items") as? List<String> ?: emptyList()
@@ -357,16 +398,21 @@ class BunnyActivity : AppCompatActivity() {
                             // Clear purchases
                             transaction.update(purchasesRef, "items", emptyList<String>())
 
-                            // Update coins (create if doesn't exist)
-                            val coinsRef = firestore.collection("UserCoins").document(username)
-                            if (!transaction.get(coinsRef).exists()) {
-                                transaction.set(coinsRef, mapOf(
-                                    "userId" to username,
-                                    "coins" to totalRefund
-                                ))
-                            } else {
-                                transaction.update(coinsRef, "coins", FieldValue.increment(totalRefund.toLong()))
-                            }
+                            // Get current document
+                            val coinDoc = transaction.get(coinsRef)
+
+                            // Calculate new values
+                            val currentTotalEarned = coinDoc.getLong("totalEarned") ?: 0
+                            val currentBalance = coinDoc.getLong("currentBalance") ?:
+                            coinDoc.getLong("coins") ?: 0
+
+                            // Update with full structure
+                            transaction.set(coinsRef, mapOf(
+                                "userId" to username,
+                                "totalEarned" to currentTotalEarned + totalRefund,
+                                "currentBalance" to currentBalance + totalRefund,
+                                "lastUpdated" to FieldValue.serverTimestamp()
+                            ), SetOptions.merge())
                         }.addOnCompleteListener {
                             progressDialog.dismiss()
 
@@ -401,6 +447,8 @@ class BunnyActivity : AppCompatActivity() {
             .setOnDismissListener { progressDialog.dismiss() }
             .show()
     }
+
+
 
 
 
