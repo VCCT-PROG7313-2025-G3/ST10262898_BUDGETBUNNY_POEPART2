@@ -348,8 +348,6 @@ class BunnyActivity : AppCompatActivity() {
             return
         }
 
-        Log.d("ClosetDebug", "Adding item: $itemName (ResID: $resourceId)")
-
         // Check if already exists
         for (i in 0 until closetContainer.childCount) {
             val view = closetContainer.getChildAt(i)
@@ -359,27 +357,31 @@ class BunnyActivity : AppCompatActivity() {
         }
 
         val imageView = ImageView(this).apply {
-            try {
-                setImageResource(resourceId)
-                layoutParams = LinearLayout.LayoutParams(
-                    resources.getDimensionPixelSize(R.dimen.closet_item_width),
-                    resources.getDimensionPixelSize(R.dimen.closet_item_height)
-                ).apply {
-                    marginEnd = resources.getDimensionPixelSize(R.dimen.closet_item_margin)
-                }
-                scaleType = ImageView.ScaleType.FIT_CENTER
-                tag = itemName
-                setOnTouchListener(DragTouchListener())
+            setImageResource(resourceId)
 
-                // Temporary debug background
-                //setBackgroundColor(0x22FF0000) // Semi-transparent red
-            } catch (e: Exception) {
-                Log.e("ClosetError", "Failed to create ImageView for $itemName", e)
+            // Set different sizes for jumpsuits vs other items
+            val size = if (itemName.startsWith("jumpsuit")) {
+                // Keep jumpsuits at current size
+                resources.getDimensionPixelSize(R.dimen.closet_item_width) to
+                        resources.getDimensionPixelSize(R.dimen.closet_item_height)
+            } else {
+
+                400.dpToPx() to 550.dpToPx() //size of clothes (exc jumpsuit_1 and 2)
             }
+
+            layoutParams = LinearLayout.LayoutParams(
+                size.first,  // Width
+                size.second  // Height
+            ).apply {
+                marginEnd = resources.getDimensionPixelSize(R.dimen.closet_item_margin)
+            }
+
+            scaleType = ImageView.ScaleType.FIT_CENTER
+            tag = itemName
+            setOnTouchListener(DragTouchListener())
         }
 
         closetContainer.addView(imageView)
-        Log.d("ClosetDebug", "Successfully added $itemName to closet")
     }
 
     // Add this extension function to convert dp to pixels
