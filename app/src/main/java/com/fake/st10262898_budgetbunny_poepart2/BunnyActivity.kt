@@ -23,6 +23,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.lifecycleScope
 import com.fake.st10262898_budgetbunny_poepart2.viewmodel.BudgetViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -276,29 +277,38 @@ class BunnyActivity : AppCompatActivity() {
 
     //Functions for shop and clothes and closet start now:
     private fun loadPurchasedItems(username: String) {
-        // Clear existing items first
         closetContainer.removeAllViews()
+        Log.d("ClosetDebug", "Loading purchased items for: $username")
 
         firestore.collection("UserPurchases").document(username).get()
             .addOnSuccessListener { document ->
                 if (document.exists()) {
-                    // Use distinct() to ensure no duplicates
                     val purchasedItems = (document.get("items") as? List<String>)?.distinct() ?: emptyList()
+                    Log.d("ClosetDebug", "Purchased items: $purchasedItems")
+
+                    // Debug: Check which items exist in imageResourceMap
+                    purchasedItems.forEach { itemId ->
+                        val exists = imageResourceMap.containsKey(itemId)
+                        Log.d("ClosetDebug", "Item $itemId exists in map: $exists")
+                    }
 
                     if (purchasedItems.isNotEmpty()) {
-                        // Load item details in batch
                         firestore.collection("ShopItems")
                             .whereIn("id", purchasedItems)
                             .get()
                             .addOnSuccessListener { querySnapshot ->
-                                // Create a map to track added items
-                                val addedItems = mutableSetOf<String>()
+                                Log.d("ClosetDebug", "Found ${querySnapshot.size()} shop items")
 
                                 querySnapshot.documents.forEach { doc ->
-                                    val itemId = doc.getString("id") ?: return@forEach
-                                    if (!addedItems.contains(itemId)) {
-                                        addItemToCloset(itemId)
-                                        addedItems.add(itemId)
+                                    val itemId = doc.getString("id") ?: ""
+                                    val imageName = doc.getString("imageName") ?: ""
+                                    Log.d("ClosetDebug", "Processing item - ID: $itemId, ImageName: $imageName")
+
+                                    // Try both id and imageName as fallback
+                                    when {
+                                        imageResourceMap.containsKey(itemId) -> addItemToCloset(itemId)
+                                        imageResourceMap.containsKey(imageName) -> addItemToCloset(imageName)
+                                        else -> Log.e("ClosetError", "No matching resource for $itemId or $imageName")
                                     }
                                 }
                             }
@@ -333,26 +343,48 @@ class BunnyActivity : AppCompatActivity() {
     }
 
     private fun addItemToCloset(itemName: String) {
-        val resourceId = imageResourceMap[itemName] ?: return
+        val resourceId = imageResourceMap[itemName] ?: run {
+            Log.e("ClosetError", "No drawable found for: $itemName")
+            return
+        }
 
-        // Check if item already exists in closet
+        Log.d("ClosetDebug", "Adding item: $itemName (ResID: $resourceId)")
+
+        // Check if already exists
         for (i in 0 until closetContainer.childCount) {
             val view = closetContainer.getChildAt(i)
             if (view is ImageView && view.tag == itemName) {
-                return // Item already exists, don't add again
+                return
             }
         }
 
         val imageView = ImageView(this).apply {
-            setImageResource(resourceId)
-            layoutParams = LinearLayout.LayoutParams(380, 380).apply {
-                marginEnd = 16
+            try {
+                setImageResource(resourceId)
+                layoutParams = LinearLayout.LayoutParams(
+                    resources.getDimensionPixelSize(R.dimen.closet_item_width),
+                    resources.getDimensionPixelSize(R.dimen.closet_item_height)
+                ).apply {
+                    marginEnd = resources.getDimensionPixelSize(R.dimen.closet_item_margin)
+                }
+                scaleType = ImageView.ScaleType.FIT_CENTER
+                tag = itemName
+                setOnTouchListener(DragTouchListener())
+
+                // Temporary debug background
+                //setBackgroundColor(0x22FF0000) // Semi-transparent red
+            } catch (e: Exception) {
+                Log.e("ClosetError", "Failed to create ImageView for $itemName", e)
             }
-            tag = itemName // Use tag to track items
-            setOnTouchListener(DragTouchListener())
         }
 
         closetContainer.addView(imageView)
+        Log.d("ClosetDebug", "Successfully added $itemName to closet")
+    }
+
+    // Add this extension function to convert dp to pixels
+    private fun Int.dpToPx(): Int {
+        return (this * resources.displayMetrics.density).toInt()
     }
 
 
