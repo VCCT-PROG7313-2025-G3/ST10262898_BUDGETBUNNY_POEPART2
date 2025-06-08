@@ -38,11 +38,13 @@ class ShopActivity : AppCompatActivity() {
 
     private fun setupViews() {
         recyclerView = findViewById(R.id.recyclerViewShop)
-        recyclerView.layoutManager = GridLayoutManager(this, 2)
+        recyclerView.layoutManager = GridLayoutManager(this, 2) // 2 items per row
 
-        findViewById<Button>(R.id.btnReturnToBunny).setOnClickListener {
-            finish()
-        }
+        // Add spacing between items
+        val spacing = resources.getDimensionPixelSize(R.dimen.item_spacing)
+        recyclerView.addItemDecoration(
+            GridSpacingItemDecoration(2, spacing, true)
+        )
     }
 
     private fun loadUserData() {

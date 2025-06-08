@@ -46,8 +46,14 @@ class BunnyActivity : AppCompatActivity() {
 
     private val imageResourceMap = mapOf(
         "jumpsuit_1" to R.drawable.jumpsuit_1,
-        "jumpsuit_2" to R.drawable.jumpsuit_2
-        //add more shopping items here cails.
+        "jumpsuit_2" to R.drawable.jumpsuit_2,
+        "blue_shirt" to R.drawable.clothes_blue_shirt,
+        "brat_shirt" to R.drawable.clothes_brat,
+        "cap" to R.drawable.clothes_cap,
+        "KCP_shirt" to R.drawable.clothes_kcp,
+        "coffee_shirt" to R.drawable.clothes_shirt_coffee,
+        "sideman_hoodie" to R.drawable.clothes_sideman,
+        "skirt" to R.drawable.clothes_skirt
     )
 
     // Firebase
