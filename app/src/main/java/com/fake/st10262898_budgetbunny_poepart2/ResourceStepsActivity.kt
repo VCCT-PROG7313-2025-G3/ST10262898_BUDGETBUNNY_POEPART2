@@ -28,7 +28,7 @@ class ResourceStepsActivity : AppCompatActivity() {
             if (currentStep < getTotalSteps(topic)) {
                 showStep(currentStep)
             } else {
-                finish()  // End of steps
+                finish()
             }
         }
     }
@@ -39,8 +39,20 @@ class ResourceStepsActivity : AppCompatActivity() {
                 0 -> R.drawable.save_money_step1
                 1 -> R.drawable.save_money_step2
                 else -> R.drawable.save_money_step3
+            }/*
+            "invest_wisely" -> when (step) {
+                0 -> R.drawable.invest_step1
+                1 -> R.drawable.invest_step2
+                else -> R.drawable.invest_step3
+            }*/
+            "budgeting_tips" -> when (step) {
+                0 -> R.drawable.rb_01
+                1 -> R.drawable.rb_02
+                2 -> R.drawable.rb_03
+                3 -> R.drawable.rb_04
+                4 -> R.drawable.rb_05
+                else -> R.drawable.rb_05
             }
-            // Add other topics here
             else -> R.drawable.default_step
         }
         imageView.setImageResource(resourceId)
@@ -48,7 +60,9 @@ class ResourceStepsActivity : AppCompatActivity() {
 
     private fun getTotalSteps(topic: String): Int {
         return when (topic) {
-            "save_money" -> 3  // Example: 3 steps for "save money"
+            "save_money" -> 3
+            "invest_wisely" -> 3
+            "budgeting_tips" -> 5
             else -> 0
         }
     }

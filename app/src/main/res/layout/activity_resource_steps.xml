@@ -8,14 +8,14 @@
     android:background="@color/black"
     tools:context=".ResourceStepsActivity">
 
-    <!-- Fullscreen step container -->
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clickable="true"
         android:focusable="true">
 
-        <!-- Step Image/Content -->
+
         <ImageView
             android:id="@+id/iv_step_content"
             android:layout_width="match_parent"
@@ -23,7 +23,7 @@
             android:scaleType="centerCrop"
             android:contentDescription="Resource step image"/>
 
-        <!-- Progress Indicator (Top) -->
+
         <LinearLayout
             android:id="@+id/progress_container"
             android:layout_width="match_parent"
@@ -33,10 +33,10 @@
             android:orientation="horizontal"
             android:padding="2dp">
 
-            <!-- Dynamically added progress bars will go here -->
+
         </LinearLayout>
 
-        <!-- Step Counter -->
+
         <TextView
             android:id="@+id/tv_step_counter"
             android:layout_width="wrap_content"
@@ -48,7 +48,7 @@
             android:layout_gravity="top|end"
             android:layout_margin="16dp"/>
 
-        <!-- Topic Title -->
+
         <TextView
             android:id="@+id/tv_topic_title"
             android:layout_width="wrap_content"
@@ -60,7 +60,7 @@
             android:layout_gravity="top|center_horizontal"
             android:layout_marginTop="24dp"/>
 
-        <!-- Close Button -->
+
         <ImageButton
             android:id="@+id/btn_close"
             android:layout_width="48dp"
@@ -71,7 +71,7 @@
         android:layout_gravity="top|start"
         android:layout_margin="8dp"/>
 
-        <!-- Navigation Hint (Bottom) -->
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -13,10 +13,7 @@ class ResourcesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_resources)
-
         setupCardAnimations()
-
-
     }
 
     private fun setupCardAnimations() {
@@ -32,8 +29,8 @@ class ResourcesActivity : AppCompatActivity() {
                     view.animate().scaleX(1f).scaleY(1f).setDuration(100).start()
                     when (view.id) {
                         R.id.card_save_money -> openTopic("save_money")
-                        R.id.card_invest -> openTopic("invest")
-                        R.id.card_earn -> openTopic("earn")
+                        R.id.card_invest -> openTopic("invest_wisely")
+                        R.id.card_earn -> openTopic("budgeting_tips")  // Changed from "earn_more" to match card title
                     }
                 }.start()
             }
