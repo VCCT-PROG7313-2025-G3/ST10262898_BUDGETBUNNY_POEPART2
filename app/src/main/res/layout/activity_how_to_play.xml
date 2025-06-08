@@ -1,17 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_note"
     android:padding="24dp">
 
-    <TextView
-        android:id="@+id/howToPlayText"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="How to play instructions go here..."
-        android:textSize="18sp"
-        android:textColor="#000000"
-        android:lineSpacingExtra="8dp"
-        android:translationY="50dp"/>
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/howToPlayText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="#333333"
+            android:lineSpacingMultiplier="1.2"
+            android:padding="8dp"
+            android:layout_marginTop="50dp"
+            android:textIsSelectable="true"
+            android:autoLink="all"/>
+
+        <ImageView
+            android:layout_width="400dp"
+            android:layout_height="600dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="30dp"
+            android:src="@drawable/budgetbunny_wamsta"
+            android:contentDescription="Budget Bunny mascot"
+            android:layout_marginBottom="20dp"/>
+    </LinearLayout>
 </ScrollView>
