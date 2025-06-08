@@ -7,7 +7,10 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.ProgressBar
+import android.widget.RelativeLayout
 import android.widget.Spinner
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.fake.st10262898_budgetbunny_poepart2.data.BudgetFirestore
 import com.fake.st10262898_budgetbunny_poepart2.data.ExpenseFirebase
@@ -39,6 +42,17 @@ class DetailedBarChartActivity : AppCompatActivity() {
     private var startDate: Long = 0L
     private var endDate: Long = System.currentTimeMillis()
 
+    // Progress bar variables
+    private var maxGoalValue = 0.0
+    private lateinit var progressBar: ProgressBar
+    private lateinit var budgetText: TextView
+    private lateinit var tvMinGoalValue: TextView
+    private lateinit var tvMaxGoalValue: TextView
+    private lateinit var minGoalMarker: View
+    private lateinit var maxGoalMarker: View
+    private lateinit var minGoalLabel: TextView
+    private lateinit var maxGoalLabel: TextView
+
     // Initialize Firebase
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,9 +63,93 @@ class DetailedBarChartActivity : AppCompatActivity() {
         periodSpinner = findViewById(R.id.periodSpinner)
         btnDateRange = findViewById(R.id.btnDateRange)
 
+        // Initialize progress bar views
+        progressBar = findViewById(R.id.progressBar)
+        budgetText = findViewById(R.id.budgetForMonth)
+        tvMinGoalValue = findViewById(R.id.tv_minGoalValue)
+        tvMaxGoalValue = findViewById(R.id.tv_maxGoalValue)
+        minGoalMarker = findViewById(R.id.minGoalMarker)
+        maxGoalMarker = findViewById(R.id.maxGoalMarker)
+        minGoalLabel = findViewById(R.id.minGoalLabel)
+        maxGoalLabel = findViewById(R.id.maxGoalLabel)
+
         setupPeriodSpinner()
         setupDateRangePicker()
+        loadBudgetData() // Load budget data for progress bar
+    }
 
+    private fun loadBudgetData() {
+        val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val currentUserId = sharedPreferences.getString("username", "") ?: return
+
+        // Get user's goals
+        val userMinGoal = sharedPreferences.getFloat("MIN_GOAL", 0f).toDouble()
+        maxGoalValue = sharedPreferences.getFloat("TOTAL_BUDGET_GOAL", 0f).toDouble()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val budgetsSnapshot = db.collection("budgets")
+                    .whereEqualTo("username", currentUserId)
+                    .get()
+                    .await()
+
+                val userBudgets = budgetsSnapshot.toObjects(BudgetFirestore::class.java)
+                val totalIncome = userBudgets.sumOf { it.budgetIncome }
+
+                runOnUiThread {
+                    // Update progress
+                    progressBar.max = maxGoalValue.toInt()
+                    progressBar.progress = totalIncome.toInt()
+                    budgetText.text = "R${totalIncome.toInt()} of R${maxGoalValue.toInt()} saved"
+
+                    // Update labels
+                    tvMinGoalValue.text = "Min Goal: R${userMinGoal.toInt()}"
+                    tvMaxGoalValue.text = "Max Goal: R${maxGoalValue.toInt()}"
+
+                    updateMarkerPositions(userMinGoal)
+                }
+            } catch (e: Exception) {
+                Log.e("DetailedBarChart", "Error loading budget data", e)
+            }
+        }
+    }
+
+    private fun updateMarkerPositions(minGoal: Double) {
+        progressBar.post {
+            val progressBarWidth = progressBar.width
+            if (maxGoalValue > 0) {
+                val minGoalMarkerPosition = (minGoal / maxGoalValue * progressBarWidth).toInt()
+
+                minGoalMarker.layoutParams =
+                    (minGoalMarker.layoutParams as RelativeLayout.LayoutParams).apply {
+                        leftMargin = minGoalMarkerPosition
+                    }
+
+                maxGoalMarker.post {
+                    val maxMarkerWidth = maxGoalMarker.width
+                    val maxGoalMarkerPosition = progressBarWidth - maxMarkerWidth
+
+                    maxGoalMarker.layoutParams =
+                        (maxGoalMarker.layoutParams as RelativeLayout.LayoutParams).apply {
+                            leftMargin = maxGoalMarkerPosition
+                        }
+                }
+
+                minGoalLabel.post {
+                    minGoalLabel.layoutParams =
+                        (minGoalLabel.layoutParams as RelativeLayout.LayoutParams).apply {
+                            leftMargin = minGoalMarkerPosition - (minGoalLabel.width / 2)
+                        }
+                }
+
+                maxGoalLabel.post {
+                    maxGoalLabel.layoutParams =
+                        (maxGoalLabel.layoutParams as RelativeLayout.LayoutParams).apply {
+                            leftMargin = progressBarWidth - (maxGoalLabel.width / 2)
+                        }
+                }
+            }
+        }
     }
 
     private fun setupPeriodSpinner() {
@@ -112,8 +210,6 @@ class DetailedBarChartActivity : AppCompatActivity() {
     private var isLoading = false
 
     private fun loadData(period: String) {
-
-
         if (isLoading) {
             Log.d("ChartDebug", "Load already in progress, skipping")
             return
