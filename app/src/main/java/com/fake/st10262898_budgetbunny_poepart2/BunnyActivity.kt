@@ -143,26 +143,34 @@ class BunnyActivity : AppCompatActivity() {
     private fun setupToggleBar() {
         val toggleBar = findViewById<LinearLayout>(R.id.toggleBar)
         val toggleHandle = findViewById<Button>(R.id.toggleHandleButton)
-        val mainContent = findViewById<FrameLayout>(R.id.mainContentContainer)
         val btnCloseToggle = findViewById<ImageButton>(R.id.btnCloseToggle)
 
         var isOpen = false
 
         toggleHandle.setOnClickListener {
             isOpen = if (isOpen) {
-                toggleBar.animate().translationX(toggleBar.width.toFloat()).setDuration(300).start()
-                mainContent.animate().translationX(0f).setDuration(300).start()
+                // Close: slide toggle bar off screen to the right
+                toggleBar.animate()
+                    .translationX(toggleBar.width.toFloat())
+                    .setDuration(300)
+                    .start()
                 false
             } else {
-                toggleBar.animate().translationX(0f).setDuration(300).start()
-                mainContent.animate().translationX(-toggleBar.width.toFloat()).setDuration(300).start()
+                // Open: slide toggle bar in from the right (overlay mode)
+                toggleBar.animate()
+                    .translationX(0f)
+                    .setDuration(300)
+                    .start()
                 true
             }
         }
 
         btnCloseToggle.setOnClickListener {
-            toggleBar.animate().translationX(toggleBar.width.toFloat()).setDuration(300).start()
-            mainContent.animate().translationX(0f).setDuration(300).start()
+            // Close: slide toggle bar off screen to the right
+            toggleBar.animate()
+                .translationX(toggleBar.width.toFloat())
+                .setDuration(300)
+                .start()
             isOpen = false
         }
     }
