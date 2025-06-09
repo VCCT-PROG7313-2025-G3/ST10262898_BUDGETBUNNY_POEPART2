@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Existing dimensions -->
+
     <dimen name="item_spacing">16dp</dimen>
     <dimen name="closet_item_width">140dp</dimen>
     <dimen name="closet_item_height">120dp</dimen>
     <dimen name="closet_item_margin">8dp</dimen>
-
-    <!-- Add these new dimensions for other items -->
     <dimen name="closet_large_item_width">50dp</dimen>
     <dimen name="closet_large_item_height">50dp</dimen>
 </resources>

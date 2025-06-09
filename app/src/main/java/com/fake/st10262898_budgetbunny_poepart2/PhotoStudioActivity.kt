@@ -33,11 +33,12 @@ class PhotoStudioActivity : AppCompatActivity() {
     private lateinit var bunnyImage: ImageView
     private lateinit var backgroundSelector: LinearLayout
     private var currentBackgroundRes = R.drawable.bg_lightning
+    //These are the clothes that the bunny was supposed to be able to wear:
     private val imageResourceMap = mapOf(
         "jumpsuit_1" to R.drawable.jumpsuit_1,
         "jumpsuit_2" to R.drawable.jumpsuit_2
     )
-    //These are the clothes that the bunny was supposed to be able:
+
 
 
     //This allows a requests for permission to be made
