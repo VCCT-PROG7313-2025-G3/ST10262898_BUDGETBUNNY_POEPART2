@@ -3,7 +3,7 @@ package com.fake.st10262898_budgetbunny_poepart2
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import java.io.ByteArrayOutputStream
-
+//This whole class is needed in order to be able to work with images
 object BitmapUtils {
     fun bitmapToByteArray(bitmap: Bitmap): ByteArray {
         val stream = ByteArrayOutputStream()

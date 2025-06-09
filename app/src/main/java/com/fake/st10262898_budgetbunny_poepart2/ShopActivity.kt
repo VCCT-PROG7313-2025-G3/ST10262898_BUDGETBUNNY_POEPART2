@@ -31,6 +31,7 @@ class ShopActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shop)
 
+
         val btnReturnToBunny = findViewById<Button>(R.id.btnReturnToBunny)
 
 
@@ -49,7 +50,7 @@ class ShopActivity : AppCompatActivity() {
 
     private fun setupViews() {
         recyclerView = findViewById(R.id.recyclerViewShop)
-        recyclerView.layoutManager = GridLayoutManager(this, 2) // 2 items per row
+        recyclerView.layoutManager = GridLayoutManager(this, 2)
 
         // Add consistent spacing between items
         val spacing = resources.getDimensionPixelSize(R.dimen.item_spacing)
@@ -143,13 +144,13 @@ class ShopActivity : AppCompatActivity() {
         val userPurchasesRef = firestore.collection("UserPurchases").document(userId)
         val userCoinsRef = firestore.collection("UserCoins").document(userId)
 
-        // First ensure the purchases document exists
+
         userPurchasesRef.get().addOnSuccessListener { document ->
             if (!document.exists()) {
-                // Create the document if it doesn't exist
+
                 userPurchasesRef.set(mapOf("items" to emptyList<String>()))
                     .addOnSuccessListener {
-                        // Now proceed with the purchase
+
                         executePurchase(item, userPurchasesRef, userCoinsRef)
                     }
                     .addOnFailureListener { e ->
@@ -157,7 +158,7 @@ class ShopActivity : AppCompatActivity() {
                         Log.e("ShopActivity", "Error creating purchases doc", e)
                     }
             } else {
-                // Document exists, proceed with purchase
+
                 executePurchase(item, userPurchasesRef, userCoinsRef)
             }
         }.addOnFailureListener { e ->
@@ -178,7 +179,7 @@ class ShopActivity : AppCompatActivity() {
         firestore.runTransaction { transaction ->
             val coinDoc = transaction.get(userCoinsRef)
 
-            // Get current balance (prefer currentBalance, fall back to coins for legacy)
+
             val currentBalance = coinDoc.getLong("currentBalance")
                 ?: coinDoc.getLong("coins")
                 ?: 0
@@ -187,10 +188,10 @@ class ShopActivity : AppCompatActivity() {
                 throw Exception("Not enough coins")
             }
 
-            // Update both documents - maintain full structure
+
             transaction.update(userPurchasesRef, "items", FieldValue.arrayUnion(item.id))
 
-            // Create complete update with all required fields
+
             transaction.set(userCoinsRef,
                 mapOf(
                     "userId" to userId,

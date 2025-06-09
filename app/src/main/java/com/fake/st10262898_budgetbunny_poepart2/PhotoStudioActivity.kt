@@ -37,8 +37,10 @@ class PhotoStudioActivity : AppCompatActivity() {
         "jumpsuit_1" to R.drawable.jumpsuit_1,
         "jumpsuit_2" to R.drawable.jumpsuit_2
     )
+    //These are the clothes that the bunny was supposed to be able:
 
 
+    //This allows a requests for permission to be made
     companion object {
         private const val PERMISSION_REQUEST_CODE = 100
         private const val FILENAME_FORMAT = "yyyyMMdd_HHmmss"
@@ -73,6 +75,7 @@ class PhotoStudioActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnBack).setOnClickListener { finish() }
     }
 
+
     private fun captureAndSaveBunny() {
         try {
             val bitmap = Bitmap.createBitmap(
@@ -92,10 +95,10 @@ class PhotoStudioActivity : AppCompatActivity() {
 
     private fun saveImageToGallery(bitmap: Bitmap) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            // Android 10+ - Use MediaStore
+
             saveImageUsingMediaStore(bitmap)
         } else {
-            // Android 9 and below - Legacy method
+
             saveImageLegacy(bitmap)
         }
     }
@@ -147,7 +150,7 @@ class PhotoStudioActivity : AppCompatActivity() {
             imageFile.parentFile?.mkdirs()
             FileOutputStream(imageFile).use { fos ->
                 if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)) {
-                    // Notify gallery
+
                     sendBroadcast(
                         Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).apply {
                             data = Uri.fromFile(imageFile)
@@ -164,7 +167,7 @@ class PhotoStudioActivity : AppCompatActivity() {
 
     private fun checkPermissions(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            // Android 10+ doesn't need WRITE_EXTERNAL_STORAGE for MediaStore
+
             true
         } else {
             ContextCompat.checkSelfPermission(
@@ -191,10 +194,10 @@ class PhotoStudioActivity : AppCompatActivity() {
 
 
     private fun createDressedBunny(dressedItems: Array<String>) {
-        // Add base bunny image
+
         bunnyImage.setImageResource(R.drawable.budgetbunny_wamsta_two)
 
-        // Clear any existing clothing items (except the base bunny)
+
         for (i in bunnyContainer.childCount - 1 downTo 0) {
             val view = bunnyContainer.getChildAt(i)
             if (view != bunnyImage) {
@@ -202,7 +205,7 @@ class PhotoStudioActivity : AppCompatActivity() {
             }
         }
 
-        // Add each clothing item
+
         dressedItems.forEach { itemData ->
             val parts = itemData.split(",")
             if (parts.size == 3) {

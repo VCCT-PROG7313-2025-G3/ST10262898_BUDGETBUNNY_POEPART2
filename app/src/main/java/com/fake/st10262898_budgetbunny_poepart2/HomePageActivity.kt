@@ -82,11 +82,11 @@ class HomePageActivity : AppCompatActivity() {
             val fab = findViewById<FloatingActionButton>(R.id.fabChat)
             val chatContainer = findViewById<LinearLayout>(R.id.chatContainer)
 
-            // Calculate proper margin (nav height + 16dp padding)
+
             val marginBottom = navBar.height +
                     (16 * resources.displayMetrics.density).toInt()
 
-            // Apply to both elements
+
             (fab.layoutParams as CoordinatorLayout.LayoutParams).bottomMargin = marginBottom
             (chatContainer.layoutParams as CoordinatorLayout.LayoutParams).bottomMargin = marginBottom
         }
@@ -133,7 +133,7 @@ class HomePageActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(this@HomePageActivity)
             adapter = chatAdapter
         }
-        // Welcome message
+        // Welcome message for chatbot
         addChatMessage("Welcome! Choose:\nA - Add Expense\nB - Set Budget\nC - Play Game \nD - View Graphs \nE - Your financial health", true)
 
 
@@ -265,12 +265,11 @@ class HomePageActivity : AppCompatActivity() {
 
     private fun setupBottomNavigation() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-        bottomNavigationView.selectedItemId = R.id.nav_home // Default selected item
+        bottomNavigationView.selectedItemId = R.id.nav_home
 
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {
-                    // Already on home, no action needed
                     true
                 }
                 R.id.nav_transactions -> {
@@ -307,20 +306,18 @@ class HomePageActivity : AppCompatActivity() {
         override fun getFormattedValue(value: Float): String = "${value.toInt()}%"
     }
 
-    // Add this if you're getting IndexAxisValueFormatter errors
+
     class IndexAxisValueFormatter(private val labels: List<String>) : ValueFormatter() {
         override fun getFormattedValue(value: Float): String {
             return labels.getOrNull(value.toInt()) ?: ""
         }
     }
 
-    //Chat Bot methods:
+    //Chat Bot methods I am using:
     private fun toggleChat() {
         isChatExpanded = !isChatExpanded
         chatContainer.visibility = if (isChatExpanded) View.VISIBLE else View.GONE
     }
-
-
 
     private fun addChatMessage(message: String, isBot: Boolean = true) {
         val chatMessage = ChatMessage(message, isBot)

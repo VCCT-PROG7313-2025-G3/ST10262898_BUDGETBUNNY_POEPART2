@@ -44,10 +44,12 @@ class BunnyActivity : AppCompatActivity() {
     private lateinit var coinCountText: TextView
     private lateinit var bunnyNameText: TextView
 
+    //allows the methods in the budgetViewModel to be used
     private val budgetViewModel: BudgetViewModel by viewModels()
 
 
 
+    //This links whats in the drawables to the database and to the page
     private val imageResourceMap = mapOf(
         "jumpsuit_1" to R.drawable.jumpsuit_1,
         "jumpsuit_2" to R.drawable.jumpsuit_2,
@@ -71,6 +73,7 @@ class BunnyActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bunny)
 
+        //Get which user is locked in
         val username = getSharedPreferences("UserPrefs", MODE_PRIVATE)
             .getString("username", "") ?: return
 
@@ -127,6 +130,7 @@ class BunnyActivity : AppCompatActivity() {
 
 
 
+    //What happens when the application is resumed
     override fun onResume() {
         super.onResume()
         val username = getSharedPreferences("UserPrefs", MODE_PRIVATE)
@@ -140,6 +144,7 @@ class BunnyActivity : AppCompatActivity() {
         loadPurchasedItems(username)
     }
 
+    //This is the feature for the toggle bar on the right
     private fun setupToggleBar() {
         val toggleBar = findViewById<LinearLayout>(R.id.toggleBar)
         val toggleHandle = findViewById<Button>(R.id.toggleHandleButton)
@@ -156,7 +161,7 @@ class BunnyActivity : AppCompatActivity() {
                     .start()
                 false
             } else {
-                // Open: slide toggle bar in from the right (overlay mode)
+
                 toggleBar.animate()
                     .translationX(0f)
                     .setDuration(300)
@@ -166,7 +171,7 @@ class BunnyActivity : AppCompatActivity() {
         }
 
         btnCloseToggle.setOnClickListener {
-            // Close: slide toggle bar off screen to the right
+
             toggleBar.animate()
                 .translationX(toggleBar.width.toFloat())
                 .setDuration(300)
@@ -177,6 +182,7 @@ class BunnyActivity : AppCompatActivity() {
 
 
 
+    //This sets up the elements in the xml
     private fun setupButtons() {
 
         findViewById<Button>(R.id.btnShop).setOnClickListener {
@@ -204,10 +210,10 @@ class BunnyActivity : AppCompatActivity() {
 
             dressUpLayout.post {
                 try {
-                    // Hide toggle bar temporarily
+
                     toggleBar.visibility = View.GONE
 
-                    // Create bitmap
+
                     val bitmap = Bitmap.createBitmap(
                         dressUpLayout.width,
                         dressUpLayout.height,
@@ -216,10 +222,10 @@ class BunnyActivity : AppCompatActivity() {
                     val canvas = Canvas(bitmap)
                     dressUpLayout.draw(canvas)
 
-                    // Show toggle bar again
+
                     toggleBar.visibility = View.VISIBLE
 
-                    // Compress and pass bitmap
+
                     val stream = ByteArrayOutputStream()
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream)
 
@@ -229,7 +235,7 @@ class BunnyActivity : AppCompatActivity() {
                     startActivity(intent)
 
                 } catch (e: Exception) {
-                    toggleBar.visibility = View.VISIBLE // Ensure it's visible if error occurs
+                    toggleBar.visibility = View.VISIBLE
                     Toast.makeText(this, "Failed to prepare photo", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -253,10 +259,10 @@ class BunnyActivity : AppCompatActivity() {
                         return false
                     }
 
-                    // Create a shadow builder with the original view
+
                     val shadow = View.DragShadowBuilder(view)
 
-                    // Start drag operation - pass the view itself as local state
+
                     view.startDragAndDrop(null, shadow, view, 0)
 
                     Log.d("DragDrop", "Started drag for item: $itemTag")
@@ -278,36 +284,38 @@ class BunnyActivity : AppCompatActivity() {
             val username = getSharedPreferences("UserPrefs", MODE_PRIVATE)
                 .getString("username", "") ?: return
 
-            // Force refresh everything
+
             budgetViewModel.refreshCoins(username)
             loadPurchasedItems(username)
 
-            // Update coins immediately if provided
+
             data?.getIntExtra("NEW_COINS", -1)?.takeIf { it >= 0 }?.let { coins ->
                 coinCountText.text = "Coins: $coins"
             }
         }
     }
 
+    //This is so the app can be given permission to use the camera
     companion object {
         const val SHOP_REQUEST_CODE = 1001
 
     }
 
+    //This is functionality to be able to drag and drop the clothes
     private val dragListener = View.OnDragListener { v, event ->
         when (event.action) {
             DragEvent.ACTION_DRAG_STARTED -> {
-                // Accept drag events
+
                 true
             }
 
             DragEvent.ACTION_DRAG_ENTERED -> {
-                // Visual feedback when entering drop zone
+
                 true
             }
 
             DragEvent.ACTION_DRAG_EXITED -> {
-                // Visual feedback when exiting drop zone
+
                 true
             }
 
@@ -316,16 +324,16 @@ class BunnyActivity : AppCompatActivity() {
                     val draggedView = event.localState as? ImageView ?: return@OnDragListener false
                     val dressUpLayout = findViewById<RelativeLayout>(R.id.dressUpLayout)
 
-                    // Get the drop position relative to dressUpLayout
+
                     val dropX = event.x
                     val dropY = event.y
 
-                    // Create the new view with proper dimensions
+
                     val droppedView = ImageView(this@BunnyActivity).apply {
                         setImageDrawable(draggedView.drawable)
                         tag = draggedView.tag
 
-                        // Size when dragging clothes (KEEPING YOUR ORIGINAL SIZING LOGIC)
+                        // Size when dragging clothes (This is different to the ones in closet so it can fit the bunny)
                         val dragSize = when (draggedView.tag.toString()) {
                             "jumpsuit_1", "jumpsuit_2" -> 110.dpToPx() to 140.dpToPx()
                             "blue_shirt" -> 450.dpToPx() to 520.dpToPx()
@@ -335,11 +343,11 @@ class BunnyActivity : AppCompatActivity() {
                             "sideman_hoodie" -> 500.dpToPx() to 500.dpToPx()
                             "cap" -> 400.dpToPx() to 500.dpToPx()
                             "skirt" -> 390.dpToPx() to 480.dpToPx()
-                            else -> 200.dpToPx() to 240.dpToPx()
+                            else -> 500.dpToPx() to 500.dpToPx()
                         }
 
                         layoutParams = RelativeLayout.LayoutParams(dragSize.first, dragSize.second).apply {
-                            // Set initial position in layout params to avoid jumping
+
                             leftMargin = (dropX - dragSize.first/2).toInt().coerceAtLeast(0)
                             topMargin = (dropY - dragSize.second/2).toInt().coerceAtLeast(0)
                         }
@@ -349,10 +357,10 @@ class BunnyActivity : AppCompatActivity() {
                         setOnTouchListener(MovingTouchListener())
                     }
 
-                    // Add to dress up area and request layout
+
                     dressUpLayout.addView(droppedView)
                     dressUpLayout.post {
-                        // After layout, adjust position if needed
+
                         droppedView.x = (dropX - droppedView.width/2).coerceIn(0f, (dressUpLayout.width - droppedView.width).toFloat())
                         droppedView.y = (dropY - droppedView.height/2).coerceIn(0f, (dressUpLayout.height - droppedView.height).toFloat())
                     }
@@ -372,7 +380,7 @@ class BunnyActivity : AppCompatActivity() {
     }
 
 
-        //Functions for shop and clothes and closet start now:
+    //This loads all the items that have been purchased from shop
     private fun loadPurchasedItems(username: String) {
         closetContainer.removeAllViews()
         Log.d("ClosetDebug", "Loading purchased items for: $username")
@@ -395,7 +403,7 @@ class BunnyActivity : AppCompatActivity() {
                                     val imageName = doc.getString("imageName") ?: ""
                                     Log.d("ClosetDebug", "Processing item - ID: $itemId, ImageName: $imageName")
 
-                                    // Enhanced matching logic:
+                                    // Check for both ID and imageName could nnot find which one exactly works
                                     when {
                                         // 1. Try exact ID match
                                         imageResourceMap.containsKey(itemId) -> addItemToClosetWithDynamicSize(itemId)
@@ -423,6 +431,7 @@ class BunnyActivity : AppCompatActivity() {
     }
 
 
+    //This displays the items that have been purchased
     private fun displayPurchasedItems(itemIds: List<String>) {
         if (itemIds.isEmpty()) return
 
@@ -430,14 +439,14 @@ class BunnyActivity : AppCompatActivity() {
             .whereIn("id", itemIds)
             .get()
             .addOnSuccessListener { querySnapshot ->
-                // Create a map to ensure unique items
+
                 val uniqueItems = mutableMapOf<String, String>()
                 querySnapshot.documents.forEach { doc ->
                     val itemName = doc.getString("id") ?: return@forEach
                     uniqueItems[itemName] = itemName
                 }
 
-                // Add only unique items to closet
+
                 uniqueItems.values.forEach { itemName ->
                     addItemToClosetWithDynamicSize(itemName)
                 }
@@ -447,6 +456,7 @@ class BunnyActivity : AppCompatActivity() {
             }
     }
 
+    //This is a method to ensure clothes are at the closet and are big enough to be seen there.
     private fun addItemToClosetWithDynamicSize(itemName: String) {
         try {
             val resourceId = imageResourceMap[itemName] ?: run {
@@ -454,22 +464,22 @@ class BunnyActivity : AppCompatActivity() {
                 return
             }
 
-            // Check if item already exists
+
             closetContainer.findViewWithTag<View>(itemName)?.let {
                 Log.d("ClosetDebug", "Item $itemName already exists in closet")
                 return
             }
 
             val imageView = ImageView(this).apply {
-                // Set layer type for better performance
+
                 setLayerType(View.LAYER_TYPE_HARDWARE, null)
 
-                // Set image resource
+
                 setImageResource(resourceId)
 
-                // Set size for closet display
+                // Set size for closet display (this is different to size it will be on bunny)
                 val closetSize = if (itemName.startsWith("jumpsuit")) {
-                    120.dpToPx() to 160.dpToPx() // Smaller default sizes
+                    120.dpToPx() to 160.dpToPx()
                 } else {
                     200.dpToPx() to 200.dpToPx()
                 }
@@ -488,14 +498,14 @@ class BunnyActivity : AppCompatActivity() {
                 adjustViewBounds = true
                 tag = itemName
 
-                // Add touch listener for drag operations
+
                 setOnTouchListener(ScalingDragTouchListener())
 
-                // Add debug border (optional)
+
                 background = ContextCompat.getDrawable(context, R.drawable.debug_border)
             }
 
-            // Add to closet container
+
             closetContainer.addView(imageView)
             Log.d("ClosetDebug", "Successfully added item: $itemName")
 
@@ -507,12 +517,13 @@ class BunnyActivity : AppCompatActivity() {
 
 
 
-    // Add this extension function to convert dp to pixels
+    // This convert dp to pixels so I can control it manually (size of the images)
     private fun Int.dpToPx(): Int {
         return (this * resources.displayMetrics.density).toInt()
     }
 
 
+    //This allows for moving of the clothes
     inner class MovingTouchListener : View.OnTouchListener {
         private var dX = 0f
         private var dY = 0f
@@ -546,15 +557,15 @@ class BunnyActivity : AppCompatActivity() {
                         val newX = event.rawX + dX
                         val newY = event.rawY + dY
 
-                        // Get the layout bounds in screen coordinates
+
                         val layoutLocation = IntArray(2)
                         dressUpLayout.getLocationOnScreen(layoutLocation)
 
-                        // Convert to layout coordinates
+
                         val layoutX = newX - layoutLocation[0]
                         val layoutY = newY - layoutLocation[1]
 
-                        // Apply boundaries
+
                         view.x = layoutX.coerceIn(0f, (dressUpLayout.width - view.width).toFloat())
                         view.y = layoutY.coerceIn(0f, (dressUpLayout.height - view.height).toFloat())
                     }
@@ -573,6 +584,7 @@ class BunnyActivity : AppCompatActivity() {
         }
     }
 
+    //This is the method to essentially start the game all over, get all their coins back and all clothes go back to store
     private fun resetClosetAndRefund() {
         val username = getSharedPreferences("UserPrefs", MODE_PRIVATE)
             .getString("username", "") ?: return
@@ -590,11 +602,11 @@ class BunnyActivity : AppCompatActivity() {
 
                 lifecycleScope.launch {
                     try {
-                        // 1. First get all data we need before transaction
+
                         val purchasesRef = firestore.collection("UserPurchases").document(username)
                         val coinsRef = firestore.collection("UserCoins").document(username)
 
-                        // Get purchases document first
+
                         val purchasesDoc = purchasesRef.get().await()
 
                         if (!purchasesDoc.exists()) {
@@ -619,22 +631,21 @@ class BunnyActivity : AppCompatActivity() {
                             return@launch
                         }
 
-                        // Get shop items to calculate refund
+
                         val shopItems = firestore.collection("ShopItems")
                             .whereIn("id", items).get().await()
 
                         val totalRefund = shopItems.sumOf { it.getLong("price")?.toInt() ?: 0 }
 
-                        // 2. Now run the transaction with proper read-before-write order
+
                         firestore.runTransaction { transaction ->
-                            // First read all documents we need to update
+
                             val coinDoc = transaction.get(coinsRef)
 
-                            // Then perform writes
-                            // Clear purchases
+
                             transaction.update(purchasesRef, "items", emptyList<String>())
 
-                            // Update coins
+
                             val currentTotalEarned = coinDoc.getLong("totalEarned") ?: 0
                             val currentBalance = coinDoc.getLong("currentBalance") ?:
                             coinDoc.getLong("coins") ?: 0

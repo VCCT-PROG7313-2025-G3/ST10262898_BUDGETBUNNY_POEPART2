@@ -106,7 +106,7 @@ class TransactionsActivity : AppCompatActivity() {
             .addOnSuccessListener { documents ->
                 val expenses = documents.mapNotNull { doc ->
                     try {
-                        // Use the correct fromDocument method
+
                         ExpenseFirebase(
                             expenseName = doc.getString("expenseName") ?: "",
                             expenseAmount = doc.getDouble("expenseAmount") ?: 0.0,

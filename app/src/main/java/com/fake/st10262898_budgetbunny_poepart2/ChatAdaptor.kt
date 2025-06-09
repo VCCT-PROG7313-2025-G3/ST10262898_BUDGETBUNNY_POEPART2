@@ -53,6 +53,7 @@ class ChatAdapter(private val messages: MutableList<ChatMessage>) :
         }
     }
 
+    //Gets total amount of messages in the chat
     override fun getItemCount() = messages.size
 
     private fun dpToPx(context: android.content.Context, dp: Float): Int {

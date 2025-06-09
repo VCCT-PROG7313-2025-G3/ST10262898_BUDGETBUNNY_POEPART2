@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         btn_login.setOnClickListener {
             val username = usernameEditText.text.toString().trim()
             val password = passwordEditText.text.toString().trim()
-            val email = "$username@fakeemail.com"  // Same fake email logic as signup
+            val email = "$username@fakeemail.com"
 
             if (username.isNotEmpty() && password.isNotEmpty()) {
                 auth.signInWithEmailAndPassword(email, password)

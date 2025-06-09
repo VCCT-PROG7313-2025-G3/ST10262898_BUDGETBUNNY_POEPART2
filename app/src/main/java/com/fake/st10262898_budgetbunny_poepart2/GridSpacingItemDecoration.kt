@@ -3,7 +3,7 @@ package com.fake.st10262898_budgetbunny_poepart2
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-
+//This class is to ensure the spacing in the store is well implemented
 class GridSpacingItemDecoration(
     private val spanCount: Int,
     private val spacing: Int,

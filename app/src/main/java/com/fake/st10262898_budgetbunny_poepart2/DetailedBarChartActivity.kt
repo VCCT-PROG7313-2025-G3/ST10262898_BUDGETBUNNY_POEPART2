@@ -75,9 +75,10 @@ class DetailedBarChartActivity : AppCompatActivity() {
 
         setupPeriodSpinner()
         setupDateRangePicker()
-        loadBudgetData() // Load budget data for progress bar
+        loadBudgetData()
     }
 
+    //BUdget data is loaded here
     private fun loadBudgetData() {
         val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
         val currentUserId = sharedPreferences.getString("username", "") ?: return
@@ -152,6 +153,7 @@ class DetailedBarChartActivity : AppCompatActivity() {
         }
     }
 
+    //This is so user can enter a specific date they want.
     private fun setupPeriodSpinner() {
         val periods = arrayOf("Last Week", "Last Month", "Last 3 Months", "Last 6 Months", "All Time")
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, periods)
@@ -184,6 +186,7 @@ class DetailedBarChartActivity : AppCompatActivity() {
         loadData("All Time")
     }
 
+    //This is so user can enter a much specific date they want
     private fun setupDateRangePicker() {
         btnDateRange.setOnClickListener {
             val datePicker = MaterialDatePicker.Builder.dateRangePicker()

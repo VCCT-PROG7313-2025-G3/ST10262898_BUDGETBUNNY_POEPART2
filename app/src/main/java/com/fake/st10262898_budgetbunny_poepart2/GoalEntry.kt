@@ -81,11 +81,6 @@ class GoalEntry : AppCompatActivity() {
         }
     }
 
-    /*private fun updateDateInView() {
-        val dateFormat = "dd/MM/yyyy"
-        val sdf = SimpleDateFormat(dateFormat, Locale.getDefault())
-        dateEditText.setText(sdf.format(calendar.time))
-    }*/
 
     private fun updateDateButtonText() {
         val dateFormat = "dd/MM/yyyy"
@@ -98,7 +93,7 @@ class GoalEntry : AppCompatActivity() {
         val amountText = amountEditText.text.toString()
         val incomeText = incomeEditText.text.toString()
 
-        // Removed dateText validation since we're using the calendar picker
+
         if (category.isEmpty() || amountText.isEmpty() || incomeText.isEmpty()) {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
             return
@@ -130,10 +125,10 @@ class GoalEntry : AppCompatActivity() {
                 budgetViewModel.addBudget(
                     totalBudgetGoal = amount,
                     budgetCategory = category,
-                    budgetAmount = 0.0, // Initial amount saved is 0
+                    budgetAmount = 0.0,
                     username = username,
                     minTotalBudgetGoal = income,
-                    budgetDate = selectedDateInMillis, // Using the stored date
+                    budgetDate = selectedDateInMillis,
                     budgetIncome = income
                 )
 

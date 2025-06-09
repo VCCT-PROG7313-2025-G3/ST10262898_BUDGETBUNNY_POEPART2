@@ -27,6 +27,7 @@ class BunnyNameActivity : AppCompatActivity() {
         val buttonNext = findViewById<Button>(R.id.btn_next)
 
 
+        //Method to make sure when clicking button the bunny name is saved (includes error handling)
         buttonNext.setOnClickListener {
             val bunnyName = bunnyName.text.toString().trim()
 

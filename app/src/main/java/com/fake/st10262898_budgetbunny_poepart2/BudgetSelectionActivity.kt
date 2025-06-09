@@ -40,11 +40,13 @@ class BudgetSelectionActivity : AppCompatActivity() {
         loadUserBudgets()
     }
 
+    //This is what happens when you resume the application
     override fun onResume() {
         super.onResume()
-        loadUserBudgets() // Refresh data when returning
+        loadUserBudgets()
     }
 
+    //This allows the user to select a budget from what he has entered before
     private fun loadUserBudgets() {
         val username = getSharedPreferences("UserPrefs", MODE_PRIVATE)
             .getString("username", "") ?: return

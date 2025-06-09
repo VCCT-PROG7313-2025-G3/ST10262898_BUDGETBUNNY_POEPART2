@@ -16,6 +16,7 @@ class ResourcesActivity : AppCompatActivity() {
         setupCardAnimations()
     }
 
+    //This finds the cards in the xml view and sets up the animations for them
     private fun setupCardAnimations() {
         val cards = listOf<View>(
             findViewById<CardView>(R.id.card_save_money),
@@ -30,13 +31,14 @@ class ResourcesActivity : AppCompatActivity() {
                     when (view.id) {
                         R.id.card_save_money -> openTopic("save_money")
                         R.id.card_invest -> openTopic("invest_wisely")
-                        R.id.card_earn -> openTopic("budgeting_tips")  // Changed from "earn_more" to match card title
+                        R.id.card_earn -> openTopic("budgeting_tips")
                     }
                 }.start()
             }
         }
     }
 
+    //allows for a card view to be open
     private fun openTopic(topic: String) {
         startActivity(Intent(this, ResourceStepsActivity::class.java).apply {
             putExtra("topic", topic)

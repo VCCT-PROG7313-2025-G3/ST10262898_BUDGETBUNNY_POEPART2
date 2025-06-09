@@ -19,7 +19,7 @@ class ResourceStepsActivity : AppCompatActivity() {
         topic = intent.getStringExtra("topic") ?: "save_money"
         imageView = findViewById(R.id.iv_step_content)
 
-        // Load the first step
+
         showStep(currentStep)
 
         // Tap to advance
@@ -33,6 +33,7 @@ class ResourceStepsActivity : AppCompatActivity() {
         }
     }
 
+    //This links the images to the steps
     private fun showStep(step: Int) {
         val resourceId = when (topic) {
             "save_money" -> when (step) {
@@ -63,6 +64,7 @@ class ResourceStepsActivity : AppCompatActivity() {
         imageView.setImageResource(resourceId)
     }
 
+    //This gets the total steps for each topic
     private fun getTotalSteps(topic: String): Int {
         return when (topic) {
             "save_money" -> 4

@@ -44,7 +44,7 @@ class signUpPage : AppCompatActivity() {
                 } else {
                     passwordRequirementsText.setTextColor(resources.getColor(android.R.color.white))
 
-                    // Firebase requires email for signup, so we create a fake email here:
+                    // Firebase requires email for signup, so I need to create a fake email here:
                     val email = "$username@fakeemail.com"
 
                     auth.createUserWithEmailAndPassword(email, password)

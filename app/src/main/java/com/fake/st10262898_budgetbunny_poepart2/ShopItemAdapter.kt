@@ -13,6 +13,7 @@ class ShopItemAdapter(
     private val onItemClick: (ShopItem) -> Unit
 ) : RecyclerView.Adapter<ShopItemAdapter.ViewHolder>() {
 
+    // Map image from drawables to datbase
     private val imageResourceMap = mapOf(
         "jumpsuit_1" to R.drawable.jumpsuit_1,
         "jumpsuit_2" to R.drawable.jumpsuit_2,
@@ -51,6 +52,7 @@ class ShopItemAdapter(
         holder.price.text = "${item.price} coins"
         holder.itemView.setOnClickListener { onItemClick(item) }
     }
+
 
     override fun getItemCount() = filteredItems.size
 

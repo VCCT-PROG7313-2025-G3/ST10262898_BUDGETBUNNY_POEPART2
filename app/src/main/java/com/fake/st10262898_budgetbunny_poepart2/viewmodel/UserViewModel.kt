@@ -37,6 +37,6 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         auth.signOut()
     }
 
-    //Gets teh current user that is currently logged on
+    //Gets the current user that is currently logged on
     fun getCurrentUser() = auth.currentUser
 }

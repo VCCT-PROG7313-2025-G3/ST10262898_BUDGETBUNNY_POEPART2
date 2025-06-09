@@ -25,11 +25,8 @@ class Settings : AppCompatActivity() {
             insets
         }
 
-        // Set click listener for migration button
-        findViewById<TextView>(R.id.tv_migration).setOnClickListener {
-            val intent = Intent(this, MigrationActivity::class.java)
-            startActivity(intent)
-        }
+
+
 
         // Set the date and time
         val tvDateTime: TextView = findViewById(R.id.tv_dateTime)
@@ -43,7 +40,7 @@ class Settings : AppCompatActivity() {
 
     private fun setupBottomNavigation() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-        bottomNavigationView.selectedItemId = R.id.nav_settings // Highlight settings since we're in Settings activity
+        bottomNavigationView.selectedItemId = R.id.nav_settings
 
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
@@ -67,7 +64,7 @@ class Settings : AppCompatActivity() {
                     overridePendingTransition(0, 0)
                     true
                 }
-                R.id.nav_settings -> true // Already on settings, do nothing
+                R.id.nav_settings -> true
                 else -> false
             }
         }

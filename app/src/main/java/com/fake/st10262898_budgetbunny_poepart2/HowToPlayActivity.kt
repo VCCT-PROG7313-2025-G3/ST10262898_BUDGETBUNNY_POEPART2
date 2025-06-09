@@ -20,12 +20,12 @@ class HowToPlayActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_how_to_play)
 
-        // Set click listener on the overlay
+
         findViewById<View>(R.id.overlay).setOnClickListener {
             returnToBunnyActivity()
         }
 
-        // Keep your existing insets listener but update the ID
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.mainScrollView)) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             view.setPadding(
@@ -48,6 +48,7 @@ class HowToPlayActivity : AppCompatActivity() {
     }
 
 
+    //This sets up a HTML text on the page so it looks better
     private fun setupHowToPlayText() {
         val howToPlayText = findViewById<TextView>(R.id.howToPlayText)
 
@@ -77,6 +78,7 @@ class HowToPlayActivity : AppCompatActivity() {
         }
     }
 
+    //Creates an action when there is a touch on the screen to return to BunnyActivity
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event?.action == MotionEvent.ACTION_DOWN) {
             returnToBunnyActivity()

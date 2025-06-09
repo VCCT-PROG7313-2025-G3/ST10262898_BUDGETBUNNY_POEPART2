@@ -11,7 +11,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 
 
-
+//I used this class to change database strcuture of past entries in the datbase:
 class MigrationActivity : AppCompatActivity() {
     private val TAG = "FirestoreMigration"
 
