@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.DragEvent
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.FrameLayout
@@ -33,6 +34,7 @@ import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
+import kotlin.math.abs
 
 class BunnyActivity : AppCompatActivity() {
 
@@ -303,25 +305,19 @@ class BunnyActivity : AppCompatActivity() {
 
             DragEvent.ACTION_DROP -> {
                 try {
-                    // Get the dragged view from local state
-                    val draggedView = event.localState as? ImageView
-                    if (draggedView == null) {
-                        Log.e("DragDrop", "Dragged view is null")
-                        return@OnDragListener false
-                    }
-
+                    val draggedView = event.localState as? ImageView ?: return@OnDragListener false
                     val dressUpLayout = findViewById<RelativeLayout>(R.id.dressUpLayout)
 
-                    // Calculate drop position
-                    val dropX = event.x - (draggedView.width / 2f)
-                    val dropY = event.y - (draggedView.height / 2f)
+                    // Get the drop position relative to dressUpLayout
+                    val dropX = event.x
+                    val dropY = event.y
 
-                    // Create a new ImageView for the dress-up area
+                    // Create the new view with proper dimensions
                     val droppedView = ImageView(this@BunnyActivity).apply {
                         setImageDrawable(draggedView.drawable)
                         tag = draggedView.tag
 
-                        // Size when dragging clothes
+                        // Size when dragging clothes (KEEPING YOUR ORIGINAL SIZING LOGIC)
                         val dragSize = when (draggedView.tag.toString()) {
                             "jumpsuit_1", "jumpsuit_2" -> 110.dpToPx() to 140.dpToPx()
                             "blue_shirt" -> 450.dpToPx() to 520.dpToPx()
@@ -331,29 +327,29 @@ class BunnyActivity : AppCompatActivity() {
                             "sideman_hoodie" -> 500.dpToPx() to 500.dpToPx()
                             "cap" -> 400.dpToPx() to 500.dpToPx()
                             "skirt" -> 390.dpToPx() to 480.dpToPx()
-                            else -> 200.dpToPx() to 240.dpToPx() // default size
+                            else -> 200.dpToPx() to 240.dpToPx()
                         }
 
-                        layoutParams = RelativeLayout.LayoutParams(dragSize.first, dragSize.second)
+                        layoutParams = RelativeLayout.LayoutParams(dragSize.first, dragSize.second).apply {
+                            // Set initial position in layout params to avoid jumping
+                            leftMargin = (dropX - dragSize.first/2).toInt().coerceAtLeast(0)
+                            topMargin = (dropY - dragSize.second/2).toInt().coerceAtLeast(0)
+                        }
+
                         scaleType = ImageView.ScaleType.FIT_CENTER
                         adjustViewBounds = true
-
-                        // Set position
-                        x = dropX.coerceAtLeast(0f)
-                            .coerceAtMost((dressUpLayout.width - dragSize.first).toFloat())
-                        y = dropY.coerceAtLeast(0f)
-                            .coerceAtMost((dressUpLayout.height - dragSize.second).toFloat())
-
-                        // Add the new moving touch listener instead of just click to remove
                         setOnTouchListener(MovingTouchListener())
-
-
                     }
 
-                    // Add to dress up area
+                    // Add to dress up area and request layout
                     dressUpLayout.addView(droppedView)
+                    dressUpLayout.post {
+                        // After layout, adjust position if needed
+                        droppedView.x = (dropX - droppedView.width/2).coerceIn(0f, (dressUpLayout.width - droppedView.width).toFloat())
+                        droppedView.y = (dropY - droppedView.height/2).coerceIn(0f, (dressUpLayout.height - droppedView.height).toFloat())
+                    }
 
-                    Log.d("DragDrop", "Successfully dropped item: ${draggedView.tag}")
+                    Log.d("DragDrop", "Dropped item at (${dropX}, ${dropY})")
                     Toast.makeText(this@BunnyActivity, "Item dropped! Touch and drag to move, or tap to remove", Toast.LENGTH_SHORT).show()
                     true
                 } catch (e: Exception) {
@@ -362,11 +358,7 @@ class BunnyActivity : AppCompatActivity() {
                 }
             }
 
-            DragEvent.ACTION_DRAG_ENDED -> {
-                // Clean up after drag operation
-                true
-            }
-
+            DragEvent.ACTION_DRAG_ENDED -> true
             else -> false
         }
     }
@@ -517,7 +509,7 @@ class BunnyActivity : AppCompatActivity() {
         private var dX = 0f
         private var dY = 0f
         private var isDragging = false
-        private val clickThreshold = 10f
+        private val clickThreshold = ViewConfiguration.get(this@BunnyActivity).scaledTouchSlop
         private var initialX = 0f
         private var initialY = 0f
 
@@ -535,39 +527,34 @@ class BunnyActivity : AppCompatActivity() {
                 }
 
                 MotionEvent.ACTION_MOVE -> {
-                    val deltaX = Math.abs(event.rawX - initialX)
-                    val deltaY = Math.abs(event.rawY - initialY)
+                    val deltaX = abs(event.rawX - initialX)
+                    val deltaY = abs(event.rawY - initialY)
 
-                    if (deltaX > clickThreshold || deltaY > clickThreshold) {
+                    if (!isDragging && (deltaX > clickThreshold || deltaY > clickThreshold)) {
                         isDragging = true
+                    }
 
+                    if (isDragging) {
                         val newX = event.rawX + dX
                         val newY = event.rawY + dY
 
-                        // Get the layout bounds
+                        // Get the layout bounds in screen coordinates
                         val layoutLocation = IntArray(2)
                         dressUpLayout.getLocationOnScreen(layoutLocation)
 
-                        // Calculate boundaries relative to the dress up layout
-                        val minX = 0f
-                        val maxX = (dressUpLayout.width - view.width).toFloat()
-                        val minY = 0f
-                        val maxY = (dressUpLayout.height - view.height).toFloat()
-
-                        // Convert screen coordinates to layout coordinates
+                        // Convert to layout coordinates
                         val layoutX = newX - layoutLocation[0]
                         val layoutY = newY - layoutLocation[1]
 
                         // Apply boundaries
-                        view.x = layoutX.coerceIn(minX, maxX)
-                        view.y = layoutY.coerceIn(minY, maxY)
+                        view.x = layoutX.coerceIn(0f, (dressUpLayout.width - view.width).toFloat())
+                        view.y = layoutY.coerceIn(0f, (dressUpLayout.height - view.height).toFloat())
                     }
                     return true
                 }
 
                 MotionEvent.ACTION_UP -> {
                     if (!isDragging) {
-                        // This was a click, remove the item
                         dressUpLayout.removeView(view)
                         Toast.makeText(this@BunnyActivity, "Item removed", Toast.LENGTH_SHORT).show()
                     }
