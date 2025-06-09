@@ -26,12 +26,22 @@ class ShopActivity : AppCompatActivity() {
     private lateinit var userId: String
     private val firestore = FirebaseFirestore.getInstance()
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shop)
 
+        val btnReturnToBunny = findViewById<Button>(R.id.btnReturnToBunny)
+
+
         userId = getSharedPreferences("UserPrefs", MODE_PRIVATE)
             .getString("username", "") ?: return
+
+        btnReturnToBunny.setOnClickListener {
+            val intent = Intent(this, BunnyActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
 
         setupViews()
         loadUserData()

@@ -316,7 +316,7 @@ class BunnyActivity : AppCompatActivity() {
                     val dropX = event.x - (draggedView.width / 2f)
                     val dropY = event.y - (draggedView.height / 2f)
 
-                    // Create a new ImageView for the dress-up area (don't move the original)
+                    // Create a new ImageView for the dress-up area
                     val droppedView = ImageView(this@BunnyActivity).apply {
                         setImageDrawable(draggedView.drawable)
                         tag = draggedView.tag
