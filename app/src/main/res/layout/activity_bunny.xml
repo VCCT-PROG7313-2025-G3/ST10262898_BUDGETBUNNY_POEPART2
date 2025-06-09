@@ -47,17 +47,23 @@
             <HorizontalScrollView
                 android:id="@+id/closetScrollView"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="200dp"
                 android:layout_alignParentBottom="true"
-                android:padding="8dp"
-                android:background="#ffffff">
+                android:fillViewport="true"
+                android:scrollbars="none"
+                android:background="#FFFFFF"
+                android:clipToPadding="false"
+                android:paddingHorizontal="8dp">
 
                 <LinearLayout
                     android:id="@+id/closetContainer"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal" />
-
+                    android:orientation="horizontal"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:divider="@drawable/divider_space"
+                android:showDividers="middle"/>
             </HorizontalScrollView>
         </RelativeLayout>
     </FrameLayout>

@@ -24,6 +24,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.graphics.Color
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.fake.st10262898_budgetbunny_poepart2.viewmodel.BudgetViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -103,6 +104,20 @@ class BunnyActivity : AppCompatActivity() {
             Log.d("CoinDebug", "Coins updated to: $coins")
         }
 
+        closetContainer.post {
+            Log.d("ClosetDebug", "Closet container size: ${closetContainer.width}x${closetContainer.height}")
+        }
+
+        closetContainer.postDelayed({
+            Log.d("ClosetDebug", "Closet children: ${closetContainer.childCount}")
+            for (i in 0 until closetContainer.childCount) {
+                val view = closetContainer.getChildAt(i)
+                Log.d("ClosetDebug", "Child $i: ${view.width}x${view.height} visible=${view.isShown}")
+                if (view is ImageView) {
+                    Log.d("ClosetDebug", "Image tag: ${view.tag ?: "No tag"}")
+                }
+            }
+        }, 1000)
 
     }
 
@@ -214,16 +229,36 @@ class BunnyActivity : AppCompatActivity() {
 
 
     // Drag and drop functionality
-    inner class DragTouchListener : View.OnTouchListener {
+    inner class ScalingDragTouchListener : View.OnTouchListener {
         override fun onTouch(view: View, event: MotionEvent): Boolean {
-            if (event.action == MotionEvent.ACTION_DOWN) {
-                val shadow = View.DragShadowBuilder(view)
-                view.startDragAndDrop(null, shadow, view, 0)
-                return true
+            return try {
+                if (event.action == MotionEvent.ACTION_DOWN && view is ImageView) {
+
+                    // Ensure view has proper tag
+                    val itemTag = view.tag?.toString()
+                    if (itemTag.isNullOrEmpty()) {
+                        Log.e("DragDrop", "View has no tag, cannot drag")
+                        return false
+                    }
+
+                    // Create a shadow builder with the original view
+                    val shadow = View.DragShadowBuilder(view)
+
+                    // Start drag operation - pass the view itself as local state
+                    view.startDragAndDrop(null, shadow, view, 0)
+
+                    Log.d("DragDrop", "Started drag for item: $itemTag")
+                    true
+                } else {
+                    false
+                }
+            } catch (e: Exception) {
+                Log.e("DragDrop", "Error in touch listener", e)
+                false
             }
-            return false
         }
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -249,33 +284,87 @@ class BunnyActivity : AppCompatActivity() {
 
     private val dragListener = View.OnDragListener { v, event ->
         when (event.action) {
-            DragEvent.ACTION_DROP -> {
-                val draggedView = event.localState as ImageView
-                val dropX = event.x - draggedView.width / 2
-                val dropY = event.y - draggedView.height / 2
-
-
-                val dressUpLayout = findViewById<RelativeLayout>(R.id.dressUpLayout)
-
-                // Remove from parent if needed
-                if (draggedView.parent != null) {
-                    (draggedView.parent as ViewGroup).removeView(draggedView)
-                }
-
-                // Set new position parameters
-                draggedView.x = dropX
-                draggedView.y = dropY
-
-                // Add to dress up area
-                dressUpLayout.addView(draggedView)
+            DragEvent.ACTION_DRAG_STARTED -> {
+                // Accept drag events
                 true
             }
-            else -> true
+
+            DragEvent.ACTION_DRAG_ENTERED -> {
+                // Visual feedback when entering drop zone
+                true
+            }
+
+            DragEvent.ACTION_DRAG_EXITED -> {
+                // Visual feedback when exiting drop zone
+                true
+            }
+
+            DragEvent.ACTION_DROP -> {
+                try {
+                    // Get the dragged view from local state
+                    val draggedView = event.localState as? ImageView
+                    if (draggedView == null) {
+                        Log.e("DragDrop", "Dragged view is null")
+                        return@OnDragListener false
+                    }
+
+                    val dressUpLayout = findViewById<RelativeLayout>(R.id.dressUpLayout)
+
+                    // Calculate drop position
+                    val dropX = event.x - (draggedView.width / 2f)
+                    val dropY = event.y - (draggedView.height / 2f)
+
+                    // Create a new ImageView for the dress-up area (don't move the original)
+                    val droppedView = ImageView(this@BunnyActivity).apply {
+                        setImageDrawable(draggedView.drawable)
+                        tag = draggedView.tag
+
+                        // Set larger size for bunny fitting
+                        val dragSize = if (draggedView.tag.toString().startsWith("jumpsuit")) {
+                            120.dpToPx() to 150.dpToPx()
+                        } else {
+                            400.dpToPx() to 480.dpToPx()
+                        }
+
+                        layoutParams = RelativeLayout.LayoutParams(dragSize.first, dragSize.second)
+                        scaleType = ImageView.ScaleType.FIT_CENTER
+                        adjustViewBounds = true
+
+                        // Set position
+                        x = dropX.coerceAtLeast(0f)
+                            .coerceAtMost((dressUpLayout.width - dragSize.first).toFloat())
+                        y = dropY.coerceAtLeast(0f)
+                            .coerceAtMost((dressUpLayout.height - dragSize.second).toFloat())
+
+                        // Add the new moving touch listener instead of just click to remove
+                        setOnTouchListener(MovingTouchListener())
+
+
+                    }
+
+                    // Add to dress up area
+                    dressUpLayout.addView(droppedView)
+
+                    Log.d("DragDrop", "Successfully dropped item: ${draggedView.tag}")
+                    Toast.makeText(this@BunnyActivity, "Item dropped! Touch and drag to move, or tap to remove", Toast.LENGTH_SHORT).show()
+                    true
+                } catch (e: Exception) {
+                    Log.e("DragDrop", "Error in drop action", e)
+                    false
+                }
+            }
+
+            DragEvent.ACTION_DRAG_ENDED -> {
+                // Clean up after drag operation
+                true
+            }
+
+            else -> false
         }
     }
 
 
-    //Functions for shop and clothes and closet start now:
+        //Functions for shop and clothes and closet start now:
     private fun loadPurchasedItems(username: String) {
         closetContainer.removeAllViews()
         Log.d("ClosetDebug", "Loading purchased items for: $username")
@@ -285,12 +374,6 @@ class BunnyActivity : AppCompatActivity() {
                 if (document.exists()) {
                     val purchasedItems = (document.get("items") as? List<String>)?.distinct() ?: emptyList()
                     Log.d("ClosetDebug", "Purchased items: $purchasedItems")
-
-                    // Debug: Check which items exist in imageResourceMap
-                    purchasedItems.forEach { itemId ->
-                        val exists = imageResourceMap.containsKey(itemId)
-                        Log.d("ClosetDebug", "Item $itemId exists in map: $exists")
-                    }
 
                     if (purchasedItems.isNotEmpty()) {
                         firestore.collection("ShopItems")
@@ -304,16 +387,30 @@ class BunnyActivity : AppCompatActivity() {
                                     val imageName = doc.getString("imageName") ?: ""
                                     Log.d("ClosetDebug", "Processing item - ID: $itemId, ImageName: $imageName")
 
-                                    // Try both id and imageName as fallback
+                                    // Enhanced matching logic:
                                     when {
-                                        imageResourceMap.containsKey(itemId) -> addItemToCloset(itemId)
-                                        imageResourceMap.containsKey(imageName) -> addItemToCloset(imageName)
+                                        // 1. Try exact ID match
+                                        imageResourceMap.containsKey(itemId) -> addItemToClosetWithDynamicSize(itemId)
+                                        // 2. Try ID with suffix removed
+                                        imageResourceMap.containsKey(itemId.substringBeforeLast('_')) ->
+                                            addItemToClosetWithDynamicSize(itemId.substringBeforeLast('_'))
+                                        // 3. Try exact imageName match
+                                        imageResourceMap.containsKey(imageName) -> addItemToClosetWithDynamicSize(imageName)
+                                        // 4. Try imageName with suffix removed
+                                        imageResourceMap.containsKey(imageName.substringBeforeLast('_')) ->
+                                            addItemToClosetWithDynamicSize(imageName.substringBeforeLast('_'))
                                         else -> Log.e("ClosetError", "No matching resource for $itemId or $imageName")
                                     }
                                 }
                             }
+                            .addOnFailureListener { e ->
+                                Log.e("ClosetDebug", "Error loading shop items", e)
+                            }
                     }
                 }
+            }
+            .addOnFailureListener { e ->
+                Log.e("ClosetDebug", "Error loading purchases", e)
             }
     }
 
@@ -334,7 +431,7 @@ class BunnyActivity : AppCompatActivity() {
 
                 // Add only unique items to closet
                 uniqueItems.values.forEach { itemName ->
-                    addItemToCloset(itemName)
+                    addItemToClosetWithDynamicSize(itemName)
                 }
             }
             .addOnFailureListener { e ->
@@ -342,53 +439,136 @@ class BunnyActivity : AppCompatActivity() {
             }
     }
 
-    private fun addItemToCloset(itemName: String) {
-        val resourceId = imageResourceMap[itemName] ?: run {
-            Log.e("ClosetError", "No drawable found for: $itemName")
-            return
-        }
-
-        // Check if already exists
-        for (i in 0 until closetContainer.childCount) {
-            val view = closetContainer.getChildAt(i)
-            if (view is ImageView && view.tag == itemName) {
+    private fun addItemToClosetWithDynamicSize(itemName: String) {
+        try {
+            val resourceId = imageResourceMap[itemName] ?: run {
+                Log.e("ClosetError", "No drawable found for: $itemName")
                 return
             }
-        }
 
-        val imageView = ImageView(this).apply {
-            setImageResource(resourceId)
-
-            // Set different sizes for jumpsuits vs other items
-            val size = if (itemName.startsWith("jumpsuit")) {
-                // Keep jumpsuits at current size
-                resources.getDimensionPixelSize(R.dimen.closet_item_width) to
-                        resources.getDimensionPixelSize(R.dimen.closet_item_height)
-            } else {
-
-                400.dpToPx() to 550.dpToPx() //size of clothes (exc jumpsuit_1 and 2)
+            // Check if item already exists
+            closetContainer.findViewWithTag<View>(itemName)?.let {
+                Log.d("ClosetDebug", "Item $itemName already exists in closet")
+                return
             }
 
-            layoutParams = LinearLayout.LayoutParams(
-                size.first,  // Width
-                size.second  // Height
-            ).apply {
-                marginEnd = resources.getDimensionPixelSize(R.dimen.closet_item_margin)
+            val imageView = ImageView(this).apply {
+                // Set layer type for better performance
+                setLayerType(View.LAYER_TYPE_HARDWARE, null)
+
+                // Set image resource
+                setImageResource(resourceId)
+
+                // Set size for closet display
+                val closetSize = if (itemName.startsWith("jumpsuit")) {
+                    120.dpToPx() to 160.dpToPx() // Smaller default sizes
+                } else {
+                    200.dpToPx() to 200.dpToPx()
+                }
+
+                layoutParams = LinearLayout.LayoutParams(
+                    closetSize.first,
+                    closetSize.second
+                ).apply {
+                    marginEnd = 16.dpToPx()
+                    marginStart = 8.dpToPx()
+                    topMargin = 8.dpToPx()
+                    bottomMargin = 8.dpToPx()
+                }
+
+                scaleType = ImageView.ScaleType.FIT_CENTER
+                adjustViewBounds = true
+                tag = itemName
+
+                // Add touch listener for drag operations
+                setOnTouchListener(ScalingDragTouchListener())
+
+                // Add debug border (optional)
+                background = ContextCompat.getDrawable(context, R.drawable.debug_border)
             }
 
-            scaleType = ImageView.ScaleType.FIT_CENTER
-            tag = itemName
-            setOnTouchListener(DragTouchListener())
-        }
+            // Add to closet container
+            closetContainer.addView(imageView)
+            Log.d("ClosetDebug", "Successfully added item: $itemName")
 
-        closetContainer.addView(imageView)
+        } catch (e: Exception) {
+            Log.e("ClosetError", "Failed to add item $itemName to closet", e)
+        }
     }
+
+
+
 
     // Add this extension function to convert dp to pixels
     private fun Int.dpToPx(): Int {
         return (this * resources.displayMetrics.density).toInt()
     }
 
+
+    inner class MovingTouchListener : View.OnTouchListener {
+        private var dX = 0f
+        private var dY = 0f
+        private var isDragging = false
+        private val clickThreshold = 10f
+        private var initialX = 0f
+        private var initialY = 0f
+
+        override fun onTouch(view: View, event: MotionEvent): Boolean {
+            val dressUpLayout = findViewById<RelativeLayout>(R.id.dressUpLayout)
+
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    isDragging = false
+                    initialX = event.rawX
+                    initialY = event.rawY
+                    dX = view.x - event.rawX
+                    dY = view.y - event.rawY
+                    return true
+                }
+
+                MotionEvent.ACTION_MOVE -> {
+                    val deltaX = Math.abs(event.rawX - initialX)
+                    val deltaY = Math.abs(event.rawY - initialY)
+
+                    if (deltaX > clickThreshold || deltaY > clickThreshold) {
+                        isDragging = true
+
+                        val newX = event.rawX + dX
+                        val newY = event.rawY + dY
+
+                        // Get the layout bounds
+                        val layoutLocation = IntArray(2)
+                        dressUpLayout.getLocationOnScreen(layoutLocation)
+
+                        // Calculate boundaries relative to the dress up layout
+                        val minX = 0f
+                        val maxX = (dressUpLayout.width - view.width).toFloat()
+                        val minY = 0f
+                        val maxY = (dressUpLayout.height - view.height).toFloat()
+
+                        // Convert screen coordinates to layout coordinates
+                        val layoutX = newX - layoutLocation[0]
+                        val layoutY = newY - layoutLocation[1]
+
+                        // Apply boundaries
+                        view.x = layoutX.coerceIn(minX, maxX)
+                        view.y = layoutY.coerceIn(minY, maxY)
+                    }
+                    return true
+                }
+
+                MotionEvent.ACTION_UP -> {
+                    if (!isDragging) {
+                        // This was a click, remove the item
+                        dressUpLayout.removeView(view)
+                        Toast.makeText(this@BunnyActivity, "Item removed", Toast.LENGTH_SHORT).show()
+                    }
+                    return true
+                }
+            }
+            return false
+        }
+    }
 
     private fun resetClosetAndRefund() {
         val username = getSharedPreferences("UserPrefs", MODE_PRIVATE)
