@@ -11,42 +11,43 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 
-
 class BunnyNameActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_bunny_name)
 
-
         val auth = FirebaseAuth.getInstance()
         val firestore = FirebaseFirestore.getInstance()
 
-        //Find the the elements on the page
-        val bunnyName = findViewById<EditText>(R.id.bunnyName)
+        // Find the elements on the page
+        val bunnyNameEditText = findViewById<EditText>(R.id.bunnyName)
         val buttonNext = findViewById<Button>(R.id.btn_next)
 
-
-        //Method to make sure when clicking button the bunny name is saved (includes error handling)
         buttonNext.setOnClickListener {
-            val bunnyName = bunnyName.text.toString().trim()
+            val bunnyName = bunnyNameEditText.text.toString().trim()
 
             if (bunnyName.isNotEmpty()) {
                 val userId = auth.currentUser?.uid
 
                 if (userId != null) {
+                    // Save to Firestore
                     val userDoc = firestore.collection("users").document(userId)
                     val data = hashMapOf("bunnyName" to bunnyName)
                     userDoc.set(data, SetOptions.merge())
                         .addOnSuccessListener {
+
+                            getSharedPreferences("UserPrefs", MODE_PRIVATE).edit()
+                                .putString("bunnyName", bunnyName)
+                                .apply()
+
                             Toast.makeText(this, "Bunny named!", Toast.LENGTH_SHORT).show()
                             startActivity(Intent(this, SignUpReward::class.java))
                         }
                         .addOnFailureListener {
                             Toast.makeText(this, "Failed to save bunny name", Toast.LENGTH_SHORT).show()
                         }
-                }
-                else {
+                } else {
                     Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
                 }
             } else {
