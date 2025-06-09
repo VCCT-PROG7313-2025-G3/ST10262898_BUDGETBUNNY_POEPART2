@@ -58,6 +58,8 @@ class BunnyActivity : AppCompatActivity() {
         "skirt" to R.drawable.clothes_skirt
     )
 
+
+
     // Firebase
     private val auth = FirebaseAuth.getInstance()
     private val firestore = FirebaseFirestore.getInstance()
@@ -319,11 +321,17 @@ class BunnyActivity : AppCompatActivity() {
                         setImageDrawable(draggedView.drawable)
                         tag = draggedView.tag
 
-                        // Set larger size for bunny fitting
-                        val dragSize = if (draggedView.tag.toString().startsWith("jumpsuit")) {
-                            120.dpToPx() to 150.dpToPx()
-                        } else {
-                            400.dpToPx() to 480.dpToPx()
+                        // Size when dragging clothes
+                        val dragSize = when (draggedView.tag.toString()) {
+                            "jumpsuit_1", "jumpsuit_2" -> 110.dpToPx() to 140.dpToPx()
+                            "blue_shirt" -> 450.dpToPx() to 520.dpToPx()
+                            "brat_shirt" -> 450.dpToPx() to 520.dpToPx()
+                            "KCP_shirt" -> 450.dpToPx() to 520.dpToPx()
+                            "coffee_shirt" -> 460.dpToPx() to 520.dpToPx()
+                            "sideman_hoodie" -> 500.dpToPx() to 500.dpToPx()
+                            "cap" -> 400.dpToPx() to 500.dpToPx()
+                            "skirt" -> 390.dpToPx() to 480.dpToPx()
+                            else -> 200.dpToPx() to 240.dpToPx() // default size
                         }
 
                         layoutParams = RelativeLayout.LayoutParams(dragSize.first, dragSize.second)
