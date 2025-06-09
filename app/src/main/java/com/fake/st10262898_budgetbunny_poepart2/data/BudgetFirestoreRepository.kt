@@ -131,7 +131,6 @@ class BudgetFirestoreRepository(private val budgetFirestoreDao: BudgetFirestoreD
     //Gets total income and converts it into coins (R10 = 1)
     suspend fun calculateAndUpdateCoins(username: String) {
         try {
-            // Get all budgets for user and sum income
             val budgets = db.collection("budgets")
                 .whereEqualTo("username", username)
                 .get()
@@ -140,22 +139,35 @@ class BudgetFirestoreRepository(private val budgetFirestoreDao: BudgetFirestoreD
             val totalIncome = budgets.sumOf { it.getDouble("budgetIncome") ?: 0.0 }
             val earnedCoins = (totalIncome / 10).toInt()
 
-
             val userCoinsRef = db.collection("UserCoins").document(username)
-
-
             val existingDoc = userCoinsRef.get().await()
-            val currentBalance = existingDoc.getLong("currentBalance") ?: earnedCoins
 
-            userCoinsRef.set(
-                mapOf(
-                    "userId" to username,
-                    "totalEarned" to earnedCoins,
-                    "currentBalance" to currentBalance,
-                    "lastUpdated" to FieldValue.serverTimestamp()
-                ),
-                SetOptions.merge()
-            ).await()
+            if (!existingDoc.exists()) {
+                // New user - initialize both fields
+                userCoinsRef.set(
+                    mapOf(
+                        "userId" to username,
+                        "totalEarned" to earnedCoins,
+                        "currentBalance" to earnedCoins,
+                        "lastUpdated" to FieldValue.serverTimestamp()
+                    )
+                ).await()
+            } else {
+                // Existing user - calculate the difference and update
+                val previousTotalEarned = existingDoc.getLong("totalEarned") ?: 0
+                val currentBalance = existingDoc.getLong("currentBalance") ?: 0
+                val newCoins = earnedCoins - previousTotalEarned
+
+                userCoinsRef.set(
+                    mapOf(
+                        "userId" to username,
+                        "totalEarned" to earnedCoins,
+                        "currentBalance" to (currentBalance + newCoins).coerceAtLeast(0),
+                        "lastUpdated" to FieldValue.serverTimestamp()
+                    ),
+                    SetOptions.merge()
+                ).await()
+            }
         } catch (e: Exception) {
             Log.e("CoinCalc", "Error calculating coins", e)
             throw e
