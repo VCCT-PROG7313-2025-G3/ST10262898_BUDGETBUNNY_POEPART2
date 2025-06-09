@@ -119,6 +119,11 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
                     overridePendingTransition(0, 0)
                     true
                 }
+                R.id.nav_bunny -> {
+                    startActivity(Intent(this, BunnyActivity::class.java))
+                    overridePendingTransition(0, 0)
+                    true
+                }
                 R.id.nav_budgetGoal -> true // Already on this page
                 R.id.nav_settings -> {
                     startActivity(Intent(this@BudgetGoalsOverviewActivity, Settings::class.java))

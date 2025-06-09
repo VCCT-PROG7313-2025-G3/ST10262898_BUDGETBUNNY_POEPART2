@@ -180,6 +180,11 @@ class TransactionsActivity : AppCompatActivity() {
                     overridePendingTransition(0, 0)
                     true
                 }
+                R.id.nav_bunny -> {
+                    startActivity(Intent(this, BunnyActivity::class.java))
+                    overridePendingTransition(0, 0)
+                    true
+                }
                 R.id.nav_settings -> {
                     startActivity(Intent(this@TransactionsActivity, Settings::class.java))
                     overridePendingTransition(0, 0)
