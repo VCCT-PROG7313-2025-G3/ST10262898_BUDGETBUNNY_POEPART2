@@ -111,20 +111,37 @@ class BudgetFirestoreDao {
             val totalIncome = budgets.sumOf { it.getDouble("budgetIncome") ?: 0.0 }
             val earnedCoins = (totalIncome / 10).toInt()
 
+            val userCoinsRef = userCoinsCollection.document(username)
+            val existingDoc = userCoinsRef.get().await()
 
-            val currentDoc = userCoinsCollection.document(username).get().await()
-            val currentBalance = currentDoc.getLong("currentBalance") ?: earnedCoins
+            // For new users, set both totalEarned and currentBalance to earnedCoins
+            // For existing users, add the difference between new earnedCoins and previous totalEarned to currentBalance
+            if (!existingDoc.exists()) {
+                // New user - initialize both fields
+                userCoinsRef.set(
+                    mapOf(
+                        "userId" to username,
+                        "totalEarned" to earnedCoins,
+                        "currentBalance" to earnedCoins,
+                        "lastUpdated" to FieldValue.serverTimestamp()
+                    )
+                ).await()
+            } else {
+                // Existing user - calculate the difference and update
+                val previousTotalEarned = existingDoc.getLong("totalEarned") ?: 0
+                val currentBalance = existingDoc.getLong("currentBalance") ?: 0
+                val newCoins = earnedCoins - previousTotalEarned
 
-
-            userCoinsCollection.document(username).set(
-                mapOf(
-                    "userId" to username,
-                    "totalEarned" to earnedCoins,
-                    "currentBalance" to currentBalance,
-                    "lastUpdated" to FieldValue.serverTimestamp()
-                ),
-                SetOptions.merge()
-            ).await()
+                userCoinsRef.set(
+                    mapOf(
+                        "userId" to username,
+                        "totalEarned" to earnedCoins,
+                        "currentBalance" to (currentBalance + newCoins).coerceAtLeast(0),
+                        "lastUpdated" to FieldValue.serverTimestamp()
+                    ),
+                    SetOptions.merge()
+                ).await()
+            }
         } catch (e: Exception) {
             throw Exception("Failed to calculate and update coins", e)
         }
