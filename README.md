@@ -1,58 +1,63 @@
-Youtube Link:
-https://youtu.be/adVgpeyLdvs?si=48CNtLiwLTXE-mMe
+Github link: https://github.com/VCCT-PROG7313-2025-G3/ST10262898_BUDGETBUNNY_POEPART2
 
-ReadMe
-  BudgetBunny Budgeting Application
-  BudgetBunny is a fun, modern take on a budgeting app. It was designed to help you manage your finances with ease through interactive charts, gamification, and smart tracking       features! 
-  
-Key Features
-  View your finances
-    •	Make use of bar graphs, progress bars, and pie charts to view your income, savings, and expenses.
-    •	Track your spending over a selectable time period.
-  
-  Receipt and Transaction tracking
-    •	Log expenses manually or take a photo to save your transaction receipt
-    •	View your recent transactions and spend based on how much you budgeted
-    
-  Smart Budgeting
-    •	Set monthly budget goals
-    •	Track your spending by category
-    •	Use progress bars to visualize how close your budget goal is
-  
-  Gamification (Coming soon)
-    •	Use coins earned during saving milestones to customize your bunny.
-  
-Install and start saving!
-  Step 1:
-    Download the BudgetBunny application.
-  
-  Step 2:
-    Sign up if it’s your first time using the application.
+Youtube link:
 
-  Step 3:
-    Enter a valid username and password.
-  
-  Step 4:
-    Enter your expense details.
-  
-  Step 5:
-    Enter your budget goals.
-  
-  Step 6:
-    Name your bunny.
-  
-  Step 7:
-    Log in to BudgetBunny.
-  
-  Step 8:
-    Log your income, expenses, and budget goals.
-  
-  Step 9:
-    Enjoy using the BudgetBunny application.
-  
+Overview
+BudgetBunny is a simple and stylish application designed to help young adults manage their personal finances. Track income, expenses, and savings goals with ease, all in one place with the added benefit of the cutest digital bunny companion. This app is built to provide a user-friendly interface and robust functionality for budgeting on the go.
 Features
-  BudgetBunny offers a variety of features including
-  
+●	Income and Expense Tracking: Record and categorize your transactions.
+●	Budget Planning: Set monthly budgets for different categories.
+●	Savings Goals: Create and monitor progress toward financial goals.
+●	Reports and Insights: Visualize spending patterns with charts and summaries.
+●	Gamification: dress up your digital bunny.
+Installation:
+Clone the repo:
+
+Git clone https://github.com/VCCT-PROG7313-2025-G3/ST10262898_BUDGETBUNNY_POEPART2.git
+
+Open in Android Studio:
+●	Launch Android Studio and select Open an existing project.
+●	Navigate to the cloned BudgetBunny directory and open it.
+Set Up Firebase:
+●	Create a Firebase project in the Firebase Console.
+●	Add an Android app to your Firebase project 
+●	Download the google-services.json file and place it in the app/ directory of your project.
+●	Enable Firestore and Authentication (e.g., Email/Password, Google Sign-In) in the Firebase Console.
+●	Sync the project with Gradle to include Firebase dependencies.
+
+Run the Application:
+●	Connect an Android device or start an emulator.
+●	Click Run in Android Studio to build and install the app.
+
+
+
+Usage
+Step 1: Download the BudgetBunny application.
+Step 2: Sign up if it’s your first time using the application.
+Step 3: Enter a valid username and password.
+Step 4: Enter your expense details.
+Step 5: Enter your budget goals.
+Step 6: Name your bunny.
+Step 7: Log in to BudgetBunny.
+Step 8: Log your income, expenses, and budget goals.
+Step 9: Enjoy using the BudgetBunny application.
+Features BudgetBunny offers a variety of features including
+
+
+Contributing:
+We welcome contributions! To contribute:
+1.	Fork the repository.
+2.	Create a new branch (git checkout -b feature/your-feature).
+3.	Make your changes and commit (git commit -m 'Add your feature').
+4.	Push to the branch (git push origin feature/your-feature).
+5.	Open a pull request.
+Please ensure your code follows the project's coding standards and includes tests where applicable.
+Contact Us:
+
+(insert email addresses)
+
+
+
 
 References:
 https://developer.android.com/develop/ui/views/layout/cardview
