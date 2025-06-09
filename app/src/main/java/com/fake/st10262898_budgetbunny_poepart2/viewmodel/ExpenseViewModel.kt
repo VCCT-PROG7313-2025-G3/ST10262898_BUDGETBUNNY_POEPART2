@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 
 class ExpenseViewModel : ViewModel() {
 
+    //Allows Firestore to be used in this class
     private val repository = FirestoreExpenseRepository()
 
     private val _expenses = MutableLiveData<List<ExpenseFirebase>>()
@@ -25,24 +26,28 @@ class ExpenseViewModel : ViewModel() {
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage
 
+    //Allows for expenses to be entered into the datbase
     fun addExpense(expense: ExpenseFirebase) {
         repository.addExpense(expense) { success ->
             if (success) loadExpenses(expense.username)
         }
     }
 
+    //Reads expenses off the database
     fun loadExpenses(username: String) {
         repository.getExpenses(username) { result ->
             _expenses.postValue(result)
         }
     }
 
+    //Now users can delete their expenses which they do not want recorded
     fun deleteExpense(expenseId: String, username: String) {
         repository.deleteExpense(expenseId) { success ->
             if (success) loadExpenses(username)
         }
     }
 
+    //Select a date and be able to see expenses between that
     fun loadExpensesBetweenDates(username: String, startDate: Long, endDate: Long) {
         repository.getExpensesBetweenDates(username, startDate, endDate) { expenses ->
             if (expenses != null) {

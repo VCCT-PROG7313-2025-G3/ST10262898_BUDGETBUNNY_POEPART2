@@ -21,6 +21,7 @@ class BudgetFirestoreDao {
         return document.id
     }
 
+    //This gets the budget for a specific user
     suspend fun getBudgetForUser(username: String): List<BudgetFirestore> {
         return budgetsCollection
             .whereEqualTo("username", username)
@@ -28,15 +29,17 @@ class BudgetFirestoreDao {
             .await()
             .toObjects(BudgetFirestore::class.java)
             .mapIndexed { index, budget ->
-                budget.copy(id = budget.id ?: "") // Ensure ID is set
+                budget.copy(id = budget.id ?: "")
             }
     }
 
+    //This method gets the minimum total budget goal for a user
     suspend fun getMinTotalBudgetGoalForUser(username: String): Double {
         val budgets = getBudgetForUser(username)
         return budgets.firstOrNull()?.minTotalBudgetGoal ?: 0.0
     }
 
+    //This method updates the minimum total of a user
     suspend fun updateMinTotalBudgetGoalForUser(username: String, minTotalBudgetGoal: Double) {
         budgetsCollection
             .whereEqualTo("username", username)
@@ -48,6 +51,7 @@ class BudgetFirestoreDao {
             }
     }
 
+    //This method will get the budgets in a date range
     suspend fun getBudgetsInDateRange(username: String, start: Long, end: Long): List<BudgetFirestore> {
         return budgetsCollection
             .whereEqualTo("username", username)
@@ -58,10 +62,12 @@ class BudgetFirestoreDao {
             .toObjects(BudgetFirestore::class.java)
     }
 
+    //This allows the user to be able to delete a buget they do not use
     suspend fun deleteBudget(id: String) {
         budgetsCollection.document(id).delete().await()
     }
 
+    //Allows user to get budget category totals within a specific date
     suspend fun getCategoryTotalsForDateRange(
         username: String,
         startDate: Long,
@@ -77,10 +83,12 @@ class BudgetFirestoreDao {
             }
     }
 
+    //This gets all the budgets for a specific user
     suspend fun getAllBudgetsForUser(username: String): List<BudgetFirestore> {
         return getBudgetForUser(username)
     }
 
+    //This gets the category totals for a specific user
     suspend fun getCategoryTotals(username: String): List<CategoryTotalFirestore> {
         val budgets = getBudgetForUser(username)
         return budgets.groupBy { it.budgetCategory }
@@ -92,6 +100,7 @@ class BudgetFirestoreDao {
             }
     }
 
+    //This method gets teh total income of a user, then converts the total income to coins (R10 = 1)
     suspend fun calculateAndUpdateCoins(username: String) {
         try {
             val budgets = budgetsCollection
@@ -102,11 +111,11 @@ class BudgetFirestoreDao {
             val totalIncome = budgets.sumOf { it.getDouble("budgetIncome") ?: 0.0 }
             val earnedCoins = (totalIncome / 10).toInt()
 
-            // Get current document to preserve existing balance
+
             val currentDoc = userCoinsCollection.document(username).get().await()
             val currentBalance = currentDoc.getLong("currentBalance") ?: earnedCoins
 
-            // Update with full structure
+
             userCoinsCollection.document(username).set(
                 mapOf(
                     "userId" to username,
@@ -121,6 +130,7 @@ class BudgetFirestoreDao {
         }
     }
 
+    //After calculating the coins this gets the amount of coins has.
     suspend fun getUserCoins(username: String): Int {
         return try {
             val doc = userCoinsCollection.document(username).get().await()

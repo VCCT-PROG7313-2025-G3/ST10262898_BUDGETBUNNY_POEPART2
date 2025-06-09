@@ -11,7 +11,7 @@ data class ExpenseFirebase(
     var expenseImageBase64: String? = null
 ) {
     @Exclude
-    var id: String = ""
+    var id: String = "" //
 
     fun toMap(): Map<String, Any?> {
         return mapOf(

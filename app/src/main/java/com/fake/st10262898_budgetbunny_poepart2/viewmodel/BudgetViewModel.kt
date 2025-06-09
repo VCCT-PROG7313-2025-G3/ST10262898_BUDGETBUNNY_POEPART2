@@ -17,7 +17,7 @@ import kotlinx.coroutines.tasks.await
 
 class BudgetViewModel(application: Application) : AndroidViewModel(application) {
 
-    // Firestore implementations only
+    // Firestore implementations:
     private val repository = BudgetFirestoreRepository(BudgetFirestoreDao())
     private val firestore = FirebaseFirestore.getInstance()
 
@@ -25,6 +25,7 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
     private val _userCoins = MutableLiveData<Int>()
     val userCoins: LiveData<Int> get() = _userCoins
 
+    //Implementation for budgets
     private val _budgets = MutableLiveData<List<BudgetFirestore>>()
     val budgets: LiveData<List<BudgetFirestore>> get() = _budgets
 
@@ -38,6 +39,7 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
     val updateStatus: LiveData<Pair<Boolean, String?>> = _updateStatus
 
 
+    //This allows the app to add a budget into Firestore
     fun addBudget(
         totalBudgetGoal: Double,
         budgetCategory: String,
@@ -60,7 +62,7 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val newId = repository.insertBudget(budget) // Now returns the auto-generated ID
+                val newId = repository.insertBudget(budget)
                 repository.updateMinTotalBudgetGoalForUser(username, minTotalBudgetGoal)
                 loadBudgets(username)
                 _budgetSaved.postValue(true)
@@ -72,6 +74,7 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    //This allows the application to be able to get the budgets in the database
     fun loadBudgets(username: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -84,6 +87,7 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    //This allows a user to be able to delete budgets they do not need anymore:
     fun deleteBudget(id: String, username: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -96,6 +100,7 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    //Gets the min goal that the user has entered:
     fun getMinTotalBudgetGoalForUser(username: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -107,6 +112,7 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    //Gets the totals for the categories for a budgets for a specific user
     fun getCategoryTotals(username: String, onResult: (List<CategoryTotalFirestore>) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -119,6 +125,7 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    //This does the same as the method above but now a user can also filter by date
     fun getCategoryTotalsByDateRange(
         username: String,
         startDate: Long,
@@ -137,13 +144,14 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    //This allows a user to be able to enter update their income for budget entries
     fun updateBudgetIncome(budgetId: String, amount: Double) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val success = repository.updateBudgetIncome(budgetId, amount)
                 _updateStatus.postValue(success to if (success) null else "Update failed silently")
 
-                // Force refresh regardless of success
+
                 _budgets.value?.firstOrNull()?.username?.let { loadBudgets(it) }
             } catch (e: Exception) {
                 _updateStatus.postValue(false to e.message)
@@ -152,6 +160,7 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    //This gets teh total income for a user across all budgets
     private suspend fun getTotalIncomeForUser(username: String): Double {
         return try {
             val querySnapshot = firestore.collection("Budgets")
@@ -169,6 +178,7 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    //This turns total income into coins (R10 = 1)
     fun calculateAndUpdateCoins(username: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -180,6 +190,7 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    //After creating coins now the application can load them
     fun loadUserCoins(username: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -191,6 +202,7 @@ class BudgetViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    //This is for incase coins decrease or increase
     fun refreshCoins(username: String) {
         viewModelScope.launch {
             try {

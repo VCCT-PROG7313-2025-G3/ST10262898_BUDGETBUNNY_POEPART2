@@ -16,7 +16,7 @@ class BudgetFirestoreRepository(private val budgetFirestoreDao: BudgetFirestoreD
 
     suspend fun insertBudget(budget: BudgetFirestore): String {
         return try {
-            // Create a new document with auto-generated ID
+            // Create a new document with auto-generated ID (Firestore does this)
             val docRef = db.collection("budgets").document()
 
             // Set the data while preserving the auto-generated ID
@@ -24,13 +24,14 @@ class BudgetFirestoreRepository(private val budgetFirestoreDao: BudgetFirestoreD
 
             docRef.set(budgetWithId).await()
             Log.d(TAG, "Budget created with ID: ${docRef.id}")
-            docRef.id // Return the new document ID
+            docRef.id
         } catch (e: Exception) {
             Log.e(TAG, "Error creating budget", e)
-            throw e // Re-throw to handle in ViewModel
+            throw e
         }
     }
 
+    //Gets the budgets for a user
     suspend fun getBudgetsForUser(username: String): List<BudgetFirestore> {
         return try {
             db.collection("budgets")
@@ -39,7 +40,7 @@ class BudgetFirestoreRepository(private val budgetFirestoreDao: BudgetFirestoreD
                 .await()
                 .documents
                 .map { doc ->
-                    doc.toObject(BudgetFirestore::class.java)!!.copy(id = doc.id)  // Manually set ID
+                    doc.toObject(BudgetFirestore::class.java)!!.copy(id = doc.id)
                 }
         } catch (e: Exception) {
             Log.e(TAG, "Error loading budgets", e)
@@ -64,6 +65,7 @@ class BudgetFirestoreRepository(private val budgetFirestoreDao: BudgetFirestoreD
     }
 
 
+    //Allows user to see the totals they have for each category:
     fun getCategoryTotalsByDateRange(
         username: String,
         startDate: Long,
@@ -105,6 +107,7 @@ class BudgetFirestoreRepository(private val budgetFirestoreDao: BudgetFirestoreD
             }
     }
 
+    //This method updates the income from the budgets table
     suspend fun updateBudgetIncome(budgetId: String, additionalIncome: Double): Boolean {
         if (budgetId.isBlank()) {
             Log.w(TAG, "Attempted update with empty budget ID")
@@ -112,7 +115,7 @@ class BudgetFirestoreRepository(private val budgetFirestoreDao: BudgetFirestoreD
         }
 
         return try {
-            val document = db.collection("budgets").document(budgetId) // Fixed reference
+            val document = db.collection("budgets").document(budgetId)
             db.runTransaction { transaction ->
                 val snapshot = transaction.get(document)
                 val current = snapshot.getDouble("budgetIncome") ?: 0.0
@@ -125,6 +128,7 @@ class BudgetFirestoreRepository(private val budgetFirestoreDao: BudgetFirestoreD
         }
     }
 
+    //Gets total income and converts it into coins (R10 = 1)
     suspend fun calculateAndUpdateCoins(username: String) {
         try {
             // Get all budgets for user and sum income
@@ -136,10 +140,10 @@ class BudgetFirestoreRepository(private val budgetFirestoreDao: BudgetFirestoreD
             val totalIncome = budgets.sumOf { it.getDouble("budgetIncome") ?: 0.0 }
             val earnedCoins = (totalIncome / 10).toInt()
 
-            // Update coins in Firestore with NEW structure
+
             val userCoinsRef = db.collection("UserCoins").document(username)
 
-            // Get existing document to preserve currentBalance if it exists
+
             val existingDoc = userCoinsRef.get().await()
             val currentBalance = existingDoc.getLong("currentBalance") ?: earnedCoins
 
@@ -147,10 +151,10 @@ class BudgetFirestoreRepository(private val budgetFirestoreDao: BudgetFirestoreD
                 mapOf(
                     "userId" to username,
                     "totalEarned" to earnedCoins,
-                    "currentBalance" to currentBalance, // Preserve existing balance
+                    "currentBalance" to currentBalance,
                     "lastUpdated" to FieldValue.serverTimestamp()
                 ),
-                SetOptions.merge() // Only update specified fields
+                SetOptions.merge()
             ).await()
         } catch (e: Exception) {
             Log.e("CoinCalc", "Error calculating coins", e)
@@ -159,11 +163,11 @@ class BudgetFirestoreRepository(private val budgetFirestoreDao: BudgetFirestoreD
     }
 
 
+    //Now that the coins have been made the application can now get the coins to display them
     suspend fun getUserCoins(username: String): Int {
         return try {
             Log.d("CoinDebug", "Getting coins for $username")
             val doc = db.collection("UserCoins").document(username).get().await()
-            // Always use currentBalance now - remove coins fallback
             val coins = doc.getLong("currentBalance")?.toInt() ?: 0
             Log.d("CoinDebug", "Firestore coins: $coins")
             coins
