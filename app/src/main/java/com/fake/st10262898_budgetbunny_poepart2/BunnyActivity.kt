@@ -87,6 +87,12 @@ class BunnyActivity : AppCompatActivity() {
         val dressUpLayout = findViewById<View>(R.id.dressUpLayout)
         dressUpLayout.setOnDragListener(dragListener)
 
+        //Get the bunny name:
+        val bunnyName = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+            .getString("bunnyName", "My Bunny") ?: "My Bunny"
+
+        bunnyNameText.text = bunnyName
+
 
         // Observe coins
         budgetViewModel.userCoins.observe(this) { coins ->
