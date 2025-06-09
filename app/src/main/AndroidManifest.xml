@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <!-- These are all needed for the camera to work -->
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-    <uses-feature android:name="android.hardware.camera" />
+    <!-- Camera permission -->
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- Storage permissions -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
+    <!-- Camera features -->
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
+
 
     <application
         android:allowBackup="true"
@@ -21,6 +25,27 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ST10262898_BUDGETBUNNY_POEPART2"
         tools:targetApi="31">
+        <activity
+            android:name=".PhotoStudioActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MigrationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".HowToPlayActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ShopActivity"
+            android:exported="false" />
+        <activity
+            android:name=".BunnyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ResourceStepsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ResourcesActivity"
+            android:exported="false" />
         <activity
             android:name=".DetailedBarChartActivity"
             android:exported="false" />
@@ -103,6 +128,16 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

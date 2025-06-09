@@ -17,6 +17,8 @@ https://developer.android.com/develop/ui/views/layout/cardview-->
         android:layout_height="25dp"
         app:layout_constraintTop_toTopOf="parent" />
 
+
+
     <!-- App Title -->
     <TextView
         android:id="@+id/textView"
@@ -355,6 +357,24 @@ https://developer.android.com/develop/ui/views/layout/cardview-->
                         android:layout_marginTop="8dp"
                         android:fontFamily="@font/jost_medium"
                         android:text="@string/set_faq"
+                        android:textColor="@color/white"
+                        android:textSize="17sp" />
+
+                    <View
+                        android:layout_width="310dp"
+                        android:layout_height="1dp"
+                        android:layout_gravity="center"
+                        android:layout_marginVertical="9dp"
+                        android:background="@color/light_grey" />
+
+                    <!-- Migration Button -->
+                    <TextView
+                        android:id="@+id/tv_migration"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/jost_medium"
+                        android:text="Data Migration"
                         android:textColor="@color/white"
                         android:textSize="17sp" />
 

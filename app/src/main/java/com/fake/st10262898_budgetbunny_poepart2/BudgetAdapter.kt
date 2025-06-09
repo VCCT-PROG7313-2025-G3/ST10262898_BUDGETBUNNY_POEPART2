@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.fake.st10262898_budgetbunny_poepart2.data.BudgetFirestore
 import java.text.NumberFormat
 import java.util.Locale
-
+//This class is needed in order to be able to work with the budgets recycler views
 class BudgetAdapter(
     private var budgets: List<BudgetFirestore>,
     private val onItemClick: (BudgetFirestore) -> Unit = {}
@@ -34,7 +34,7 @@ class BudgetAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BudgetViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_goal_card, parent, false) // Reuse your existing layout
+            .inflate(R.layout.item_goal_card, parent, false)
         return BudgetViewHolder(view)
     }
 
@@ -42,8 +42,10 @@ class BudgetAdapter(
         holder.bind(budgets[position])
     }
 
+    //This calculates how much budgets would be needed to put
     override fun getItemCount(): Int = budgets.size
 
+    //Allows recycler view to be updated
     fun updateData(newBudgets: List<BudgetFirestore>) {
         val diffResult = DiffUtil.calculateDiff(
             BudgetDiffCallback(budgets, newBudgets)
@@ -59,7 +61,7 @@ class BudgetAdapter(
         override fun getOldListSize(): Int = oldList.size
         override fun getNewListSize(): Int = newList.size
         override fun areItemsTheSame(oldPos: Int, newPos: Int): Boolean {
-            return oldList[oldPos].id == newList[newPos].id // Compare by budget ID
+            return oldList[oldPos].id == newList[newPos].id
         }
         override fun areContentsTheSame(oldPos: Int, newPos: Int): Boolean {
             return oldList[oldPos] == newList[newPos]

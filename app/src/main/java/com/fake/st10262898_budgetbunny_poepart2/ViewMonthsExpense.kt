@@ -39,7 +39,7 @@ class ViewMonthsExpense : AppCompatActivity() {
     private fun setupViewModel() {
         expenseViewModel = ViewModelProvider(this).get(ExpenseViewModel::class.java)
 
-        // Check if we came from month tile click
+
         intent.getIntExtra("month", -1).takeIf { it != -1 }?.let { month ->
             setupMonthRange(month)
         }
@@ -57,7 +57,7 @@ class ViewMonthsExpense : AppCompatActivity() {
 
     private fun setupMonthRange(month: Int) {
         val calendar = Calendar.getInstance().apply {
-            set(Calendar.MONTH, month - 1) // Convert to 0-based
+            set(Calendar.MONTH, month - 1)
             set(Calendar.DAY_OF_MONTH, 1)
         }
 
@@ -152,7 +152,7 @@ class ViewMonthsExpense : AppCompatActivity() {
             calendar.get(Calendar.MONTH),
             calendar.get(Calendar.DAY_OF_MONTH)
         ).apply {
-            // Set max date for end date picker to prevent selecting dates in the future
+
             if (!isStartDate) {
                 datePicker.maxDate = System.currentTimeMillis()
             }
@@ -172,7 +172,7 @@ class ViewMonthsExpense : AppCompatActivity() {
     }
 
     companion object {
-        // String resource constants would be defined in strings.xml
+
         const val EXTRA_MONTH = "month"
     }
 }

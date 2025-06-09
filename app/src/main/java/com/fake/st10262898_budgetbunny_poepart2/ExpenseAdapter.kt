@@ -24,7 +24,7 @@ class ExpenseAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExpenseViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.expense_item, parent, false) // make sure this layout has all the TextViews
+            .inflate(R.layout.expense_item, parent, false)
         return ExpenseViewHolder(view)
     }
 
@@ -63,8 +63,7 @@ class ExpenseAdapter(
         override fun getOldListSize(): Int = oldList.size
         override fun getNewListSize(): Int = newList.size
         override fun areItemsTheSame(oldPos: Int, newPos: Int): Boolean {
-            // You may need a unique ID from Firestore document ID for accurate comparison
-            // For now, compare by expenseName + date as a rough unique key
+
             val oldItem = oldList[oldPos]
             val newItem = newList[newPos]
             return oldItem.expenseName == newItem.expenseName &&

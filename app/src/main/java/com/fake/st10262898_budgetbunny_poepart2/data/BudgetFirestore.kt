@@ -3,8 +3,8 @@ package com.fake.st10262898_budgetbunny_poepart2.data
 import com.google.firebase.firestore.DocumentId
 
 data class BudgetFirestore(
-    var id: String = "",
-    val totalBudgetGoal: Double = 0.0,
+    var id: String = "", //Firestore will auto generate this field
+    val totalBudgetGoal: Double = 0.0, //These are set to 0 because they will be added by code
     val minTotalBudgetGoal: Double = 0.0,
     val budgetCategory: String = "",
     val budgetAmount: Double = 0.0,

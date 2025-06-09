@@ -2,13 +2,27 @@ package com.fake.st10262898_budgetbunny_poepart2
 
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
+import android.text.style.StyleSpan
 import android.util.Log
+import android.view.View
+import android.widget.Button
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fake.st10262898_budgetbunny_poepart2.data.BudgetFirestore
+import com.fake.st10262898_budgetbunny_poepart2.data.ChatMessage
 import com.fake.st10262898_budgetbunny_poepart2.data.ExpenseFirebase
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.Legend
@@ -21,10 +35,16 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import com.google.firebase.firestore.ktx.toObject
 
 class HomePageActivity : AppCompatActivity() {
 
@@ -32,6 +52,17 @@ class HomePageActivity : AppCompatActivity() {
     private lateinit var pieChart: PieChart
     private lateinit var barChart: BarChart
     private val db = Firebase.firestore
+
+
+    //This is for chatbot:
+    private lateinit var fabChat: FloatingActionButton
+    private lateinit var chatContainer: LinearLayout
+    private lateinit var etChatInput: EditText
+    private lateinit var btnChatSend: Button
+    private var isChatExpanded = false
+    private lateinit var chatAdapter: ChatAdapter
+    private val chatMessages = mutableListOf<ChatMessage>()
+    private lateinit var btnCloseChat: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +72,24 @@ class HomePageActivity : AppCompatActivity() {
         initializeViews()
         loadData()
         setupBottomNavigation()
+
+        val tvDateTime: TextView = findViewById(R.id.tv_dateTime)
+        tvDateTime.text = SimpleDateFormat("dd MMMM yyyy, HH:mm", Locale.getDefault()).format(Date())
+
+
+        findViewById<View>(R.id.bottomNavigationView).post {
+            val navBar = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+            val fab = findViewById<FloatingActionButton>(R.id.fabChat)
+            val chatContainer = findViewById<LinearLayout>(R.id.chatContainer)
+
+
+            val marginBottom = navBar.height +
+                    (16 * resources.displayMetrics.density).toInt()
+
+
+            (fab.layoutParams as CoordinatorLayout.LayoutParams).bottomMargin = marginBottom
+            (chatContainer.layoutParams as CoordinatorLayout.LayoutParams).bottomMargin = marginBottom
+        }
     }
 
     private fun initializeViews() {
@@ -48,6 +97,10 @@ class HomePageActivity : AppCompatActivity() {
         barChart = findViewById(R.id.barChart)
         val recyclerView = findViewById<RecyclerView>(R.id.rv_transactions)
         recyclerView.layoutManager = LinearLayoutManager(this)
+
+        findViewById<CardView>(R.id.cv_resources).setOnClickListener {
+            startActivity(Intent(this, ResourcesActivity::class.java))
+        }
 
         expenseAdapter = ExpenseAdapter(emptyList()) { selectedExpense ->
             Intent(this, EditTransactionsActivity::class.java).apply {
@@ -60,6 +113,40 @@ class HomePageActivity : AppCompatActivity() {
         barChart.setOnClickListener {
             val intent = Intent(this, DetailedBarChartActivity::class.java)
             startActivity(intent)
+        }
+
+
+        // Chatbot setup
+        fabChat = findViewById(R.id.fabChat)
+        chatContainer = findViewById(R.id.chatContainer)
+        etChatInput = findViewById(R.id.etChatInput)
+        btnChatSend = findViewById(R.id.btnChatSend)
+
+        fabChat.setOnClickListener { toggleChat() }
+        btnChatSend.setOnClickListener { handleChatInput() }
+
+
+
+        // Initialize chat RecyclerView
+        chatAdapter = ChatAdapter(chatMessages)
+        findViewById<RecyclerView>(R.id.rvChatMessages).apply {
+            layoutManager = LinearLayoutManager(this@HomePageActivity)
+            adapter = chatAdapter
+        }
+        // Welcome message for chatbot
+        addChatMessage("Welcome! Choose:\nA - Add Expense\nB - Set Budget\nC - Play Game \nD - View Graphs \nE - Your financial health", true)
+
+
+        btnCloseChat = findViewById(R.id.btnCloseChat)
+        btnCloseChat.setOnClickListener {
+            chatContainer.visibility = View.GONE
+            fabChat.visibility = View.VISIBLE // Show the FAB again
+        }
+
+        findViewById<CardView>(R.id.cv_WamstaPage).setOnClickListener {
+            val intent = Intent(this, BunnyActivity::class.java)
+            startActivity(intent)
+            overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left)
         }
     }
 
@@ -182,9 +269,16 @@ class HomePageActivity : AppCompatActivity() {
 
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_home -> true
+                R.id.nav_home -> {
+                    true
+                }
                 R.id.nav_transactions -> {
                     startActivity(Intent(this, TransactionsActivity::class.java))
+                    overridePendingTransition(0, 0)
+                    true
+                }
+                R.id.nav_bunny -> {
+                    startActivity(Intent(this, BunnyActivity::class.java))
                     overridePendingTransition(0, 0)
                     true
                 }
@@ -212,10 +306,109 @@ class HomePageActivity : AppCompatActivity() {
         override fun getFormattedValue(value: Float): String = "${value.toInt()}%"
     }
 
-    // Add this if you're getting IndexAxisValueFormatter errors
+
     class IndexAxisValueFormatter(private val labels: List<String>) : ValueFormatter() {
         override fun getFormattedValue(value: Float): String {
             return labels.getOrNull(value.toInt()) ?: ""
         }
     }
+
+    //Chat Bot methods I am using:
+    private fun toggleChat() {
+        isChatExpanded = !isChatExpanded
+        chatContainer.visibility = if (isChatExpanded) View.VISIBLE else View.GONE
+    }
+
+    private fun addChatMessage(message: String, isBot: Boolean = true) {
+        val chatMessage = ChatMessage(message, isBot)
+        chatMessages.add(chatMessage)
+        chatAdapter.notifyItemInserted(chatMessages.size - 1)
+
+
+        findViewById<RecyclerView>(R.id.rvChatMessages).smoothScrollToPosition(chatMessages.size - 1)
+    }
+
+    private fun handleChatInput() {
+        val input = etChatInput.text.toString().trim().uppercase()
+        etChatInput.text.clear()
+
+        addChatMessage(input, false)
+
+        when (input) {
+            "A" -> {
+                addChatMessage("Opening expenses...", true)
+                startActivity(Intent(this, ExpenseEntry::class.java))
+                collapseChat()
+            }
+            "B" -> {
+                addChatMessage("Opening budgets...", true)
+                startActivity(Intent(this, GoalEntry::class.java))
+                collapseChat()
+            }
+            "C" -> {
+                addChatMessage("Launching Bunny Game...", true)
+                startActivity(Intent(this, BunnyActivity::class.java))
+                overridePendingTransition(R.animator.slide_in_right, R.animator.slide_out_left)
+                collapseChat()
+            }
+            "D" -> {
+                addChatMessage("Opening detailed chart...", true)
+                startActivity(Intent(this, DetailedBarChartActivity::class.java))
+                collapseChat()
+            }
+            "E" -> {
+                val currentUserId = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+                    .getString("username", "") ?: ""
+                lifecycleScope.launch {
+                    val result = evaluateFinancialHealth(currentUserId)
+                    addChatMessage(result, true)
+                }
+            }
+            else -> {
+                addChatMessage("Please enter A, B, C, D or E", true)
+            }
+        }
+    }
+
+
+    private fun collapseChat() {
+        isChatExpanded = false
+        chatContainer.visibility = View.GONE
+    }
+
+
+
+    private suspend fun evaluateFinancialHealth(username: String): String {
+        val budgetsSnapshot = db.collection("budgets")
+            .whereEqualTo("username", username)
+            .get()
+            .await()
+
+        val budgets = budgetsSnapshot.documents.mapNotNull {
+            it.toObject(BudgetFirestore::class.java)
+        }
+
+        val totalIncome = budgets.sumOf { it.budgetIncome.toDouble() }
+
+        val sharedPrefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val minGoal = sharedPrefs.getFloat("MIN_GOAL", 0f).toDouble()
+        val maxGoal = sharedPrefs.getFloat("TOTAL_BUDGET_GOAL", 0f).toDouble()
+
+        return when {
+            totalIncome < minGoal -> {
+                val shortfall = (minGoal - totalIncome).toInt()
+                "📉 Financial Health: LOW\nYou need R$shortfall more to reach your minimum goal."
+            }
+            totalIncome >= minGoal && totalIncome <= maxGoal -> {
+                val tillMax = (maxGoal - totalIncome).toInt()
+                "✅ Financial Health: GOOD\nYou're on track! Just R$tillMax more to hit your max goal."
+            }
+            else -> {
+                val surplus = (totalIncome - maxGoal).toInt()
+                "🎉 Financial Health: EXCELLENT\nYou've surpassed your max goal by R$surplus!"
+            }
+        }
+    }
+
+
 }

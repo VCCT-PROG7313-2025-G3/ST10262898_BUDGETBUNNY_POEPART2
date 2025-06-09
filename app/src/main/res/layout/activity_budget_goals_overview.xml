@@ -48,8 +48,7 @@
             android:layout_height="50dp" />
 
 
-        <!-- Card View to store the bar for Budget Monthly Goal -->
-        <!-- CardView for Budget Goal with ProgressBar -->
+
         <androidx.cardview.widget.CardView
             android:id="@+id/card_budgetGoal"
             android:layout_width="match_parent"
@@ -212,7 +211,7 @@
 
 
 
-        <!-- Prompt to view entries by date -->
+
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

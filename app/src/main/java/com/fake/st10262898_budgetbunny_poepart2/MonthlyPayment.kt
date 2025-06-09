@@ -39,7 +39,7 @@ class MonthlyPayment : AppCompatActivity() {
         val amountEditText = findViewById<EditText>(R.id.enterAmount)
         val dateEditText = findViewById<EditText>(R.id.enterDate)
 
-        // Set up the DatePickerDialog
+        // This sets up the DatePickerDialog
         val datePickerListener = DatePickerDialog.OnDateSetListener { _, year, month, day ->
             calendar.set(Calendar.YEAR, year)
             calendar.set(Calendar.MONTH, month)
@@ -50,7 +50,7 @@ class MonthlyPayment : AppCompatActivity() {
             dateEditText.setText(sdf.format(calendar.time))
         }
 
-        // Configure date EditText for single-click response
+
         dateEditText.apply {
             isFocusable = false
             isClickable = true

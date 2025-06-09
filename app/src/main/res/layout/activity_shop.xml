@@ -1,0 +1,38 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#fce4ec">
+
+    <TextView
+        android:id="@+id/coinCountTextShop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Coins: 0"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#FFD700"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:paddingTop="20dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewShop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/coinCountTextShop"
+        android:layout_marginTop="16dp"
+        android:clipToPadding="false"
+        android:paddingBottom="20dp" />
+
+
+    <Button
+        android:id="@+id/btnReturnToBunny"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Return to Bunny"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp" />
+
+</RelativeLayout>

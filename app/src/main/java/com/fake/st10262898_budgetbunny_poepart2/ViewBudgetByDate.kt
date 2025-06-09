@@ -42,18 +42,18 @@ class ViewBudgetByDate : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerView)
         headingTextView = findViewById(R.id.tvHeading)
 
-        // Set default dates (current month)
+        // Set default dates (which is current month)
         val calendar = Calendar.getInstance()
         startDatePicker.init(
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
-            1, // First day of month
+            1,
             null
         )
 
-        // Setup RecyclerView
+
         adapter = CategoryTotalAdapter(emptyList()) { categoryTotal ->
-            // Handle item clicks if needed
+
             Toast.makeText(
                 this,
                 "${categoryTotal.budgetCategory}: R${"%.2f".format(categoryTotal.total)}",
@@ -73,7 +73,7 @@ class ViewBudgetByDate : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Get selected dates as timestamps
+
             val startDate = Calendar.getInstance().apply {
                 set(startDatePicker.year, startDatePicker.month, startDatePicker.dayOfMonth)
                 set(Calendar.HOUR_OF_DAY, 0)
@@ -127,6 +127,6 @@ class ViewBudgetByDate : AppCompatActivity() {
         return "Budget Totals\n${formatDate(startDate)} - ${formatDate(endDate)}"
     }
 
-    // Extension function to convert dp to px
+    // This is function to convert dp to px
     private fun Int.dpToPx(): Int = (this * resources.displayMetrics.density).toInt()
 }

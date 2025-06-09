@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.firebase.database.ktx)
+    implementation(libs.androidx.foundation.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -76,10 +77,10 @@ dependencies {
 
     //This is for Firebase:
     implementation(platform("com.google.firebase:firebase-bom:32.2.0"))
-    implementation("com.google.firebase:firebase-firestore-ktx") // This matches your TOML alias
-    implementation("com.google.firebase:firebase-auth-ktx") // optional: if using auth
-    implementation(libs.firebase.database.ktx)   // This matches your TOML alias
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation(libs.firebase.database.ktx)
 
-    //implementation("com.google.firebase:firebase-database-ktx") //needed for Firebase and HomePage
+
 
 }

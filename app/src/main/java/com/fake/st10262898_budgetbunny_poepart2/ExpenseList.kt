@@ -36,7 +36,7 @@ class ExpenseList : AppCompatActivity() {
         } else {
             Toast.makeText(this, "Welcome, $username!", Toast.LENGTH_SHORT).show()
         }
-        // Use the username as needed in ExpenseList
+
 
 
             val nextButton = findViewById<Button>(R.id.btn_next)

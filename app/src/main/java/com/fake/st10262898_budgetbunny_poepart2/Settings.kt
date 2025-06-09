@@ -25,47 +25,48 @@ class Settings : AppCompatActivity() {
             insets
         }
 
+
+
+
         // Set the date and time
         val tvDateTime: TextView = findViewById(R.id.tv_dateTime)
         val currentDateTime = SimpleDateFormat("dd MMMM yyyy, HH:mm", Locale.getDefault()).format(Date())
         tvDateTime.text = currentDateTime
 
-        // This is for the navigation bar
+
+        setupBottomNavigation()
+
+    }
+
+    private fun setupBottomNavigation() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-
-
-        bottomNavigationView.selectedItemId = R.id.nav_budgetGoal
+        bottomNavigationView.selectedItemId = R.id.nav_settings
 
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {
-                    // Takes user to home page
-                    val intent = Intent(this, HomePageActivity::class.java)
-                    startActivity(intent)
-                    overridePendingTransition(0, 0) // Smooth transition
+                    startActivity(Intent(this@Settings, HomePageActivity::class.java))
+                    overridePendingTransition(0, 0)
                     true
                 }
                 R.id.nav_transactions -> {
-                    // Takes user to transactions page
-                    val intent = Intent(this, TransactionsActivity::class.java)
-                    startActivity(intent)
+                    startActivity(Intent(this@Settings, TransactionsActivity::class.java))
+                    overridePendingTransition(0, 0)
+                    true
+                }
+                R.id.nav_bunny -> {
+                    startActivity(Intent(this@Settings, BunnyActivity::class.java))
                     overridePendingTransition(0, 0)
                     true
                 }
                 R.id.nav_budgetGoal -> {
-                    // Already on budget goals page, do nothing
-                    true
-                }
-                R.id.nav_settings -> {
-                    // Takes user to settings page
-                    val intent = Intent(this, Settings::class.java)
-                    startActivity(intent)
+                    startActivity(Intent(this@Settings, BudgetGoalsOverviewActivity::class.java))
                     overridePendingTransition(0, 0)
                     true
                 }
+                R.id.nav_settings -> true
                 else -> false
             }
         }
-
     }
 }

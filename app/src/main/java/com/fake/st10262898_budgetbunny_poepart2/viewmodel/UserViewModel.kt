@@ -11,9 +11,10 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     val registrationResult = MutableLiveData<Boolean>()
     val loginResult = MutableLiveData<Boolean>()
 
-    // Helper function to convert username to fake email
+    // Helper function to convert username to fake email (This is because firestore needs an email)
     private fun usernameToEmail(username: String) = "$username@myapp.fake"
 
+    //Allows users to be registred into firestore:
     fun registerUser(username: String, password: String) {
         val email = usernameToEmail(username)
         auth.createUserWithEmailAndPassword(email, password)
@@ -22,6 +23,7 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
             }
     }
 
+    //allows users to login into application
     fun loginUser(username: String, password: String) {
         val email = usernameToEmail(username)
         auth.signInWithEmailAndPassword(email, password)
@@ -30,9 +32,11 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
             }
     }
 
+    //Allows users to logout
     fun logoutUser() {
         auth.signOut()
     }
 
+    //Gets the current user that is currently logged on
     fun getCurrentUser() = auth.currentUser
 }

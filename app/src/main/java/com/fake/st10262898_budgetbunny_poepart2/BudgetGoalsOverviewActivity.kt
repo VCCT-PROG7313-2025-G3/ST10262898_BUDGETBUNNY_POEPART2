@@ -25,7 +25,10 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import com.fake.st10262898_budgetbunny_poepart2.data.BudgetFirestore
 import com.fake.st10262898_budgetbunny_poepart2.viewmodel.BudgetViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class BudgetGoalsOverviewActivity : AppCompatActivity() {
 
@@ -60,8 +63,9 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
         loadBudgetGoals()
     }
 
+    //This setups all my User Interface
     private fun setupUI() {
-        // Add Income Button - Now with budget selection
+
         val addIncomeBtn = Button(this).apply {
             text = "Add Income"
             setTextColor(Color.WHITE)
@@ -70,7 +74,6 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
                 R.color.dark_pastel_purple
             )
             setOnClickListener {
-                // Open BudgetSelectionActivity instead of showing dialogs
                 startActivity(Intent(this@BudgetGoalsOverviewActivity, BudgetSelectionActivity::class.java))
             }
         }
@@ -100,9 +103,10 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
 
 
 
+    //This is for the navigation at the bottom
     private fun setupBottomNavigation() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-        bottomNavigationView.selectedItemId = R.id.nav_budgetGoal // Highlight current tab
+        bottomNavigationView.selectedItemId = R.id.nav_budgetGoal
 
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
@@ -116,7 +120,12 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
                     overridePendingTransition(0, 0)
                     true
                 }
-                R.id.nav_budgetGoal -> true // Already on this page
+                R.id.nav_bunny -> {
+                    startActivity(Intent(this, BunnyActivity::class.java))
+                    overridePendingTransition(0, 0)
+                    true
+                }
+                R.id.nav_budgetGoal -> true
                 R.id.nav_settings -> {
                     startActivity(Intent(this@BudgetGoalsOverviewActivity, Settings::class.java))
                     overridePendingTransition(0, 0)
@@ -127,16 +136,18 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
         }
     }
 
+    //When you basically come back to the application from entering something then this is how it would resume
     override fun onResume() {
         super.onResume()
         loadBudgetGoals()
 
-        // Add this new observer
+
         budgetViewModel.updateStatus.observe(this) { (success, _) ->
-            if (success) loadBudgetGoals() // Double refresh on updates
+            if (success) loadBudgetGoals()
         }
     }
 
+    //This gets the budget goals for the specific user
     private fun loadBudgetGoals() {
         getSharedPreferences("UserPrefs", MODE_PRIVATE).getString("username", "")?.let { username ->
             budgetViewModel.budgets.observe(this) { updateUI(it) }
@@ -144,28 +155,29 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
         }
     }
 
+    //This is all implementation for the progress bar:
     private fun updateUI(budgetGoals: List<BudgetFirestore>) {
         val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
         val currentUserId = sharedPreferences.getString("username", "") ?: return
 
-        // Get user's goals
+
         val userMinGoal = sharedPreferences.getFloat("MIN_GOAL", 0f).toDouble()
         maxGoalValue = sharedPreferences.getFloat("TOTAL_BUDGET_GOAL", 0f).toDouble()
 
-        // Filter and process budgets
+
         val userBudgets = budgetGoals.filter { it.username == currentUserId }
         val totalIncome = userBudgets.sumOf { it.budgetIncome }
 
-        // Update progress
+
         progressBar.max = maxGoalValue.toInt()
         progressBar.progress = totalIncome.toInt()
         budgetText.text = "R${totalIncome.toInt()} of R${maxGoalValue.toInt()} saved"
 
-        // Update labels
+
         tvMinGoalValue.text = "Min Goal: R${userMinGoal.toInt()}"
         tvMaxGoalValue.text = "Max Goal: R${maxGoalValue.toInt()}"
 
-        // Update budget list
+
         goalsContainer.removeAllViews()
         userBudgets.groupBy { it.budgetCategory }.forEach { (category, budgets) ->
             LayoutInflater.from(this).inflate(R.layout.item_goal_card, goalsContainer, false).apply {
@@ -177,8 +189,13 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
         }
 
         updateMarkerPositions(userMinGoal)
+
+
+
+
     }
 
+    //This updates the min and max goals according to what the user has entered
     private fun updateMarkerPositions(minGoal: Double) {
         progressBar.post {
             val progressBarWidth = progressBar.width
@@ -216,4 +233,6 @@ class BudgetGoalsOverviewActivity : AppCompatActivity() {
             }
         }
     }
+
+
 }

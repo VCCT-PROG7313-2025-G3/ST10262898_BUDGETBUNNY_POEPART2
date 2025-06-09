@@ -29,6 +29,7 @@ class bugetGoalsPage : AppCompatActivity() {
             insets
         }
 
+        //Initialise elements on xml
         val holidayButton = findViewById<Button>(R.id.holiday_button)
         val houseButton = findViewById<Button>(R.id.house_button)
         val tuitionButton = findViewById<Button>(R.id.tuition_button)
@@ -54,7 +55,6 @@ class bugetGoalsPage : AppCompatActivity() {
             val intent = Intent(this, CategoryBudgetGoal::class.java).apply {
                 putExtra("CATEGORY_NAME", category)
                 putExtra("USERNAME", username)
-                // Pass goals via intent but don't save to prefs here
                 putExtra("TOTAL_BUDGET_GOAL", goalText.toDoubleOrNull() ?: 0.0)
                 putExtra("MIN_GOAL", minGoalText.toDoubleOrNull() ?: 0.0)
             }
@@ -82,13 +82,13 @@ class bugetGoalsPage : AppCompatActivity() {
             }
         })
 
-        // Handle Next button click - single save point
+
         btn_next.setOnClickListener {
             val goalText = amountEditText.text.toString().trim()
             val minGoalText = minBudgetEditText.text.toString().trim()
 
             if (goalText.isNotEmpty() && minGoalText.isNotEmpty()) {
-                // Save goals to SharedPreferences (only here)
+
                 sharedPreferences.edit().apply {
                     putFloat("MIN_GOAL", minGoalText.toFloat())
                     putFloat("TOTAL_BUDGET_GOAL", goalText.toFloat())

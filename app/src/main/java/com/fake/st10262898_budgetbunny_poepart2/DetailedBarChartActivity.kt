@@ -7,7 +7,10 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.ProgressBar
+import android.widget.RelativeLayout
 import android.widget.Spinner
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.fake.st10262898_budgetbunny_poepart2.data.BudgetFirestore
 import com.fake.st10262898_budgetbunny_poepart2.data.ExpenseFirebase
@@ -39,6 +42,18 @@ class DetailedBarChartActivity : AppCompatActivity() {
     private var startDate: Long = 0L
     private var endDate: Long = System.currentTimeMillis()
 
+    // Progress bar variables
+    private var maxGoalValue = 0.0
+    private lateinit var progressBar: ProgressBar
+    private lateinit var budgetText: TextView
+    private lateinit var tvMinGoalValue: TextView
+    private lateinit var tvMaxGoalValue: TextView
+    private lateinit var minGoalMarker: View
+    private lateinit var maxGoalMarker: View
+    private lateinit var minGoalLabel: TextView
+    private lateinit var maxGoalLabel: TextView
+
+    // Initialize Firebase
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detailed_bar_chart)
@@ -48,26 +63,130 @@ class DetailedBarChartActivity : AppCompatActivity() {
         periodSpinner = findViewById(R.id.periodSpinner)
         btnDateRange = findViewById(R.id.btnDateRange)
 
+        // Initialize progress bar views
+        progressBar = findViewById(R.id.progressBar)
+        budgetText = findViewById(R.id.budgetForMonth)
+        tvMinGoalValue = findViewById(R.id.tv_minGoalValue)
+        tvMaxGoalValue = findViewById(R.id.tv_maxGoalValue)
+        minGoalMarker = findViewById(R.id.minGoalMarker)
+        maxGoalMarker = findViewById(R.id.maxGoalMarker)
+        minGoalLabel = findViewById(R.id.minGoalLabel)
+        maxGoalLabel = findViewById(R.id.maxGoalLabel)
+
         setupPeriodSpinner()
         setupDateRangePicker()
-        loadData("All Time")
+        loadBudgetData()
     }
 
+    //BUdget data is loaded here
+    private fun loadBudgetData() {
+        val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val currentUserId = sharedPreferences.getString("username", "") ?: return
+
+        // Get user's goals
+        val userMinGoal = sharedPreferences.getFloat("MIN_GOAL", 0f).toDouble()
+        maxGoalValue = sharedPreferences.getFloat("TOTAL_BUDGET_GOAL", 0f).toDouble()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val budgetsSnapshot = db.collection("budgets")
+                    .whereEqualTo("username", currentUserId)
+                    .get()
+                    .await()
+
+                val userBudgets = budgetsSnapshot.toObjects(BudgetFirestore::class.java)
+                val totalIncome = userBudgets.sumOf { it.budgetIncome }
+
+                runOnUiThread {
+                    // Update progress
+                    progressBar.max = maxGoalValue.toInt()
+                    progressBar.progress = totalIncome.toInt()
+                    budgetText.text = "R${totalIncome.toInt()} of R${maxGoalValue.toInt()} saved"
+
+                    // Update labels
+                    tvMinGoalValue.text = "Min Goal: R${userMinGoal.toInt()}"
+                    tvMaxGoalValue.text = "Max Goal: R${maxGoalValue.toInt()}"
+
+                    updateMarkerPositions(userMinGoal)
+                }
+            } catch (e: Exception) {
+                Log.e("DetailedBarChart", "Error loading budget data", e)
+            }
+        }
+    }
+
+    private fun updateMarkerPositions(minGoal: Double) {
+        progressBar.post {
+            val progressBarWidth = progressBar.width
+            if (maxGoalValue > 0) {
+                val minGoalMarkerPosition = (minGoal / maxGoalValue * progressBarWidth).toInt()
+
+                minGoalMarker.layoutParams =
+                    (minGoalMarker.layoutParams as RelativeLayout.LayoutParams).apply {
+                        leftMargin = minGoalMarkerPosition
+                    }
+
+                maxGoalMarker.post {
+                    val maxMarkerWidth = maxGoalMarker.width
+                    val maxGoalMarkerPosition = progressBarWidth - maxMarkerWidth
+
+                    maxGoalMarker.layoutParams =
+                        (maxGoalMarker.layoutParams as RelativeLayout.LayoutParams).apply {
+                            leftMargin = maxGoalMarkerPosition
+                        }
+                }
+
+                minGoalLabel.post {
+                    minGoalLabel.layoutParams =
+                        (minGoalLabel.layoutParams as RelativeLayout.LayoutParams).apply {
+                            leftMargin = minGoalMarkerPosition - (minGoalLabel.width / 2)
+                        }
+                }
+
+                maxGoalLabel.post {
+                    maxGoalLabel.layoutParams =
+                        (maxGoalLabel.layoutParams as RelativeLayout.LayoutParams).apply {
+                            leftMargin = progressBarWidth - (maxGoalLabel.width / 2)
+                        }
+                }
+            }
+        }
+    }
+
+    //This is so user can enter a specific date they want.
     private fun setupPeriodSpinner() {
         val periods = arrayOf("Last Week", "Last Month", "Last 3 Months", "Last 6 Months", "All Time")
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, periods)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         periodSpinner.adapter = adapter
 
+
+        var isInitialSetup = true
+        var lastSelectionTime = 0L
+
         periodSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                loadData(periods[position])
+                val now = System.currentTimeMillis()
+                if (now - lastSelectionTime < 300) return
+                lastSelectionTime = now
+
+                if (isInitialSetup) {
+                    isInitialSetup = false
+
+                } else {
+                    loadData(periods[position])
+                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
+
+
+        periodSpinner.setSelection(periods.indexOf("All Time"))
+        loadData("All Time")
     }
 
+    //This is so user can enter a much specific date they want
     private fun setupDateRangePicker() {
         btnDateRange.setOnClickListener {
             val datePicker = MaterialDatePicker.Builder.dateRangePicker()
@@ -91,37 +210,107 @@ class DetailedBarChartActivity : AppCompatActivity() {
         return "${format.format(Date(start))} - ${format.format(Date(end))}"
     }
 
+    private var isLoading = false
+
     private fun loadData(period: String) {
+        if (isLoading) {
+            Log.d("ChartDebug", "Load already in progress, skipping")
+            return
+        }
+        isLoading = true
+
+
+        runOnUiThread {
+            expensesChart.setNoDataText("Loading expenses...")
+            expensesChart.setNoDataTextColor(Color.BLACK)
+            budgetsChart.setNoDataText("Loading budgets...")
+            budgetsChart.setNoDataTextColor(Color.BLACK)
+            expensesChart.invalidate()
+            budgetsChart.invalidate()
+        }
+
         val currentUserId = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-            .getString("username", "") ?: ""
+            .getString("username", "") ?: "".also {
+            Log.e("ChartDebug", "No username found in SharedPreferences")
+        }
+
+        Log.d("ChartDebug", "Starting data load for user: $currentUserId, period: $period")
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                // Get expenses for selected period
-                val expensesQuery = db.collection("expenses")
-                    .whereEqualTo("username", currentUserId)
-                    .whereGreaterThanOrEqualTo("expenseDate", when (period) {
-                        "Custom Range" -> startDate
-                        else -> getStartDateForPeriod(period)
-                    })
-                    .whereLessThanOrEqualTo("expenseDate", when (period) {
-                        "Custom Range" -> endDate
-                        else -> System.currentTimeMillis()
-                    })
 
-                val expenses = expensesQuery.get().await().toObjects(ExpenseFirebase::class.java)
+                val expensesQuery = if (period == "All Time") {
+                    Log.d("ChartDebug", "Querying ALL expenses")
+                    db.collection("expenses")
+                        .whereEqualTo("username", currentUserId)
+                } else if (period == "Custom Range") {
+                    Log.d("ChartDebug", "Querying CUSTOM RANGE expenses from ${Date(startDate)} to ${Date(endDate)}")
+                    db.collection("expenses")
+                        .whereEqualTo("username", currentUserId)
+                        .whereGreaterThanOrEqualTo("expenseDate", Date(startDate))
+                        .whereLessThanOrEqualTo("expenseDate", Date(endDate))
+                } else {
+                    val startMillis = getStartDateForPeriod(period)
+                    Log.d("ChartDebug", "Querying $period expenses from ${Date(startMillis)}")
+                    db.collection("expenses")
+                        .whereEqualTo("username", currentUserId)
+                        .whereGreaterThanOrEqualTo("expenseDate", Date(startMillis))
+                        .whereLessThanOrEqualTo("expenseDate", Date(System.currentTimeMillis()))
+                }
 
-                // Get budgets (not time-filtered)
-                val budgets = db.collection("budgets")
+
+                val expensesDeferred = expensesQuery.get()
+                val budgetsDeferred = db.collection("budgets")
                     .whereEqualTo("username", currentUserId)
-                    .get().await().toObjects(BudgetFirestore::class.java)
+                    .get()
+
+
+                val expensesSnapshot = expensesDeferred.await()
+                val budgetsSnapshot = budgetsDeferred.await()
+
+
+                val expenses = expensesSnapshot.toObjects(ExpenseFirebase::class.java)
+                val budgets = budgetsSnapshot.toObjects(BudgetFirestore::class.java)
+
+                Log.d("ChartDebug", "Loaded ${expenses.size} expenses and ${budgets.size} budgets")
+
 
                 runOnUiThread {
-                    setupExpensesChart(expenses, budgets)
-                    setupBudgetsChart(budgets)
+                    if (expenses.isEmpty()) {
+                        Log.d("ChartDebug", "No expenses found for period: $period")
+                        expensesChart.clear()
+                        expensesChart.setNoDataText("No expenses in $period period")
+                        expensesChart.setNoDataTextColor(Color.BLACK)
+                    } else {
+                        Log.d("ChartDebug", "Setting up chart with ${expenses.size} expenses")
+                        setupExpensesChart(expenses, budgets)
+                    }
+
+                    if (budgets.isEmpty()) {
+                        Log.d("ChartDebug", "No budgets found")
+                        budgetsChart.clear()
+                        budgetsChart.setNoDataText("No budgets configured")
+                        budgetsChart.setNoDataTextColor(Color.BLACK)
+                    } else {
+                        Log.d("ChartDebug", "Setting up chart with ${budgets.size} budgets")
+                        setupBudgetsChart(budgets)
+                    }
                 }
+
             } catch (e: Exception) {
                 Log.e("DetailedBarChart", "Error loading data", e)
+                runOnUiThread {
+                    expensesChart.clear()
+                    budgetsChart.clear()
+                    val errorMsg = e.message?.take(50) ?: "Unknown error"
+                    expensesChart.setNoDataText("Error: $errorMsg")
+                    budgetsChart.setNoDataText("Error: $errorMsg")
+                    expensesChart.setNoDataTextColor(Color.RED)
+                    budgetsChart.setNoDataTextColor(Color.RED)
+                }
+            } finally {
+                isLoading = false
+                Log.d("ChartDebug", "Completed data load for period: $period")
             }
         }
     }
@@ -139,35 +328,46 @@ class DetailedBarChartActivity : AppCompatActivity() {
     }
 
     private fun setupExpensesChart(expenses: List<ExpenseFirebase>, budgets: List<BudgetFirestore>) {
+        Log.d("ChartDebug", "Expenses count: ${expenses.size}")
+        Log.d("ChartDebug", "Budgets count: ${budgets.size}")
+
+        expenses.forEach { expense ->
+            Log.d("ChartDebug", "Expense: ${expense.expenseCategory} - ${expense.expenseAmount}")
+        }
+
+        Log.d("ChartDebug", "Setting up chart with ${expenses.size} expenses")
+
         if (expenses.isEmpty()) {
             expensesChart.clear()
+            expensesChart.setNoDataText("No expenses in selected period")
+            expensesChart.setNoDataTextColor(Color.BLACK)
             expensesChart.invalidate()
             return
         }
 
-        // Get goals from SharedPreferences
+
         val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
         val minGoal = sharedPreferences.getFloat("MIN_GOAL", 0f)
         val maxGoal = sharedPreferences.getFloat("TOTAL_BUDGET_GOAL", 0f)
 
-        // Group and sort expense data
+
         val expenseData = expenses.groupBy { it.expenseCategory }
             .mapValues { it.value.sumOf { expense -> expense.expenseAmount } }
             .toList()
             .sortedByDescending { it.second }
 
-        // Create entries
+
         val entries = expenseData.mapIndexed { index, (_, amount) ->
             BarEntry(index.toFloat(), amount.toFloat())
         }
 
-        // Configure dataset
+
         val dataSet = BarDataSet(entries, "Amount Spent").apply {
             colors = expenseData.map { (_, amount) ->
                 when {
-                    amount.toFloat() > maxGoal -> Color.parseColor("#F44336") // Red if over max
-                    amount.toFloat() < minGoal -> Color.parseColor("#FFC107") // Amber if under min
-                    else -> Color.parseColor("#4CAF50") // Green if within goals
+                    amount.toFloat() > maxGoal -> Color.parseColor("#F44336")
+                    amount.toFloat() < minGoal -> Color.parseColor("#FFC107")
+                    else -> Color.parseColor("#4CAF50")
                 }
             }
             valueTextColor = Color.BLACK
@@ -175,9 +375,9 @@ class DetailedBarChartActivity : AppCompatActivity() {
             setDrawValues(true)
         }
 
-        // Configure chart
+
         expensesChart.apply {
-            // Basic setup
+
             setDrawBarShadow(false)
             setDrawValueAboveBar(true)
             description.isEnabled = false
@@ -186,13 +386,13 @@ class DetailedBarChartActivity : AppCompatActivity() {
             setBackgroundColor(Color.WHITE)
             animateY(800)
 
-            // Configure data
+
             data = BarData(dataSet).apply {
                 barWidth = 0.5f
                 setValueTextSize(10f)
             }
 
-            // X-axis
+
             xAxis.apply {
                 position = XAxis.XAxisPosition.BOTTOM
                 granularity = 1f
@@ -207,7 +407,7 @@ class DetailedBarChartActivity : AppCompatActivity() {
                 }
             }
 
-            // Left Y-axis with goal lines
+
             axisLeft.apply {
                 removeAllLimitLines()
                 textColor = Color.BLACK
@@ -217,7 +417,7 @@ class DetailedBarChartActivity : AppCompatActivity() {
                 gridColor = Color.parseColor("#EEEEEE")
                 axisLineColor = Color.DKGRAY
 
-                // Only show goal lines if they're set (>0)
+
                 if (minGoal > 0) {
                     addLimitLine(
                         LimitLine(minGoal, "Min Goal: ${"%.2f".format(minGoal)}").apply {
@@ -245,7 +445,7 @@ class DetailedBarChartActivity : AppCompatActivity() {
 
             axisRight.isEnabled = false
 
-            // Legend
+
             legend.apply {
                 textColor = Color.DKGRAY
                 textSize = 11f
@@ -270,13 +470,13 @@ class DetailedBarChartActivity : AppCompatActivity() {
             return
         }
 
-        // Group and sort budget data
+
         val budgetData = budgets.groupBy { it.budgetCategory }
             .mapValues { it.value.sumOf { budget -> budget.budgetAmount } }
             .toList()
             .sortedByDescending { it.second }
 
-        // Create entries
+
         val entries = budgetData.mapIndexed { index, (_, amount) ->
             BarEntry(index.toFloat(), amount.toFloat())
         }
@@ -306,13 +506,13 @@ class DetailedBarChartActivity : AppCompatActivity() {
             setBackgroundColor(Color.WHITE)
             animateY(800)
 
-            // Configure data
+
             data = BarData(dataSet).apply {
                 barWidth = 0.5f
                 setValueTextSize(10f)
             }
 
-            // X-axis
+
             xAxis.apply {
                 position = XAxis.XAxisPosition.BOTTOM
                 granularity = 1f
@@ -327,7 +527,7 @@ class DetailedBarChartActivity : AppCompatActivity() {
                 }
             }
 
-            // Left Y-axis
+
             axisLeft.apply {
                 textColor = Color.BLACK
                 textSize = 10f
@@ -337,10 +537,10 @@ class DetailedBarChartActivity : AppCompatActivity() {
                 axisLineColor = Color.DKGRAY
             }
 
-            // Right Y-axis
+
             axisRight.isEnabled = false
 
-            // Legend
+
             legend.apply {
                 textColor = Color.DKGRAY
                 textSize = 11f
@@ -352,7 +552,7 @@ class DetailedBarChartActivity : AppCompatActivity() {
                 xOffset = 0f
             }
 
-            // Extra spacing
+
             setExtraOffsets(12f, 12f, 12f, 12f)
             setVisibleXRangeMaximum(5f)
 

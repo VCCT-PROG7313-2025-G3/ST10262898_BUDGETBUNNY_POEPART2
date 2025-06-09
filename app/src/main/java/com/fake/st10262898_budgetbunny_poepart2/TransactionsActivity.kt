@@ -106,7 +106,7 @@ class TransactionsActivity : AppCompatActivity() {
             .addOnSuccessListener { documents ->
                 val expenses = documents.mapNotNull { doc ->
                     try {
-                        // Use the correct fromDocument method
+
                         ExpenseFirebase(
                             expenseName = doc.getString("expenseName") ?: "",
                             expenseAmount = doc.getDouble("expenseAmount") ?: 0.0,
@@ -177,6 +177,11 @@ class TransactionsActivity : AppCompatActivity() {
                 R.id.nav_transactions -> true
                 R.id.nav_budgetGoal -> {
                     startActivity(Intent(this@TransactionsActivity, BudgetGoalsOverviewActivity::class.java))
+                    overridePendingTransition(0, 0)
+                    true
+                }
+                R.id.nav_bunny -> {
+                    startActivity(Intent(this, BunnyActivity::class.java))
                     overridePendingTransition(0, 0)
                     true
                 }
