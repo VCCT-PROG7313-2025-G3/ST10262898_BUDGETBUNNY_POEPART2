@@ -39,7 +39,7 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Transparent overlay for clicks -->
+
     <View
         android:id="@+id/overlay"
         android:layout_width="match_parent"

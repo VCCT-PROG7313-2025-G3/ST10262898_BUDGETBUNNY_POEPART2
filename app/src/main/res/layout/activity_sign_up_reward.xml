@@ -29,7 +29,7 @@
         android:layout_width="391dp"
         android:layout_height="55dp"
         android:fontFamily="@font/assistant_bold"
-        android:text="@string/here_s_50_coins_to_get_you_started_on_your_budgetbunny_journey"
+        android:text="Good luck on your budget bunny journey"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="18sp"

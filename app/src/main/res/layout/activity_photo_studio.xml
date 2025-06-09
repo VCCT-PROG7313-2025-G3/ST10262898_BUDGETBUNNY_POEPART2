@@ -28,7 +28,7 @@
             android:scaleType="centerInside"/>
     </RelativeLayout>
 
-    <!-- Background selector at bottom -->
+    <!-- Background selector-->
     <LinearLayout
         android:id="@+id/backgroundSelector"
         android:layout_width="match_parent"
