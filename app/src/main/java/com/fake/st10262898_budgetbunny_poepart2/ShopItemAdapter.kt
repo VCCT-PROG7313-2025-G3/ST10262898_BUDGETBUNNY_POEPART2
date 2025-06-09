@@ -1,5 +1,4 @@
-package com.fake.st10262898_budgetbunny_poepart2
-
+import com.fake.st10262898_budgetbunny_poepart2.R
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,31 +40,16 @@ class ShopItemAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = filteredItems[position]
-        val resourceId = imageResourceMap[item.imageName] ?: 0
+        val resourceId = imageResourceMap[item.imageName] ?: R.drawable.ic_launcher_foreground // Default fallback image
 
         holder.image.apply {
             setImageResource(resourceId)
-            scaleType = ImageView.ScaleType.CENTER_CROP // Ensures images fill the space
-            adjustViewBounds = true
-
-
-
-            post {
-                val layoutParams = layoutParams
-                layoutParams.width = 200.dpToPx(context) // Convert dp to pixels
-                layoutParams.height = 300.dpToPx(context)
-                this.layoutParams = layoutParams
-            }
-
+            scaleType = ImageView.ScaleType.CENTER_CROP
+            adjustViewBounds = false
         }
 
         holder.price.text = "${item.price} coins"
         holder.itemView.setOnClickListener { onItemClick(item) }
-    }
-
-
-    fun Int.dpToPx(context: Context): Int {
-        return (this * context.resources.displayMetrics.density).toInt()
     }
 
     override fun getItemCount() = filteredItems.size
@@ -77,6 +61,4 @@ class ShopItemAdapter(
             notifyItemRemoved(position)
         }
     }
-
-
 }

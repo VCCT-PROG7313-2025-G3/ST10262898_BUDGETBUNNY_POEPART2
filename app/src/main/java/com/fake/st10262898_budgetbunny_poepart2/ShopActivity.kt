@@ -1,5 +1,6 @@
 package com.fake.st10262898_budgetbunny_poepart2
 
+import ShopItemAdapter
 import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
@@ -40,7 +41,7 @@ class ShopActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerViewShop)
         recyclerView.layoutManager = GridLayoutManager(this, 2) // 2 items per row
 
-        // Add spacing between items
+        // Add consistent spacing between items
         val spacing = resources.getDimensionPixelSize(R.dimen.item_spacing)
         recyclerView.addItemDecoration(
             GridSpacingItemDecoration(2, spacing, true)
@@ -51,7 +52,6 @@ class ShopActivity : AppCompatActivity() {
         // Load coins and purchased items
         firestore.collection("UserCoins").document(userId).get()
             .addOnSuccessListener { coinDoc ->
-                // Only use currentBalance - no fallback to coins
                 userCoins = coinDoc.getLong("currentBalance")?.toInt() ?: 0
                 updateCoinDisplay()
 
@@ -60,6 +60,15 @@ class ShopActivity : AppCompatActivity() {
                         val purchasedItems = purchasesDoc.get("items") as? List<String> ?: emptyList()
                         loadShopItems(purchasedItems)
                     }
+                    .addOnFailureListener { e ->
+                        Log.e("ShopActivity", "Error loading purchases", e)
+                        // Still load shop items even if purchases fail
+                        loadShopItems(emptyList())
+                    }
+            }
+            .addOnFailureListener { e ->
+                Log.e("ShopActivity", "Error loading user coins", e)
+                Toast.makeText(this, "Error loading data", Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -67,16 +76,37 @@ class ShopActivity : AppCompatActivity() {
         firestore.collection("ShopItems").get()
             .addOnSuccessListener { querySnapshot ->
                 val availableItems = querySnapshot.documents.mapNotNull { doc ->
+                    val itemId = doc.getString("id") ?: doc.id
+                    val imageName = doc.getString("imageName") ?: ""
+                    val price = doc.getLong("price")?.toInt() ?: 0
+                    val category = doc.getString("category") ?: ""
+
+                    Log.d("ShopActivity", "Loading item: $itemId, image: $imageName, price: $price")
+
                     ShopItem(
-                        id = doc.getString("id") ?: "",
-                        imageName = doc.getString("imageName") ?: "",
-                        price = doc.getLong("price")?.toInt() ?: 0,
-                        category = doc.getString("category") ?: ""
+                        id = itemId,
+                        imageName = imageName,
+                        price = price,
+                        category = category
                     )
-                }.filter { it.id !in purchasedItems }
+                }.filter { item ->
+                    val isNotPurchased = item.id !in purchasedItems
+                    Log.d("ShopActivity", "Item ${item.id} - isPurchased: ${!isNotPurchased}")
+                    isNotPurchased
+                }
+
+                Log.d("ShopActivity", "Total available items: ${availableItems.size}")
+
+                if (availableItems.isEmpty()) {
+                    Toast.makeText(this, "No items available in shop", Toast.LENGTH_SHORT).show()
+                }
 
                 adapter = ShopItemAdapter(availableItems) { item -> attemptBuy(item) }
                 recyclerView.adapter = adapter
+            }
+            .addOnFailureListener { e ->
+                Log.e("ShopActivity", "Error loading shop items", e)
+                Toast.makeText(this, "Error loading shop items", Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -90,15 +120,7 @@ class ShopActivity : AppCompatActivity() {
             .setTitle("Confirm Purchase")
             .setMessage("Buy ${item.id} for ${item.price} coins?")
             .setPositiveButton("Buy") { _, _ ->
-                // Show loading dialog
-                val progressDialog = ProgressDialog(this).apply {
-                    setMessage("Processing...")
-                    setCancelable(false)
-                    show()
-                }
-
                 purchaseItem(item)
-                progressDialog.dismiss()
             }
             .setNegativeButton("Cancel", null)
             .show()
@@ -133,7 +155,6 @@ class ShopActivity : AppCompatActivity() {
             Log.e("ShopActivity", "Error checking purchases doc", e)
         }
     }
-
 
     private fun executePurchase(item: ShopItem,
                                 userPurchasesRef: DocumentReference,
@@ -176,19 +197,16 @@ class ShopActivity : AppCompatActivity() {
             updateCoinDisplay()
             adapter.removeItem(item)
             progressDialog.dismiss()
+            Toast.makeText(this, "Purchase successful!", Toast.LENGTH_SHORT).show()
             setResult(RESULT_OK, Intent().putExtra("NEW_COINS", newBalance.toInt()))
         }.addOnFailureListener { e ->
             progressDialog.dismiss()
             Toast.makeText(this, "Purchase failed: ${e.message}", Toast.LENGTH_LONG).show()
+            Log.e("ShopActivity", "Purchase failed", e)
         }
     }
-
 
     private fun updateCoinDisplay() {
         findViewById<TextView>(R.id.coinCountTextShop).text = "Coins: $userCoins"
     }
-
-
-
-
 }
