@@ -149,7 +149,7 @@ class BunnyActivity : AppCompatActivity() {
 
         toggleHandle.setOnClickListener {
             isOpen = if (isOpen) {
-                // Close: slide toggle bar off screen to the right
+
                 toggleBar.animate()
                     .translationX(toggleBar.width.toFloat())
                     .setDuration(300)

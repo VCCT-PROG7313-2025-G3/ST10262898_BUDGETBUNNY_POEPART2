@@ -73,6 +73,10 @@ class HomePageActivity : AppCompatActivity() {
         loadData()
         setupBottomNavigation()
 
+        val tvDateTime: TextView = findViewById(R.id.tv_dateTime)
+        tvDateTime.text = SimpleDateFormat("dd MMMM yyyy, HH:mm", Locale.getDefault()).format(Date())
+
+
         findViewById<View>(R.id.bottomNavigationView).post {
             val navBar = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
             val fab = findViewById<FloatingActionButton>(R.id.fabChat)
