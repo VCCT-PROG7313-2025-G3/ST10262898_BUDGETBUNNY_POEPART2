@@ -1,9 +1,13 @@
 package com.fake.st10262898_budgetbunny_poepart2
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -16,8 +20,13 @@ class HowToPlayActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_how_to_play)
 
+        // Set click listener on the overlay
+        findViewById<View>(R.id.overlay).setOnClickListener {
+            returnToBunnyActivity()
+        }
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { view, insets ->
+        // Keep your existing insets listener but update the ID
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.mainScrollView)) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             view.setPadding(
                 systemBars.left,
@@ -30,6 +39,14 @@ class HowToPlayActivity : AppCompatActivity() {
 
         setupHowToPlayText()
     }
+
+    private fun returnToBunnyActivity() {
+        val intent = Intent(this, BunnyActivity::class.java)
+        startActivity(intent)
+        finish()
+        overridePendingTransition(0, 0)
+    }
+
 
     private fun setupHowToPlayText() {
         val howToPlayText = findViewById<TextView>(R.id.howToPlayText)
@@ -60,9 +77,11 @@ class HowToPlayActivity : AppCompatActivity() {
         }
     }
 
-
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        finish()
+        if (event?.action == MotionEvent.ACTION_DOWN) {
+            returnToBunnyActivity()
+            return true
+        }
         return super.onTouchEvent(event)
     }
 }

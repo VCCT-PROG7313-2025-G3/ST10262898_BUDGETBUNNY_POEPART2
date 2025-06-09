@@ -65,8 +65,8 @@ class ResourceStepsActivity : AppCompatActivity() {
 
     private fun getTotalSteps(topic: String): Int {
         return when (topic) {
-            "save_money" -> 5
-            "invest_wisely" -> 6
+            "save_money" -> 4
+            "invest_wisely" -> 5
             "budgeting_tips" -> 5
             else -> 0
         }
