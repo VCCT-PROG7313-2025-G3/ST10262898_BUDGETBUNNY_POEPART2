@@ -247,15 +247,15 @@ class DetailedBarChartActivity : AppCompatActivity() {
                     Log.d("ChartDebug", "Querying CUSTOM RANGE expenses from ${Date(startDate)} to ${Date(endDate)}")
                     db.collection("expenses")
                         .whereEqualTo("username", currentUserId)
-                        .whereGreaterThanOrEqualTo("expenseDate", Date(startDate))
-                        .whereLessThanOrEqualTo("expenseDate", Date(endDate))
+                        .whereGreaterThanOrEqualTo("expenseDate", startDate)
+                        .whereLessThanOrEqualTo("expenseDate", endDate)
                 } else {
                     val startMillis = getStartDateForPeriod(period)
                     Log.d("ChartDebug", "Querying $period expenses from ${Date(startMillis)}")
                     db.collection("expenses")
                         .whereEqualTo("username", currentUserId)
-                        .whereGreaterThanOrEqualTo("expenseDate", Date(startMillis))
-                        .whereLessThanOrEqualTo("expenseDate", Date(System.currentTimeMillis()))
+                        .whereGreaterThanOrEqualTo("expenseDate", startMillis)
+                        .whereLessThanOrEqualTo("expenseDate", System.currentTimeMillis())
                 }
 
 
